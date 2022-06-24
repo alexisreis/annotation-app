@@ -18,7 +18,8 @@ def members():
 
 @app.route("/getImage")
 def getImage():
-    path_to_processed_image = process_image("wallpaper.jpg")
+    path_to_processed_image = process_image(
+        "../client/public/wallpaper.jpg")
     return send_file(path_to_processed_image, mimetype='image/jpg')
 
 
