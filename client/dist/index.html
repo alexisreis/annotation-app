@@ -12,7 +12,8 @@
 </head>
 <body>
 <input type="file" onchange="upload()" id="file"/>
-<button onclick="improveImage()">Améliorer</button>
+<br/>
+<div id="options-container"></div>
 <br/>
 <div id="my-toolbar-container"></div>
 <img id="my-image" width="100%"/>
@@ -77,6 +78,10 @@
 			annotations = newAnnotations;
 			setLocalAnnotation(annotations);
 		});
+
+		document.getElementById("options-container").innerHTML =
+			"<button onClick='improveImage()'>Améliorer l'image</button> " +
+			"<button onClick='saveAnnotationsToJSON()'>Exporter JSON</button>";
 	}
 
 	function upload() {
@@ -136,6 +141,19 @@
 				originalImage;
 		}
 		showIsOriginal = !showIsOriginal;
+	}
+
+	function download(content, fileName, contentType) {
+		var a = document.createElement("a");
+		var file = new Blob([JSON.stringify(content, null, 2)], {type:
+			contentType});
+		a.href = URL.createObjectURL(file);
+		a.download = fileName;
+		a.click();
+	}
+
+	function saveAnnotationsToJSON(){
+		download(anno.getAnnotations(), `${imageName}.json`, 'text/plain');
 	}
 </script>
 </body>
