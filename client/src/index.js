@@ -1,17 +1,30 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from 'preact/compat';
 
+import './index.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-	<React.StrictMode>
-			<App/>
-	</React.StrictMode>
-);
+const HelloWorldWidget = props => {
+  // We'll be using 'highlighting' as body purpose for 
+  // this type of widget
+  const currentHighlight = props.annotation ? 
+    props.annotation.bodies.find(b => b.purpose === 'highlighting') : null;
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+  // This function handles body updates as the user presses buttons
+  const setHighlightBody = value => () => {
+    props.onUpsertBody(currentHighlight, { value, purpose: 'highlighting' });
+  }
+
+  return (
+    <div className="helloworld-widget">
+      { [ 'red', 'green', 'blue', 'yellow', 'brown' ].map(color =>
+        <button 
+          key={color}    
+          className={currentHighlight?.value === color ? 'selected' : null}
+          style={{ backgroundColor: color }}
+          onClick={setHighlightBody(color)}>{color}</button>
+      )}
+    </div>
+  )
+
+}
+
+export default HelloWorldWidget;
