@@ -19,3 +19,17 @@
 .helloworld-widget button:hover {
   opacity:1;
 }
+
+.sense-widget-choice{
+  padding:5px;
+  border-bottom:1px solid #e5e5e5;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.sense-div {
+  height: 3em;
+  width: 15%;
+  border: 1px solid black;
+}
