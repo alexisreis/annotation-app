@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>React Hello World Plugin</title>
+	<link rel="stylesheet"
+	      href="https://cdn.jsdelivr.net/npm/@recogito/annotorious@latest/dist/annotorious.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious@latest/dist/annotorious.min.js"></script>
+	<script src="recogito-helloworld-widget.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious-better-polygon@latest/dist/annotorious-better-polygon.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious-toolbar@latest/dist/annotorious-toolbar.min.js"></script>
+</head>
+<body>
+<input type="file" onchange="upload()" id="file"/>
+<button onclick="improveImage()">Améliorer</button>
+<br/>
+<div id="my-toolbar-container"></div>
+<img id="my-image" width="100%"/>
+
+<script type="text/javascript">
+
+	let isImproved = false;
+	let showIsOriginal = true;
+	let originalImage;
+	let improvedImage;
+	let imageName = "";
+	let annotations = [];
+	let anno;
+
+	const getLocalAnnotations = () => {
+		return localStorage.getItem(imageName)
+	}
+
+	const setLocalAnnotation = (newAnnotations) => {
+		localStorage.setItem(imageName, JSON.stringify(newAnnotations))
+	}
+
+	function initAnnotorious() {
+		anno = Annotorious.init({
+			image: 'my-image',
+			widgets: [
+				recogito.HelloWorldWidget,
+				'COMMENT',
+				'TAG'
+			]
+		});
+
+		Annotorious.BetterPolygon(anno);
+		Annotorious.Toolbar(anno, document.getElementById('my-toolbar-container'));
+
+		anno.setDrawingTool('polygon');
+
+		const storedAnnotation = getLocalAnnotations();
+		if (storedAnnotation) {
+			console.log('storedAnnotations', storedAnnotation)
+			const theannotations = window.JSON.parse(storedAnnotation)
+			annotations = theannotations;
+			anno.setAnnotations(annotations);
+		}
+
+		anno.on('createAnnotation', (annotation) => {
+			annotations = [...annotations, annotation]
+			setLocalAnnotation(annotations)
+		});
+
+		anno.on('updateAnnotation', (annotation, previous) => {
+			const newAnnotations = annotations.map(val => {
+				if (val.id === annotation.id) return annotation
+				return val
+			})
+			annotations = newAnnotations;
+			setLocalAnnotation(annotations);
+		});
+
+		anno.on('deleteAnnotation', (annotation) => {
+			const newAnnotations = annotations.filter(val => val.id !== annotation.id)
+			annotations = newAnnotations;
+			setLocalAnnotation(annotations);
+		});
+	}
+
+	function upload() {
+
+		isImproved = false;
+		if(anno) {
+			var toolbar = document.getElementsByClassName('a9s-toolbar')[0];
+			toolbar.parentNode.removeChild(toolbar);
+			anno.destroy()
+		}
+
+		const file = document.getElementById('file').files[0];
+		imageName = file.name;
+
+		const reader = new FileReader();
+		reader.onload = function (e) {
+			const image = document.getElementById("my-image");
+			image.src = e.target.result;
+			originalImage = e.target.result;
+		}
+
+		reader.readAsDataURL(file);
+		showIsOriginal = true;
+
+		initAnnotorious()
+	}
+
+	async function improveImage() {
+		if (!isImproved) {
+			// Create a FormData to POST to backend
+			const formData = new FormData();
+			formData.append("file", document.getElementById('file').files[0]);
+
+			const response = await fetch(`http://localhost:5000/uploadImage`, {
+				method: 'POST',
+				body: formData,
+				contentType: false,
+				processData: false
+			})
+
+			const blob = await response.blob()
+			improvedImage = URL.createObjectURL(blob)
+			document.getElementById("my-image").src = improvedImage;
+			isImproved = true;
+			showIsOriginal = false;
+		} else {
+			returnToBase()
+		}
+	}
+
+	function returnToBase() {
+		if (showIsOriginal) {
+			document.getElementById("my-image").src =
+				improvedImage;
+		} else {
+			document.getElementById("my-image").src =
+				originalImage;
+		}
+		showIsOriginal = !showIsOriginal;
+	}
+</script>
+</body>
+</html>
