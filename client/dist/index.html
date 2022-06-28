@@ -5,6 +5,8 @@
 	<title>React Hello World Plugin</title>
 	<link rel="stylesheet"
 	      href="https://cdn.jsdelivr.net/npm/@recogito/annotorious@latest/dist/annotorious.min.css">
+	<link rel="stylesheet"
+	      href="./index.css">
 	<script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious@latest/dist/annotorious.min.js"></script>
 	<script src="recogito-helloworld-widget.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious-better-polygon@latest/dist/annotorious-better-polygon.js"></script>
@@ -36,6 +38,35 @@
 		localStorage.setItem(imageName, JSON.stringify(newAnnotations))
 	}
 
+	const MyFormatter = function (annotation) {
+		//TODO améliorer algos
+		const isVue = annotation.bodies.find(b => {
+			return b.purpose === 'tagging' && b.value.toLowerCase() === 'vue'
+		});
+
+		const isSon = annotation.bodies.find(b => {
+			return b.purpose === 'tagging' && b.value.toLowerCase() === 'son'
+		});
+
+		const isGout = annotation.bodies.find(b => {
+			return b.purpose === 'tagging' && b.value.toLowerCase() === 'gout'
+		});
+
+		const isOdeur = annotation.bodies.find(b => {
+			return b.purpose === 'tagging' && b.value.toLowerCase() === 'odeur'
+		});
+
+		const isToucher = annotation.bodies.find(b => {
+			return b.purpose === 'tagging' && b.value.toLowerCase() === 'toucher'
+		});
+		// add the important css class if the tag is present
+		if (isVue) return 'vue'
+		if (isSon) return 'son'
+		if (isGout) return 'gout'
+		if (isOdeur) return 'odeur'
+		if (isToucher) return 'toucher'
+	}
+
 	function initAnnotorious() {
 		anno = Annotorious.init({
 			image: 'my-image',
@@ -43,7 +74,8 @@
 				recogito.HelloWorldWidget,
 				'COMMENT',
 				'TAG'
-			]
+			],
+			formatters: MyFormatter
 		});
 
 		Annotorious.BetterPolygon(anno);
@@ -87,7 +119,7 @@
 	function upload() {
 
 		isImproved = false;
-		if(anno) {
+		if (anno) {
 			var toolbar = document.getElementsByClassName('a9s-toolbar')[0];
 			toolbar.parentNode.removeChild(toolbar);
 			anno.destroy()
@@ -145,14 +177,16 @@
 
 	function download(content, fileName, contentType) {
 		var a = document.createElement("a");
-		var file = new Blob([JSON.stringify(content, null, 2)], {type:
-			contentType});
+		var file = new Blob([JSON.stringify(content, null, 2)], {
+			type:
+			contentType
+		});
 		a.href = URL.createObjectURL(file);
 		a.download = fileName;
 		a.click();
 	}
 
-	function saveAnnotationsToJSON(){
+	function saveAnnotationsToJSON() {
 		download(anno.getAnnotations(), `${imageName}.json`, 'text/plain');
 	}
 </script>
