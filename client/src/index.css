@@ -28,10 +28,14 @@
   justify-content: space-between;
 }
 
-.sense-div.selected,
-.sense-div:hover {
+.sense-div.selected {
   background: #e5e5e5;
   border-color: #009dff;
+  border-width: 4px;
+}
+
+.sense-div:hover {
+  background: #e5e5e5;
 }
 
 .sense-div {
