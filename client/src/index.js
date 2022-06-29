@@ -46,6 +46,7 @@ const MySenseWidget = props => {
 		{name: 'Gout', color: 'pink', icon: '👅'}];
 
 	const senseObject = (senseName) => {
+		console.log('senseObject')
 		if(senseName === 'Son'){
 			return {sense: 'Son', type: '', volume: 0}
 		} else if (senseName === 'Vue'){
@@ -75,7 +76,35 @@ const MySenseWidget = props => {
 
 			{currentSense?.value.sense === 'Son' ?
 				<div>
-					<h1>SON</h1>
+					<h3>Son</h3>
+					<span>Origine du son</span>
+					<br/>
+					<input type="checkbox" id="son-origine-producteur"
+					       name="son-origine" value="producer"
+					       checked={currentSense.value.type === "producer"}
+					       onClick={(e) => {
+						       const value = {sense: currentSense.value.sense, type: e.target.value, volume: currentSense.value.volume};
+						       props.onUpsertBody(currentSense, {value, purpose: 'sense'});
+					       }}/>
+					<label htmlFor="son-origine-producteur">Producteur</label>
+					<br/>
+					<input type="checkbox" id="son-origine-terminologie"
+					       name="son-origine" value="terminology"
+					       checked={currentSense.value.type === "terminology"}
+					       onChange={(e) => {
+						       const value = {sense: currentSense.value.sense, type: e.target.value, volume: currentSense.value.volume};
+						       props.onUpsertBody(currentSense, {value, purpose: 'sense'});
+					       }}/>
+					<label
+						htmlFor="son-origine-terminologie">Terminologie</label>
+					<br/>
+					<span>Intensité du son</span>
+					<br/>
+					<input type="range" min="0" max="100" value={currentSense.value.volume}
+					       onMouseLeave={(e) => {
+							   const value = {sense: currentSense.value.sense, type: currentSense.value.type, volume: e.target.value};
+						       props.onUpsertBody(currentSense, {value, purpose: 'sense'});
+					       }}/>
 				</div> : null}
 
 			{currentSense?.value.sense === 'Vue' ?
