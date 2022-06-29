@@ -39,22 +39,23 @@ const MySenseWidget = props => {
 	}
 
 	const senses = [
-		{name: 'Son', color: 'lightgreen', icon: ''},
-		{name: 'Vue', color: 'lightblue', icon: ''},
-		{name: 'Odeur', color: 'brown', icon: ''},
-		{name: 'Toucher', color: 'yellow', icon: ''},
-		{name: 'Gout', color: 'pink', icon: ''}];
+		{name: 'Son', color: 'lightgreen', icon: '🔊'},
+		{name: 'Vue', color: 'lightblue', icon: '👀'},
+		{name: 'Odeur', color: 'brown', icon: '👃'},
+		{name: 'Toucher', color: 'yellow', icon: '🤚'},
+		{name: 'Gout', color: 'pink', icon: '👅'}];
 
 	return (
 		<div className="sense-widget">
 			<div className="sense-widget-choice">
 				{senses.map(sense =>
-					<div className="sense-div">
-						<button
-							key={sense.name}
-							className={currentSense?.value === sense.name ? 'selected' : null}
+					<div 	key={sense.name}
+							className={currentSense?.value === sense.name ? 'sense-div selected' : 'sense-div'}
 							// style={{backgroundColor: sense.color}}
-							onClick={setSenseBody(sense.name)}>{sense.name}</button>
+							onClick={setSenseBody(sense.name)}>
+						{sense.icon}
+						<br/>
+						{sense.name}
 					</div>
 				)}
 			</div>
