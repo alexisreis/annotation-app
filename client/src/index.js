@@ -47,28 +47,43 @@ const MySenseWidget = props => {
 			<div className="sense-widget-choice">
 				{senses.map(sense =>
 					<div key={sense.name}
-					     className={currentSense?.value.sense === sense.name ? 'sense-div selected' : 'sense-div'}
+					     className={currentSense?.value[sense.name] ?
+					      'sense-div selected' : 'sense-div'}
 					     onClick={() => {
 							 console.log(sense.name);
 
-							 let value = [];
+							 let newValue = new Map();
 							 if(currentSense){
-								 value = currentSense.value;
-								 console.log(currentSense.value)
+								 newValue = new Map(Object.entries(currentSense.value));
+								 console.log(newValue)
 							 }
 
 						     if (sense.name === 'Son') {
-							     value.push({sense: 'Son', type: '', volume: 0})
+
+							     newValue.set('Son', {type: '', volume: 0});
+
 						     } else if (sense.name === 'Vue') {
-							     value.push({sense: 'Vue'})
+
+							     newValue.set('Vue', {sense: 'Vue'});
+
 						     } else if (sense.name === 'Odeur') {
-							     value.push({sense: 'Odeur'})
+
+							     newValue.set('Odeur', {sense: 'Odeur'});
+
 						     } else if (sense.name === 'Toucher') {
-							     value.push({sense: 'Toucher'})
+
+							     newValue.set('Toucher', {sense: 'Toucher'});
+
 						     } else if (sense.name === 'Gout') {
-							     value.push({sense: 'Gout'})
+
+							     newValue.set('Gout', {sense: 'Gout'});
+
 						     }
+						     const value = Object.fromEntries(newValue);
+							 console.log('value object : ', value);
 						     props.onUpsertBody(currentSense, {value, purpose: 'sense'});
+						     // console.log('currentSense.value',
+						     // currentSense.value);
 						 }}>
 						{sense.icon}
 						<br/>
@@ -77,79 +92,79 @@ const MySenseWidget = props => {
 				)}
 			</div>
 
-			{currentSense?.value.sense === 'Son' ?
+			{currentSense?.value['Son'] ?
 				<div>
 					<h3>Son</h3>
-					<span>Origine du son</span>
-					<br/>
-					<input type="checkbox" id="son-origine-producteur"
-					       name="son-origine" value="producer"
-					       checked={currentSense.value.type === "producer"}
-					       onClick={(e) => {
-						       const value = [{
-							       sense: currentSense.value.sense,
-							       type: e.target.value,
-							       volume: currentSense.value.volume
-						       }];
-						       props.onUpsertBody(currentSense, {
-							       value,
-							       purpose: 'sense'
-						       });
-					       }}/>
-					<label htmlFor="son-origine-producteur">Producteur</label>
-					<br/>
-					<input type="checkbox" id="son-origine-terminologie"
-					       name="son-origine" value="terminology"
-					       checked={currentSense.value.type === "terminology"}
-					       onChange={(e) => {
-						       const value = [{
-							       sense: currentSense.value.sense,
-							       type: e.target.value,
-							       volume: currentSense.value.volume
-						       }];
-						       props.onUpsertBody(currentSense, {
-							       value,
-							       purpose: 'sense'
-						       });
-					       }}/>
-					<label
-						htmlFor="son-origine-terminologie">Terminologie</label>
-					<br/>
-					<span>Intensité du son</span>
-					<br/>
-					<input type="range" min="0" max="100"
-					       value={currentSense.value.volume}
-					       onMouseLeave={(e) => {
-						       const value = [{
-							       sense: currentSense.value.sense,
-							       type: currentSense.value.type,
-							       volume: e.target.value
-						       }];
-						       props.onUpsertBody(currentSense, {
-							       value,
-							       purpose: 'sense'
-						       });
-					       }}/>
+					{/*<span>Origine du son</span>*/}
+					{/*<br/>*/}
+					{/*<input type="checkbox" id="son-origine-producteur"*/}
+					{/*       name="son-origine" value="producer"*/}
+					{/*       checked={currentSense.value.type === "producer"}*/}
+					{/*       onClick={(e) => {*/}
+					{/*	       const value = [{*/}
+					{/*		       sense: currentSense.value.sense,*/}
+					{/*		       type: e.target.value,*/}
+					{/*		       volume: currentSense.value.volume*/}
+					{/*	       }];*/}
+					{/*	       props.onUpsertBody(currentSense, {*/}
+					{/*		       value,*/}
+					{/*		       purpose: 'sense'*/}
+					{/*	       });*/}
+					{/*       }}/>*/}
+					{/*<label htmlFor="son-origine-producteur">Producteur</label>*/}
+					{/*<br/>*/}
+					{/*<input type="checkbox" id="son-origine-terminologie"*/}
+					{/*       name="son-origine" value="terminology"*/}
+					{/*       checked={currentSense.value.type === "terminology"}*/}
+					{/*       onChange={(e) => {*/}
+					{/*	       const value = [{*/}
+					{/*		       sense: currentSense.value.sense,*/}
+					{/*		       type: e.target.value,*/}
+					{/*		       volume: currentSense.value.volume*/}
+					{/*	       }];*/}
+					{/*	       props.onUpsertBody(currentSense, {*/}
+					{/*		       value,*/}
+					{/*		       purpose: 'sense'*/}
+					{/*	       });*/}
+					{/*       }}/>*/}
+					{/*<label*/}
+					{/*	htmlFor="son-origine-terminologie">Terminologie</label>*/}
+					{/*<br/>*/}
+					{/*<span>Intensité du son</span>*/}
+					{/*<br/>*/}
+					{/*<input type="range" min="0" max="100"*/}
+					{/*       value={currentSense.value.volume}*/}
+					{/*       onMouseLeave={(e) => {*/}
+					{/*	       const value = [{*/}
+					{/*		       sense: currentSense.value.sense,*/}
+					{/*		       type: currentSense.value.type,*/}
+					{/*		       volume: e.target.value*/}
+					{/*	       }];*/}
+					{/*	       props.onUpsertBody(currentSense, {*/}
+					{/*		       value,*/}
+					{/*		       purpose: 'sense'*/}
+					{/*	       });*/}
+					{/*       }}/>*/}
 				</div> : null}
 
-			{currentSense?.value.sense === 'Vue' ?
+			{currentSense?.value['Vue'] ?
 				<div>
-					<h1>VUE</h1>
+					<h1>Vue</h1>
 				</div> : null}
 
-			{currentSense?.value.sense === 'Odeur' ?
+			{currentSense?.value['Odeur'] ?
 				<div>
-					<h1>ODEUR</h1>
+					<h1>Odeur</h1>
 				</div> : null}
 
-			{currentSense?.value.sense === 'Toucher' ?
+			{currentSense?.value['Toucher'] ?
 				<div>
-					<h1>TOUCHER</h1>
+					<h1>Toucher</h1>
 				</div> : null}
 
-			{currentSense?.value.sense === 'Gout' ?
+			{currentSense?.value['Gout'] ?
 				<div>
-					<h1>GOUT</h1>
+					<h1>Gout</h1>
 				</div> : null}
 		</div>
 	)
