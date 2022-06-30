@@ -45,7 +45,8 @@
 		});
 
 		const isSon = annotation.bodies.find(b => {
-			return b.purpose === 'tagging' && b.value.toLowerCase() === 'son'
+			return b.purpose === 'sense' && b.value.sense ===
+				'Son'
 		});
 
 		const isGout = annotation.bodies.find(b => {
