@@ -172,21 +172,24 @@ const MySenseWidget = props => {
 					<label
 						htmlFor="son-origine-terminologie">Terminologie</label>
 					<br/>
-					{/*<span>Intensité du son</span>*/}
-					{/*<br/>*/}
-					{/*<input type="range" min="0" max="100"*/}
-					{/*       value={currentSense.value.volume}*/}
-					{/*       onMouseLeave={(e) => {*/}
-					{/*	       const value = [{*/}
-					{/*		       sense: currentSense.value.sense,*/}
-					{/*		       type: currentSense.value.type,*/}
-					{/*		       volume: e.target.value*/}
-					{/*	       }];*/}
-					{/*	       props.onUpsertBody(currentSense, {*/}
-					{/*		       value,*/}
-					{/*		       purpose: 'sense'*/}
-					{/*	       });*/}
-					{/*       }}/>*/}
+					<span>Intensité du son</span>
+					<br/>
+					<input type="range" min="0" max="100"
+					       value={currentSense.value['Son'].volume}
+					       onMouseLeave={(e) => {
+						       let newValue = new Map(Object.entries(currentSense.value));
+
+						       newValue.set('Son', {
+							       type:  newValue.get('Son').type,
+							       volume: e.target.value,
+						       })
+
+						       const value = Object.fromEntries(newValue);
+						       props.onUpsertBody(currentSense, {
+							       value,
+							       purpose: 'sense'
+						       });
+					       }}/>
 				</div> : null}
 
 			{currentSense?.value['Vue'] ?
