@@ -116,11 +116,8 @@ const MySenseWidget = props => {
 					       checked={currentSense.value['Son'].type.includes("producer")}
 					       onClick={(e) => {
 						       // TODO : décocher la case
-						       console.log(e);
 						       let newValue = new Map(Object.entries(currentSense.value));
 							   let newType = newValue.get('Son').type;
-							   console.log(newType);
-							   console.log(typeof newType);
 
 							   if(e.target.checked){
 								   newType.push(e.target.value)
@@ -144,24 +141,37 @@ const MySenseWidget = props => {
 					       }}/>
 					<label htmlFor="son-origine-producteur">Producteur</label>
 
-					{/*<br/> */}
-					{/*<input type="checkbox" id="son-origine-terminologie"*/}
-					{/*       name="son-origine" value="terminology"*/}
-					{/*       checked={currentSense.value.type === "terminology"}*/}
-					{/*       onChange={(e) => {*/}
-					{/*	       const value = [{*/}
-					{/*		       sense: currentSense.value.sense,*/}
-					{/*		       type: e.target.value,*/}
-					{/*		       volume: currentSense.value.volume*/}
-					{/*	       }];*/}
-					{/*	       props.onUpsertBody(currentSense, {*/}
-					{/*		       value,*/}
-					{/*		       purpose: 'sense'*/}
-					{/*	       });*/}
-					{/*       }}/>*/}
-					{/*<label*/}
-					{/*	htmlFor="son-origine-terminologie">Terminologie</label>*/}
-					{/*<br/>*/}
+					<br/>
+					<input type="checkbox" id="son-origine-terminologie"
+					       name="son-origine" value="terminology"
+					       checked={currentSense.value['Son'].type.includes("terminology")}
+					       onChange={(e) => {
+						       let newValue = new Map(Object.entries(currentSense.value));
+						       let newType = newValue.get('Son').type;
+
+						       if(e.target.checked){
+							       newType.push(e.target.value)
+							       newValue.set('Son', {
+								       type:  newType,
+								       volume: newValue.get('Son').volume
+							       })
+						       } else {
+							       newType = newType.filter((value) => value !== e.target.value);
+							       newValue.set('Son', {
+								       type:  newType,
+								       volume: newValue.get('Son').volume
+							       })
+						       }
+
+						       const value = Object.fromEntries(newValue);
+						       props.onUpsertBody(currentSense, {
+							       value,
+							       purpose: 'sense'
+						       });
+					       }}/>
+					<label
+						htmlFor="son-origine-terminologie">Terminologie</label>
+					<br/>
 					{/*<span>Intensité du son</span>*/}
 					{/*<br/>*/}
 					{/*<input type="range" min="0" max="100"*/}
