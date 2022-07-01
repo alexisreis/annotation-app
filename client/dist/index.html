@@ -41,24 +41,23 @@
 	const MyFormatter = function (annotation) {
 		//TODO améliorer algos
 		const isVue = annotation.bodies.find(b => {
-			return b.purpose === 'tagging' && b.value.toLowerCase() === 'vue'
+			return b.purpose === 'sense' && b.value['Vue']
 		});
 
 		const isSon = annotation.bodies.find(b => {
-			return b.purpose === 'sense' && b.value.sense ===
-				'Son'
+			return b.purpose === 'sense' && b.value['Son']
 		});
 
 		const isGout = annotation.bodies.find(b => {
-			return b.purpose === 'tagging' && b.value.toLowerCase() === 'gout'
+			return b.purpose === 'sense' && b.value['Gout']
 		});
 
 		const isOdeur = annotation.bodies.find(b => {
-			return b.purpose === 'tagging' && b.value.toLowerCase() === 'odeur'
+			return b.purpose === 'sense' && b.value['Odeur']
 		});
 
 		const isToucher = annotation.bodies.find(b => {
-			return b.purpose === 'tagging' && b.value.toLowerCase() === 'toucher'
+			return b.purpose === 'sense' && b.value['Toucher']
 		});
 		// add the important css class if the tag is present
 		if (isVue) return 'vue'
@@ -81,11 +80,11 @@
 			],
 			formatters: MyFormatter
 		});
-
+		anno.setDrawingTool('polygon');
 		Annotorious.BetterPolygon(anno);
 		Annotorious.Toolbar(anno, document.getElementById('my-toolbar-container'));
 
-		anno.setDrawingTool('polygon');
+
 
 		const storedAnnotation = getLocalAnnotations();
 		if (storedAnnotation) {

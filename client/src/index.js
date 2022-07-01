@@ -21,11 +21,11 @@ const MySenseWidget = props => {
 		{name: 'Gout', color: 'pink', icon: '👅'}];
 
 	const senseObject = (senseName) => {
-		console.log('senseObject')
+		// console.log('senseObject')
 		const value = []
 		if (currentSense) {
 			value.push(...currentSense.value)
-			console.log('currentSense', currentSense.value)
+			// console.log('currentSense', currentSense.value)
 		}
 		if (senseName === 'Son') {
 			value.push({sense: 'Son', type: '', volume: 0})
@@ -38,7 +38,7 @@ const MySenseWidget = props => {
 		} else if (senseName === 'Gout') {
 			value.push({sense: 'Gout'})
 		}
-		console.log('value', value)
+		// console.log('value', value)
 		return value;
 	}
 
@@ -50,12 +50,12 @@ const MySenseWidget = props => {
 					     className={currentSense?.value[sense.name] ?
 						     'sense-div selected' : 'sense-div'}
 					     onClick={() => {
-						     console.log(sense.name);
+						     // console.log(sense.name);
 
 						     let newValue = new Map();
 						     if (currentSense) {
 							     newValue = new Map(Object.entries(currentSense.value));
-							     console.log(newValue)
+							     // console.log(newValue)
 						     }
 
 						     if (sense.name === 'Son') {
@@ -91,7 +91,7 @@ const MySenseWidget = props => {
 						     }
 
 						     const value = Object.fromEntries(newValue);
-						     console.log('value object : ', value);
+						     // console.log('value object : ', value);
 						     props.onUpsertBody(currentSense, {
 							     value,
 							     purpose: 'sense'
@@ -115,7 +115,6 @@ const MySenseWidget = props => {
 					       name="son-origine" value="producer"
 					       checked={currentSense.value['Son'].type.includes("producer")}
 					       onClick={(e) => {
-						       // TODO : décocher la case
 						       let newValue = new Map(Object.entries(currentSense.value));
 							   let newType = newValue.get('Son').type;
 
@@ -172,6 +171,24 @@ const MySenseWidget = props => {
 					<label
 						htmlFor="son-origine-terminologie">Terminologie</label>
 					<br/>
+					{/*<input type="text" placeholder="autre type" onAbort={(e) => {
+						if(e.target.value === '') {
+							let newValue = new Map(Object.entries(currentSense.value));
+							let newType = newValue.get('Son').type;
+
+							newType.push(e.target.value)
+							newValue.set('Son', {
+								type: newType,
+								volume: newValue.get('Son').volume
+							})
+
+							const value = Object.fromEntries(newValue);
+							props.onUpsertBody(currentSense, {
+								value,
+								purpose: 'sense'
+							});
+						}
+					}}/>*/}
 					<span>Intensité du son</span>
 					<br/>
 					<input type="range" min="0" max="100"
@@ -213,32 +230,6 @@ const MySenseWidget = props => {
 				</div> : null}
 		</div>
 	)
-
 }
 
 export default MySenseWidget;
-
-/*const HelloWorldWidget = props => {
- // We'll be using 'highlighting' as body purpose for
- // this type of widget
- const currentHighlight = props.annotation ?
- props.annotation.bodies.find(b => b.purpose === 'highlighting') : null;
-
- // This function handles body updates as the user presses buttons
- const setHighlightBody = value => () => {
- props.onUpsertBody(currentHighlight, {value, purpose: 'highlighting'});
- }
-
- return (
- <div className="helloworld-widget">
- {['red', 'green', 'blue', 'yellow', 'brown'].map(color =>
- <button
- key={color}
- className={currentHighlight?.value === color ? 'selected' : null}
- style={{backgroundColor: color}}
- onClick={setHighlightBody(color)}>{color}</button>
- )}
- </div>
- )
-
- }*/
