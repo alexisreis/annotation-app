@@ -48,43 +48,57 @@ const MySenseWidget = props => {
 				{senses.map(sense =>
 					<div key={sense.name}
 					     className={currentSense?.value[sense.name] ?
-					      'sense-div selected' : 'sense-div'}
+						     'sense-div selected' : 'sense-div'}
 					     onClick={() => {
-							 console.log(sense.name);
+						     console.log(sense.name);
 
-							 let newValue = new Map();
-							 if(currentSense){
-								 newValue = new Map(Object.entries(currentSense.value));
-								 console.log(newValue)
-							 }
+						     let newValue = new Map();
+						     if (currentSense) {
+							     newValue = new Map(Object.entries(currentSense.value));
+							     console.log(newValue)
+						     }
 
 						     if (sense.name === 'Son') {
-
-							     newValue.set('Son', {type: '', volume: 0});
-
+							     if (!currentSense?.value['Son']) {
+								     newValue.set('Son', {type: '', volume: 0});
+							     } else {
+								     newValue.delete('Son');
+							     }
 						     } else if (sense.name === 'Vue') {
-
-							     newValue.set('Vue', {sense: 'Vue'});
-
+							     if (!currentSense?.value['Vue']) {
+								     newValue.set('Vue', {sense: 'Vue'});
+							     } else {
+								     newValue.delete('Vue');
+							     }
 						     } else if (sense.name === 'Odeur') {
-
-							     newValue.set('Odeur', {sense: 'Odeur'});
-
+								 if(!currentSense?.value['Odeur']){
+									 newValue.set('Odeur', {sense: 'Odeur'});
+								 } else {
+									 newValue.delete('Odeur');
+								 }
 						     } else if (sense.name === 'Toucher') {
-
-							     newValue.set('Toucher', {sense: 'Toucher'});
-
+								if(!currentSense?.value['Toucher']){
+									newValue.set('Toucher', {sense: 'Toucher'});
+								} else {
+									newValue.delete('Toucher');
+								}
 						     } else if (sense.name === 'Gout') {
-
-							     newValue.set('Gout', {sense: 'Gout'});
-
+								 if(!currentSense?.value['Gout']) {
+									 newValue.set('Gout', {sense: 'Gout'});
+								 } else {
+									 newValue.delete('Gout');
+								 }
 						     }
+
 						     const value = Object.fromEntries(newValue);
-							 console.log('value object : ', value);
-						     props.onUpsertBody(currentSense, {value, purpose: 'sense'});
+						     console.log('value object : ', value);
+						     props.onUpsertBody(currentSense, {
+							     value,
+							     purpose: 'sense'
+						     });
 						     // console.log('currentSense.value',
 						     // currentSense.value);
-						 }}>
+					     }}>
 						{sense.icon}
 						<br/>
 						{sense.name}
@@ -95,24 +109,27 @@ const MySenseWidget = props => {
 			{currentSense?.value['Son'] ?
 				<div>
 					<h3>Son</h3>
-					{/*<span>Origine du son</span>*/}
-					{/*<br/>*/}
-					{/*<input type="checkbox" id="son-origine-producteur"*/}
-					{/*       name="son-origine" value="producer"*/}
-					{/*       checked={currentSense.value.type === "producer"}*/}
-					{/*       onClick={(e) => {*/}
-					{/*	       const value = [{*/}
-					{/*		       sense: currentSense.value.sense,*/}
-					{/*		       type: e.target.value,*/}
-					{/*		       volume: currentSense.value.volume*/}
-					{/*	       }];*/}
-					{/*	       props.onUpsertBody(currentSense, {*/}
-					{/*		       value,*/}
-					{/*		       purpose: 'sense'*/}
-					{/*	       });*/}
-					{/*       }}/>*/}
-					{/*<label htmlFor="son-origine-producteur">Producteur</label>*/}
-					{/*<br/>*/}
+					<span>Origine du son</span>
+					<br/>
+					<input type="checkbox" id="son-origine-producteur"
+					       name="son-origine" value="producer"
+					       checked={currentSense.value['Son'].type === "producer"}
+					       onClick={(e) => {
+						       // TODO : décocher la case
+						       let newValue = new Map(Object.entries(currentSense.value));
+						       newValue.set('Son', {
+							       type: e.target.value,
+							       volume: newValue.get('Son').volume
+						       })
+						       const value = Object.fromEntries(newValue);
+						       props.onUpsertBody(currentSense, {
+							       value,
+							       purpose: 'sense'
+						       });
+					       }}/>
+					<label htmlFor="son-origine-producteur">Producteur</label>
+
+					{/*<br/> TODO : continuer */}
 					{/*<input type="checkbox" id="son-origine-terminologie"*/}
 					{/*       name="son-origine" value="terminology"*/}
 					{/*       checked={currentSense.value.type === "terminology"}*/}
@@ -149,22 +166,22 @@ const MySenseWidget = props => {
 
 			{currentSense?.value['Vue'] ?
 				<div>
-					<h1>Vue</h1>
+					<h3>Vue</h3>
 				</div> : null}
 
 			{currentSense?.value['Odeur'] ?
 				<div>
-					<h1>Odeur</h1>
+					<h3>Odeur</h3>
 				</div> : null}
 
 			{currentSense?.value['Toucher'] ?
 				<div>
-					<h1>Toucher</h1>
+					<h3>Toucher</h3>
 				</div> : null}
 
 			{currentSense?.value['Gout'] ?
 				<div>
-					<h1>Gout</h1>
+					<h3>Gout</h3>
 				</div> : null}
 		</div>
 	)
