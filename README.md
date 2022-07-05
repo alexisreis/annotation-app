@@ -1,7 +1,12 @@
 # annotation-app
 
-# Flask Server
-## Installation
+Developed by @alexisreis  
+June / July 2022
+
+# Server side
+A flask server is used to send images to the OpenCV library to enhanced them.
+### \> Installation
+You need a virtual environment to run Python with the libraries used.
 ```bash
 cd flask-server
 python -m venv venv
@@ -9,18 +14,32 @@ python -m venv venv
 pip install flask flask_cors opencv-python
 ```
 
-## Run
+### \> Run
+Once the virtual environment is set up, and the libraries installed you can 
+start the flask server like so :
+- activate the virtual environment
+- launch the server
 ```bash
 .\venv\Scripts\activate
 python server.py
 ```
 
+# Client side
+Just open the `index.html` file in `/client/dist`
 
-
-# Client
+# Annotorious widgets
+To edit the custom annotorious widgets made with React just follow these 
+steps :
 ```bash
 cd client
+npm install
 ```
-### `npm install`
-### `npm start`
-
+### \> SenseWidget
+// TODO
+### \> TranscriptionWidget
+// TODO  
+Then build your edits
+```bash
+npm run build
+```
+You can now reopen `index.html` and your edits will normally appear.d

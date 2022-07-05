@@ -39,7 +39,7 @@
 		localStorage.setItem(imageName, JSON.stringify(newAnnotations))
 	}
 
-	const MyFormatter = function (annotation) {
+	const SenseFormatter = function (annotation) {
 		//TODO améliorer algos
 		const isVue = annotation.bodies.find(b => {
 			return b.purpose === 'sense' && b.value['Vue']
@@ -68,6 +68,22 @@
 		if (isToucher) return 'toucher'
 	}
 
+	const TranscriptionFormatter = function (annotation) {
+		// Find the label body (if any)
+		const label = annotation.bodies.find(b => b.purpose === 'transcription');
+
+		if (label) {
+			// Return an HTML label, wrapped in an SVG foreignObject
+			const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+			foreignObject.innerHTML =
+				`<label xmlns="http://www.w3.org/1999/xhtml" >${label.value}</label>`;
+
+			return {
+				element: foreignObject
+			};
+		}
+	}
+
 	function initAnnotorious() {
 		anno = Annotorious.init({
 			image: 'my-image',
@@ -75,18 +91,17 @@
 				recogito.SenseWidget,
 				recogito.TranscriptionWidget,
 				/*'COMMENT',
-				{
-					widget: 'TAG', vocabulary: ['Vue', 'Son', 'Gout', 'Toucher',
-						'Odeur']
-				}*/
+				 {
+				 widget: 'TAG', vocabulary: ['Vue', 'Son', 'Gout', 'Toucher',
+				 'Odeur']
+				 }*/
 			],
-			formatters: MyFormatter
+			formatters: [SenseFormatter, TranscriptionFormatter]
 		});
 
 		Annotorious.BetterPolygon(anno);
 		anno.setDrawingTool('polygon');
 		Annotorious.Toolbar(anno, document.getElementById('my-toolbar-container'));
-
 
 
 		const storedAnnotation = getLocalAnnotations();

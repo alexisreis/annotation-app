@@ -4,16 +4,17 @@ import React from 'preact/compat';
 import './transcription-widget.css'
 
 const MySenseWidget = props => {
-	// We'll be using 'sense' as body purpose for
-	// this type of widget
+
+	// Initialise the sense JSON object if it is already present
 	const currentSense = props.annotation ?
 		props.annotation.bodies.find(b => b.purpose === 'sense') : null;
 
-	// This function handles body updates as the user presses buttons
+	// Updates the sense JSON value object
 	const setSenseBody = (value) => {
 		props.onUpsertBody(currentSense, {value, purpose: 'sense'});
 	}
 
+	// Check / uncheck a sense
 	const addSense = (senseName) => {
 		let newValue = new Map();
 		if (currentSense) {
@@ -56,6 +57,7 @@ const MySenseWidget = props => {
 		setSenseBody(value);
 	}
 
+	// Edit the type of the sound (producer / terminology)
 	const editSoundType = (e) => {
 		let newValue = new Map(Object.entries(currentSense.value));
 		let newType = newValue.get('Son').type;
@@ -78,6 +80,7 @@ const MySenseWidget = props => {
 		setSenseBody(value);
 	}
 
+	// Edit the intensity of the sound via range input
 	const editSoundIntensity = (e) => {
 		let newValue = new Map(Object.entries(currentSense.value));
 
@@ -97,8 +100,10 @@ const MySenseWidget = props => {
 		{name: 'Toucher', color: 'yellow', icon: '🤚'},
 		{name: 'Gout', color: 'pink', icon: '👅'}];
 
+	// What is displayed :
 	return (
 		<div className="sense-widget">
+			{/*Sense choice div*/}
 			<div className="sense-widget-choice">
 				{senses.map(sense =>
 					<div key={sense.name}
@@ -114,6 +119,7 @@ const MySenseWidget = props => {
 				)}
 			</div>
 
+			{/*If the sense is chosen, display the options accordingly*/}
 			{currentSense?.value['Son'] ?
 				<div className="infos-div">
 					<h3>Son</h3>
@@ -188,7 +194,7 @@ const MyTranscriptionWidget = props => {
 		<div className="transcription-widget">
 			<h3>Transcription</h3>
 			<input type="text" placeholder="Transcription"
-			       value={currentTranscription.value}
+			       value={currentTranscription?.value}
 			       onChange={(e) => setTranscriptionBody(e.target.value)}/>
 		</div>
 	)
