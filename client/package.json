@@ -1,7 +1,7 @@
 {
   "name": "@alexisreis/annotation-app",
   "version": "0.1.0",
-  "description": "A minimal code example showing how to build your own editor widgets with React",
+  "description": "React widgets for annotorious JS",
   "main": "dist/transcription-widget.js",
   "module": "dist/transcription-widget.js",
   "scripts": {

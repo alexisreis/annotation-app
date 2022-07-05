@@ -10,8 +10,13 @@ const resolveAppPath = relativePath => path.resolve(APP_DIR, relativePath);
 module.exports = {
   entry: resolveAppPath('src'),
   output: {
+    // TranscriptionWidget : Uncomment the next two lines
     filename: 'transcription-widget.js',
     library: ['recogito', 'TranscriptionWidget'],
+
+    // SenseWidget
+    // filename: 'sense-widget.js',
+    // library: ['recogito', 'SenseWidget'],
     libraryTarget: 'umd',
     libraryExport: 'default'
   },
