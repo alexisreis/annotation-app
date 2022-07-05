@@ -2,13 +2,14 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>React Hello World Plugin</title>
+	<title>Annotation App</title>
 	<link rel="stylesheet"
 	      href="https://cdn.jsdelivr.net/npm/@recogito/annotorious@latest/dist/annotorious.min.css">
 	<link rel="stylesheet"
 	      href="./index.css">
 	<script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious@latest/dist/annotorious.min.js"></script>
-	<script src="recogito-helloworld-widget.js"></script>
+	<script src="sense-widget.js"></script>
+	<script src="transcription-widget.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious-better-polygon@latest/dist/annotorious-better-polygon.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious-toolbar@latest/dist/annotorious-toolbar.min.js"></script>
 </head>
@@ -71,24 +72,26 @@
 		anno = Annotorious.init({
 			image: 'my-image',
 			widgets: [
-				recogito.HelloWorldWidget,
-				'COMMENT',
+				recogito.SenseWidget,
+				recogito.TranscriptionWidget,
+				/*'COMMENT',
 				{
 					widget: 'TAG', vocabulary: ['Vue', 'Son', 'Gout', 'Toucher',
 						'Odeur']
-				}
+				}*/
 			],
 			formatters: MyFormatter
 		});
-		anno.setDrawingTool('polygon');
+
 		Annotorious.BetterPolygon(anno);
+		anno.setDrawingTool('polygon');
 		Annotorious.Toolbar(anno, document.getElementById('my-toolbar-container'));
 
 
 
 		const storedAnnotation = getLocalAnnotations();
 		if (storedAnnotation) {
-			console.log('storedAnnotations', storedAnnotation)
+			// console.log('storedAnnotations', storedAnnotation)
 			const theannotations = window.JSON.parse(storedAnnotation)
 			annotations = theannotations;
 			anno.setAnnotations(annotations);

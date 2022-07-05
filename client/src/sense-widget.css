@@ -29,9 +29,8 @@
 }
 
 .sense-div.selected {
-  background: #e5e5e5;
   border-color: #009dff;
-  border-width: 4px;
+  border-width: 3px;
 }
 
 .sense-div:hover {
@@ -55,4 +54,23 @@
   text-align: center;
   text-decoration: none;
   font-size: 16px;
+}
+
+.infos-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items:center;
+  padding: 1em;
+  width: 100%;
+}
+
+.infos-div h3,
+.infos-div span {
+  text-align: center;
+  font-weight: bold;
+}
+
+.infos-div input[type="range"]{
+  width: 80%;
 }

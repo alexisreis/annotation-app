@@ -1,6 +1,7 @@
 import React from 'preact/compat';
 
-import './index.css';
+// import './sense-widget.css.css';
+import './transcription-widget.css'
 
 const MySenseWidget = props => {
 	// We'll be using 'sense' as body purpose for
@@ -9,7 +10,7 @@ const MySenseWidget = props => {
 		props.annotation.bodies.find(b => b.purpose === 'sense') : null;
 
 	// This function handles body updates as the user presses buttons
-	const setSenseBody = value => () => {
+	const setSenseBody = (value) => {
 		props.onUpsertBody(currentSense, {value, purpose: 'sense'});
 	}
 
@@ -19,28 +20,6 @@ const MySenseWidget = props => {
 		{name: 'Odeur', color: 'brown', icon: '👃'},
 		{name: 'Toucher', color: 'yellow', icon: '🤚'},
 		{name: 'Gout', color: 'pink', icon: '👅'}];
-
-	const senseObject = (senseName) => {
-		// console.log('senseObject')
-		const value = []
-		if (currentSense) {
-			value.push(...currentSense.value)
-			// console.log('currentSense', currentSense.value)
-		}
-		if (senseName === 'Son') {
-			value.push({sense: 'Son', type: '', volume: 0})
-		} else if (senseName === 'Vue') {
-			value.push({sense: 'Vue'})
-		} else if (senseName === 'Odeur') {
-			value.push({sense: 'Odeur'})
-		} else if (senseName === 'Toucher') {
-			value.push({sense: 'Toucher'})
-		} else if (senseName === 'Gout') {
-			value.push({sense: 'Gout'})
-		}
-		// console.log('value', value)
-		return value;
-	}
 
 	return (
 		<div className="sense-widget">
@@ -107,70 +86,73 @@ const MySenseWidget = props => {
 			</div>
 
 			{currentSense?.value['Son'] ?
-				<div>
+				<div className="infos-div">
 					<h3>Son</h3>
-					<span>Origine du son</span>
-					<br/>
-					<input type="checkbox" id="son-origine-producteur"
-					       name="son-origine" value="producer"
-					       checked={currentSense.value['Son'].type.includes("producer")}
-					       onClick={(e) => {
-						       let newValue = new Map(Object.entries(currentSense.value));
-							   let newType = newValue.get('Son').type;
+					<h4>Origine du son</h4>
+					<div>
+						<input type="checkbox" id="son-origine-producteur"
+						       name="son-origine" value="producer"
+						       checked={currentSense.value['Son'].type.includes("producer")}
+						       onClick={(e) => {
+							       let newValue = new Map(Object.entries(currentSense.value));
+							       let newType = newValue.get('Son').type;
 
-							   if(e.target.checked){
-								   newType.push(e.target.value)
-								   newValue.set('Son', {
-									   type:  newType,
-									   volume: newValue.get('Son').volume
-								   })
-							   } else {
-								   newType = newType.filter((value) => value !== e.target.value);
-								   newValue.set('Son', {
-									   type:  newType,
-									   volume: newValue.get('Son').volume
-								   })
-							   }
+							       if(e.target.checked){
+								       newType.push(e.target.value)
+								       newValue.set('Son', {
+									       type:  newType,
+									       volume: newValue.get('Son').volume
+								       })
+							       } else {
+								       newType = newType.filter((value) => value !== e.target.value);
+								       newValue.set('Son', {
+									       type:  newType,
+									       volume: newValue.get('Son').volume
+								       })
+							       }
 
-						       const value = Object.fromEntries(newValue);
-						       props.onUpsertBody(currentSense, {
-							       value,
-							       purpose: 'sense'
-						       });
-					       }}/>
-					<label htmlFor="son-origine-producteur">Producteur</label>
+							       const value = Object.fromEntries(newValue);
+							       props.onUpsertBody(currentSense, {
+								       value,
+								       purpose: 'sense'
+							       });
+						       }}/>
+						<label htmlFor="son-origine-producteur">Producteur</label>
 
-					<br/>
-					<input type="checkbox" id="son-origine-terminologie"
-					       name="son-origine" value="terminology"
-					       checked={currentSense.value['Son'].type.includes("terminology")}
-					       onChange={(e) => {
-						       let newValue = new Map(Object.entries(currentSense.value));
-						       let newType = newValue.get('Son').type;
+					</div>
+					<div>
+						<input type="checkbox" id="son-origine-terminologie"
+						       name="son-origine" value="terminology"
+						       checked={currentSense.value['Son'].type.includes("terminology")}
+						       onChange={(e) => {
+							       let newValue = new Map(Object.entries(currentSense.value));
+							       let newType = newValue.get('Son').type;
 
-						       if(e.target.checked){
-							       newType.push(e.target.value)
-							       newValue.set('Son', {
-								       type:  newType,
-								       volume: newValue.get('Son').volume
-							       })
-						       } else {
-							       newType = newType.filter((value) => value !== e.target.value);
-							       newValue.set('Son', {
-								       type:  newType,
-								       volume: newValue.get('Son').volume
-							       })
-						       }
+							       if(e.target.checked){
+								       newType.push(e.target.value)
+								       newValue.set('Son', {
+									       type:  newType,
+									       volume: newValue.get('Son').volume
+								       })
+							       } else {
+								       newType = newType.filter((value) => value !== e.target.value);
+								       newValue.set('Son', {
+									       type:  newType,
+									       volume: newValue.get('Son').volume
+								       })
+							       }
 
-						       const value = Object.fromEntries(newValue);
-						       props.onUpsertBody(currentSense, {
-							       value,
-							       purpose: 'sense'
-						       });
-					       }}/>
-					<label
-						htmlFor="son-origine-terminologie">Terminologie</label>
-					<br/>
+							       const value = Object.fromEntries(newValue);
+							       props.onUpsertBody(currentSense, {
+								       value,
+								       purpose: 'sense'
+							       });
+						       }}/>
+						<label
+							htmlFor="son-origine-terminologie">Terminologie</label>
+
+					</div>
+					<hr/>
 					{/*<input type="text" placeholder="autre type" onAbort={(e) => {
 						if(e.target.value === '') {
 							let newValue = new Map(Object.entries(currentSense.value));
@@ -189,8 +171,7 @@ const MySenseWidget = props => {
 							});
 						}
 					}}/>*/}
-					<span>Intensité du son</span>
-					<br/>
+					<h4>Intensité du son</h4>
 					<input type="range" min="0" max="100"
 					       value={currentSense.value['Son'].volume}
 					       onMouseLeave={(e) => {
@@ -231,5 +212,24 @@ const MySenseWidget = props => {
 		</div>
 	)
 }
+// export default MySenseWidget;
 
-export default MySenseWidget;
+const MyTranscriptionWidget = props => {
+	// We'll be using 'transcription' as body purpose for
+	// this type of widget
+	const currentSense = props.annotation ?
+		props.annotation.bodies.find(b => b.purpose === 'transcription') : null;
+
+	// This function handles body updates as the user presses buttons
+	const setSenseBody = (value) => {
+		props.onUpsertBody(currentSense, {value, purpose: 'transcription'});
+	}
+
+	return (
+		<div className="transcription-widget">
+			<input type="text" placeholder="Transcription" onChange={(e) => setSenseBody(e.target.value)} />
+		</div>
+	)
+}
+
+export default MyTranscriptionWidget;

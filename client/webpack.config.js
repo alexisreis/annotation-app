@@ -10,8 +10,8 @@ const resolveAppPath = relativePath => path.resolve(APP_DIR, relativePath);
 module.exports = {
   entry: resolveAppPath('src'),
   output: {
-    filename: 'recogito-helloworld-widget.js',
-    library: ['recogito', 'HelloWorldWidget'],
+    filename: 'transcription-widget.js',
+    library: ['recogito', 'TranscriptionWidget'],
     libraryTarget: 'umd',
     libraryExport: 'default'
   },

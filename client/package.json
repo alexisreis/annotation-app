@@ -1,15 +1,14 @@
 {
-  "name": "@recogito/react-helloworld-widget",
+  "name": "@alexisreis/annotation-app",
   "version": "0.1.0",
   "description": "A minimal code example showing how to build your own editor widgets with React",
-  "main": "dist/recogito-helloworld-widget.js",
-  "module": "dist/recogito-helloworld-widget.js",
+  "main": "dist/transcription-widget.js",
+  "module": "dist/transcription-widget.js",
   "scripts": {
     "build": "webpack --mode=development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Rainer Simon",
-  "license": "BSD-3-Clause",
+  "author": "Reis Alexis",
   "devDependencies": {
     "@babel/core": "^7.6.2",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
