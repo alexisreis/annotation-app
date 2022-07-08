@@ -4,21 +4,28 @@
 	<meta charset="UTF-8">
 	<title>Annotation App</title>
 	<link rel="stylesheet"
-	      href="https://cdn.jsdelivr.net/npm/@recogito/annotorious@latest/dist/annotorious.min.css">
-	<link rel="stylesheet"
 	      href="./index.css">
+	<!-- LIBRARIES -->
+	<link rel="stylesheet"
+	      href="https://cdn.jsdelivr.net/npm/@recogito/annotorious@latest/dist/annotorious.min.css">
 	<script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious@latest/dist/annotorious.min.js"></script>
-	<script src="sense-widget.js"></script>
-	<script src="transcription-widget.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious-better-polygon@latest/dist/annotorious-better-polygon.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@recogito/annotorious-toolbar@latest/dist/annotorious-toolbar.min.js"></script>
+
+	<!--WIDGETS-->
+	<script src="sense-widget.js"></script>
+	<script src="transcription-widget.js"></script>
+
 </head>
 <body>
 <input type="file" onchange="upload()" id="file"/>
 <br/>
 <div id="options-container"></div>
+<img id="found-word"/>
 <br/>
+
 <div id="my-toolbar-container"></div>
+
 <img id="my-image" width="100%"/>
 
 <script type="text/javascript">
@@ -28,8 +35,11 @@
 	let originalImage;
 	let improvedImage;
 	let imageName = "";
+
 	let annotations = [];
 	let anno;
+
+	let annotationCoordinates = "";
 
 	const getLocalAnnotations = () => {
 		return localStorage.getItem(imageName)
@@ -132,9 +142,21 @@
 			setLocalAnnotation(annotations);
 		});
 
+		anno.on('clickAnnotation', function(annotation, element) {
+			let value = annotation.target.selector.value;
+			annotationCoordinates = value.substring(11, value.length);
+		});
+
+		anno.on('cancelSelected', function(selection) {
+			annotationCoordinates = "";
+		});
+
+
+
 		document.getElementById("options-container").innerHTML =
 			"<button onClick='improveImage()'>Améliorer l'image</button> " +
-			"<button onClick='saveAnnotationsToJSON()'>Exporter JSON</button>";
+			"<button onClick='saveAnnotationsToJSON()'>Exporter JSON</button>" +
+			"<button id='find-word-button' onClick='findWord()'>Trouver le mot</button>";
 	}
 
 	function upload() {
@@ -209,6 +231,42 @@
 
 	function saveAnnotationsToJSON() {
 		download(anno.getAnnotations(), `${imageName}.json`, 'text/plain');
+	}
+
+	async function findWord(){
+		let wordFound;
+		if (annotationCoordinates) {
+			// Create a FormData to POST to backend
+			// console.log('annotationCoordinates', annotationCoordinates);
+			let tab_coordinates = annotationCoordinates.split(',');
+			// console.log('tab_coordinates', tab_coordinates);
+			tab_coordinates = tab_coordinates.map(x => parseInt(x, 10));
+			// console.log('tab_coordinates', tab_coordinates);
+
+			const formData = new FormData();
+			formData.append("file", document.getElementById('file').files[0]);
+			formData.set("x", tab_coordinates[0].toString());
+			formData.set("y", tab_coordinates[1].toString());
+			formData.set("w", tab_coordinates[2].toString());
+			formData.set("h", tab_coordinates[3].toString());
+
+			JSON.stringify(Object.fromEntries(formData));
+			// console.log(formData);
+
+			const response = await
+				fetch(`http://localhost:5000/findWordInImage`, {
+					method: 'POST',
+					body: formData,
+					contentType: false,
+					processData: false
+				})
+
+			const blob = await response.blob()
+			wordFound = URL.createObjectURL(blob)
+			document.getElementById("found-word").src = wordFound;
+		} else {
+			alert("Aucun mot selectionné\nVeuillez selectionner un mot sur l'image")
+		}
 	}
 </script>
 </body>
