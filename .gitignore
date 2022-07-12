@@ -27,3 +27,4 @@ flask-server/venv
 
 .idea
 *.txt
+*.jpg

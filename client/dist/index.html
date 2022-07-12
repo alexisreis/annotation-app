@@ -19,9 +19,11 @@
 </head>
 <body>
 <input type="file" onchange="upload()" id="file"/>
-<br/>
+<hr/>
 <div id="options-container"></div>
-<img id="found-word"/>
+<div id="potential-word" style="display: none"></div>
+
+
 <br/>
 
 <div id="my-toolbar-container"></div>
@@ -40,6 +42,7 @@
 	let anno;
 
 	let annotationCoordinates = "";
+	let selectedAnnotation = null;
 
 	const getLocalAnnotations = () => {
 		return localStorage.getItem(imageName)
@@ -145,6 +148,7 @@
 		anno.on('clickAnnotation', function(annotation, element) {
 			let value = annotation.target.selector.value;
 			annotationCoordinates = value.substring(11, value.length);
+			selectedAnnotation = annotation;
 		});
 
 		anno.on('cancelSelected', function(selection) {
@@ -155,7 +159,7 @@
 
 		document.getElementById("options-container").innerHTML =
 			"<button onClick='improveImage()'>Améliorer l'image</button> " +
-			"<button onClick='saveAnnotationsToJSON()'>Exporter JSON</button>" +
+			"<button onClick='saveAnnotationsToJSON()'>Exporter JSON</button> " +
 			"<button id='find-word-button' onClick='findWord()'>Trouver le mot</button>";
 	}
 
@@ -234,7 +238,7 @@
 	}
 
 	async function findWord(){
-		let wordFound;
+
 		if (annotationCoordinates) {
 			// Create a FormData to POST to backend
 			// console.log('annotationCoordinates', annotationCoordinates);
@@ -261,13 +265,84 @@
 					processData: false
 				})
 
-			const blob = await response.blob()
-			wordFound = URL.createObjectURL(blob)
-			document.getElementById("found-word").src = wordFound;
+			const json = await response.json();
+			console.log(json)
+
+			//TODO: afficher l'image croppée avec les valeurs de retour de la fonction
+			const potentialDiv = document.getElementById("potential-word");
+			for(let i = 0; i < json.length; i++){
+
+				const div = document.createElement("div");
+				div.setAttribute("id", "found-word-div-" + i)
+				div.setAttribute("style",
+					"display: flex; flex-direction: column; margin: 2em;")
+
+				const canvas = document.createElement("canvas");
+				canvas.setAttribute("id", "found-word-" + i);
+
+				const x = json[i][0];
+				const y = json[i][1];
+
+				const context = canvas.getContext('2d');
+
+				var image = new Image();
+				image.src = originalImage;
+
+				image.onload = () => {
+					context.drawImage(image,y, x, tab_coordinates[2],
+						tab_coordinates[3], 0, 0, tab_coordinates[2],
+						tab_coordinates[3])
+				}
+
+				const span = document.createElement('span')
+				span.innerHTML = "x : " + x + "\ty: " + y;
+				div.appendChild(span)
+
+				const duplicateButton = document.createElement('button');
+				duplicateButton.innerHTML = "Dupliquer l'annotation";
+				duplicateButton.setAttribute("onClick",
+					"duplicateAnnotation()");
+				duplicateButton.setAttribute("style", "color: green");
+
+				const removePotentialButton =
+					document.createElement('button');
+				removePotentialButton.innerHTML = "Enlever";
+				removePotentialButton.setAttribute("onClick",
+					"removePotential(" + i + ")");
+				removePotentialButton.setAttribute("style", "color: red");
+
+				div.appendChild(canvas);
+				div.appendChild(duplicateButton);
+				div.appendChild(removePotentialButton);
+
+				potentialDiv.appendChild(div);
+			}
+			potentialDiv.setAttribute('style',
+				'display: flex; flex-direction: row;');
+			//TODO: envoyer plusieurs potentiels
+
+			// const blob = await response.blob()
+			// wordFound = URL.createObjectURL(blob)
+			// document.getElementById("found-word").src = wordFound;
+
 		} else {
 			alert("Aucun mot selectionné\nVeuillez selectionner un mot sur l'image")
 		}
 	}
+
+	function duplicateAnnotation(x, y){
+		console.log(selectedAnnotation, x, y);
+		// changer target
+		// changer id
+		alert("A FAIRE")
+	}
+
+	function removePotential(i) {
+		console.log("found-word-div-" + i)
+		document.getElementById("found-word-div-" + i).remove();
+	}
 </script>
 </body>
 </html>
+<!--connexion / niveau de connexion / se focaliser sur le o:t sans perdre le
+sens de la phrase / BDD / wordspotting -->

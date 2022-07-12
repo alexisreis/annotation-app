@@ -2,7 +2,7 @@
 # .\venv\Scripts\activate
 # python server.py
 
-from flask import Flask, send_file, request
+from flask import Flask, send_file, request, jsonify
 from flask_cors import CORS
 from imageProcessing import process_image
 from word_spotting import word_spotting
@@ -45,20 +45,21 @@ def findWordInImage():
 
     # Read image from request and write to server's file system
     try:
-        # print(data)
         data = request.files['file']
         x = int(request.values.get('x'))
         y = int(request.values.get('y'))
         w = int(request.values.get('w'))
         h = int(request.values.get('h'))
     except request.exceptions.RequestException as e:
-        pass
+        return jsonify(e)
 
     # print(f'x: {x}, y: {y}, w: {w}, h:{h}')
     data.save('save_pic.jpg')
 
-    best_potential = word_spotting('save_pic.jpg', x, y, w, h);
-    return send_file(best_potential, mimetype='image/jpg')
+    best_potential = word_spotting('save_pic.jpg', x, y, w, h)
+
+    # return send_file(best_potential, mimetype='image/jpg')
+    return jsonify(best_potential)
 
 
 if __name__ == "__main__":
