@@ -2,8 +2,8 @@
   "name": "@alexisreis/annotation-app",
   "version": "0.1.0",
   "description": "React widgets for annotorious JS",
-  "main": "dist/transcription-widget.js",
-  "module": "dist/transcription-widget.js",
+  "main": "dist/scripts/transcription-widget.js",
+  "module": "dist/scripts/transcription-widget.js",
   "scripts": {
     "build": "webpack --mode=development",
     "test": "echo \"Error: no test specified\" && exit 1"

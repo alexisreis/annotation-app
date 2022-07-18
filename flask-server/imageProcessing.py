@@ -4,7 +4,7 @@
 import cv2 as cv
 import numpy as np
 
-path_to_processed_image = "troll.jpg"
+path_to_processed_image = "ret.jpg"
 
 
 # Returns path to processed image
