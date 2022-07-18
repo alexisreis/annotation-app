@@ -2,20 +2,55 @@
 # .\venv\Scripts\activate
 # python server.py
 
-from flask import Flask, send_file, request, jsonify
+# pip install flask_mysqldb
+
+from flask import Flask, send_file, request, jsonify, render_template
+from flask_mysqldb import MySQL
 from flask_cors import CORS
 from imageProcessing import process_image
 from word_spotting import word_spotting
 
 app = Flask(__name__)
+
+app.config['MYSQL_HOST'] = '127.0.0.1'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'root'
+app.config['MYSQL_DB'] = 'test_flask'
+mysql = MySQL(app)
 CORS(app)
 
 
-# MembersAPI
 @app.route("/members")
 def members():
     return {"members": ["Alexis", "Tom", "Florian", "Verlaine"]}
 
+
+@app.route("/adduser/<user>")
+def adduser(user):
+    #Creating a connection cursor
+    cursor = mysql.connection.cursor()
+
+    #Executing SQL Statements
+    cursor.execute(f''' INSERT INTO users (username) VALUES('{user}')''')
+
+    #Saving the Actions performed on the DB
+    mysql.connection.commit()
+
+    #Closing the cursor
+    cursor.close()
+    return user
+
+
+@app.route("/getusers")
+def getusers():
+    cursor = mysql.connection.cursor()
+    users = cursor.execute('''SELECT username FROM users''')
+
+    if users > 0:
+        userDetails = cursor.fetchall()
+        return jsonify(userDetails)
+        # return render_template('users.html', userDetails=userDetails)
+    return "No data in users"
 
 @app.route("/getImage")
 def getImage():

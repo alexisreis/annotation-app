@@ -4,12 +4,66 @@
 	<meta charset="UTF-8">
 	<title>Test BDD</title>
 </head>
-<body>
+<body onload="displayUsers()">
 	<script type="text/javascript">
+		const addUser = async () => {
+			const username = document.getElementById("add-user-input").value;
+			try{
+				await fetch(`http://localhost:5000/adduser/` + username, {
+					method: 'GET',
+					contentType: false,
+					processData: false
+				}).then(() => {
+					const table = document.getElementById("users_table")
+					const td = document.createElement('td')
+					td.innerHTML = username
+					table.appendChild(td)
+				})
+			} catch {
+				alert("Error - cannot add user")
+			}
 
+
+		}
+
+		const displayUsers = async () => {
+			const div = document.getElementById("users");
+			div.innerHTML = "";
+			const response = await fetch("http://localhost:5000/getusers", {
+				method: 'GET',
+				contentType: false,
+				processData: false,
+			})
+			const json = await response.json();
+			console.log(json);
+			if(json.length === 0) return;
+
+			const table = document.createElement('table')
+			table.setAttribute("border", "1")
+			table.setAttribute("id", "users_table")
+			const table_header = document.createElement('th')
+			table_header.innerHTML = "usernames";
+			table.appendChild(table_header);
+
+			json.map((user) => {
+				const row = document.createElement('tr')
+				const td = document.createElement('td')
+				td.innerHTML = user[0]
+				row.appendChild(td)
+				table.appendChild(row)
+			})
+
+			div.appendChild(table)
+		}
 	</script>
 	<a href="index.html">Go to index</a>
-	<h1>TEST</h1>
+	<h1>Test connexion BDD avec Flask</h1>
+
+	<input type="text" placeholder="Nom" id="add-user-input"/>
+	<button onclick="addUser()">Ajouter</button>
+	<hr />
+	<button onclick="displayUsers()">Display users</button>
+	<div id="users"></div>
 
 </body>
 </html>
