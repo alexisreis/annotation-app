@@ -82,14 +82,17 @@ function initAnnotorious() {
 	anno.setDrawingTool('polygon');
 	Annotorious.Toolbar(anno, document.getElementById('my-toolbar-container'));
 
+	// FOR LOCAL STORAGE
+	// const storedAnnotation = getLocalAnnotations();
+	// if (storedAnnotation) {
+	// 	// console.log('storedAnnotations', storedAnnotation)
+	// 	const theannotations = window.JSON.parse(storedAnnotation)
+	// 	annotations = theannotations;
+	// 	anno.setAnnotations(annotations);
+	// }
 
-	const storedAnnotation = getLocalAnnotations();
-	if (storedAnnotation) {
-		// console.log('storedAnnotations', storedAnnotation)
-		const theannotations = window.JSON.parse(storedAnnotation)
-		annotations = theannotations;
-		anno.setAnnotations(annotations);
-	}
+	// FOR DATA BASE
+	annotations = getDatabaseAnnotations(anno);
 
 	anno.on('createAnnotation', (annotation) => {
 		annotations = [...annotations, annotation]
@@ -132,6 +135,17 @@ function initAnnotorious() {
 		"<button onClick='improveImage()'>Améliorer l'image</button> " +
 		"<button onClick='saveAnnotationsToJSON()'>Exporter JSON</button> " +
 		"<button id='find-word-button' onClick='findWord()'>Trouver le mot</button>";
+}
+
+const getDatabaseAnnotations = async (anno) => {
+	const response = await fetch(`http://localhost:5000/getImageAnnotations/3`, {
+		method: 'GET',
+	})
+	const json = await response.json()
+	const value = json;
+	console.log(value);
+	anno.setAnnotations(value);
+	return json;
 }
 
 function upload() {
