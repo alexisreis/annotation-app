@@ -12,7 +12,7 @@ from word_spotting import word_spotting
 
 app = Flask(__name__)
 
-app.config['MYSQL_HOST'] = '127.0.0.1'
+app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'test_flask'
@@ -23,6 +23,92 @@ CORS(app)
 @app.route("/members")
 def members():
     return {"members": ["Alexis", "Tom", "Florian", "Verlaine"]}
+
+
+@app.route("/getImageAnnotations/<id>")
+def getImageAnnotations(id):
+    returnAnno = []
+    cursor = mysql.connection.cursor()
+    image_annotations = cursor.execute(f''' SELECT annotation_id, 
+                                                    zone_type, 
+                                                    zone_coord 
+                                            FROM annotations a
+                                            WHERE a.image_id = '{id}' ''')
+    if image_annotations > 0:
+        image_annotations = cursor.fetchall()
+        # print(image_annotations)
+        for annotation in image_annotations:
+            body = []
+
+            transcription_body = {}
+            transcription = cursor.execute(f''' SELECT transcription
+                                                user_id, editor_id
+                                        FROM transcription t 
+                                        WHERE t.annotation_id = 
+                                        '{annotation[0]}'; ''')
+            if transcription > 0:
+                transcription = cursor.fetchall()
+                transcription_body = {"value": transcription[0][0], "purpose":
+                                                               "transcription"}
+
+            sense_body = {"value" : {}, "purpose": "sense"}
+            sound = cursor.execute(f''' SELECT sound_type, sound_volume, 
+                                                user_id, editor_id
+                                        FROM sense_sound s 
+                                        WHERE s.annotation_id = '{annotation[0]}'; ''')
+            if sound > 0:
+                sound = cursor.fetchall()
+                sense_body.get("value").update(
+                    {"Son":
+                         {  "type": sound[0][0],
+                            "volume": sound[0][1],
+                            "user_id": sound[0][2],
+                            "editor_id": sound[0][3]
+                         }
+                     })
+
+            if sense_body.get("value"):
+                body.append(sense_body)
+
+            if transcription_body.get("value"):
+                body.append(transcription_body)
+
+            annoObject = {
+                "type": "Annotation",
+                "body": body,
+                "target": {
+                    "source": id + '.jpg',
+                    "selector": {
+                        "type": "FragmentSelector",
+                        "conformsTo": "http://www.w3.org/TR/media-frags/",
+                        "value": f"xywh=pixel:{annotation[2]}"
+                    }
+                },
+                "@context": "http://www.w3.org/ns/anno.jsonld",
+                "id": f"{annotation[0]}"
+            }
+
+            if not annotation[1]:
+                annoObject.get("target").update(
+                    { "selector": {
+                        "type": "FragmentSelector",
+                        "conformsTo": "http://www.w3.org/TR/media-frags/",
+                        "value": f"xywh=pixel:{annotation[2]}"
+                    }}
+                )
+            else:
+                annoObject.get("target").update(
+                    { "selector": {
+                        "type": "SvgSelector",
+                        "value": f"<svg><polygon points=\"{annotation[2]}\"/></svg>"
+                    }}
+                )
+
+            returnAnno.append(annoObject)
+
+        return jsonify(returnAnno)
+    else:
+        return "No annotations for this image"
 
 
 @app.route("/adduser/<user>")
@@ -51,6 +137,7 @@ def getusers():
         return jsonify(userDetails)
         # return render_template('users.html', userDetails=userDetails)
     return "No data in users"
+
 
 @app.route("/getImage")
 def getImage():
