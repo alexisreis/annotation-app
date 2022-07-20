@@ -39,7 +39,7 @@ def getImageAnnotations(id):
         # print(image_annotations)
         for annotation in image_annotations:
             body = []
-
+            # TRANSCRIPTION
             transcription_body = {}
             transcription = cursor.execute(f''' SELECT transcription
                                                 user_id, editor_id
@@ -50,8 +50,10 @@ def getImageAnnotations(id):
                 transcription = cursor.fetchall()
                 transcription_body = {"value": transcription[0][0], "purpose":
                                                                "transcription"}
-
+            # SENSE
             sense_body = {"value" : {}, "purpose": "sense"}
+
+            # SOUND
             sound = cursor.execute(f''' SELECT sound_type, sound_volume, 
                                                 user_id, editor_id
                                         FROM sense_sound s 
@@ -67,6 +69,59 @@ def getImageAnnotations(id):
                          }
                      })
 
+            # VIEW
+            view = cursor.execute(f''' SELECT user_id, editor_id
+                                        FROM sense_view s 
+                                        WHERE s.annotation_id = '{annotation[0]}'; ''')
+            if view > 0:
+                view = cursor.fetchall()
+                sense_body.get("value").update(
+                    {"Vue":
+                         {  "user_id": view[0][0],
+                            "editor_id": view[0][1]
+                         }
+                     })
+
+            # TASTE
+            taste = cursor.execute(f''' SELECT user_id, editor_id
+                                        FROM sense_taste s 
+                                        WHERE s.annotation_id = '{annotation[0]}'; ''')
+            if taste > 0:
+                taste = cursor.fetchall()
+                sense_body.get("value").update(
+                    {"Gout":
+                         {  "user_id": taste[0][0],
+                            "editor_id": taste[0][1]
+                         }
+                     })
+
+            # SMELL
+            smell = cursor.execute(f''' SELECT user_id, editor_id
+                                        FROM sense_smell s 
+                                        WHERE s.annotation_id = '{annotation[0]}'; ''')
+            if smell > 0:
+                smell = cursor.fetchall()
+                sense_body.get("value").update(
+                    {"Odeur":
+                         {  "user_id": smell[0][0],
+                            "editor_id": smell[0][1]
+                         }
+                     })
+
+            # TOUCH
+            touch = cursor.execute(f''' SELECT user_id, editor_id
+                                        FROM sense_touch s 
+                                        WHERE s.annotation_id = '{annotation[0]}'; ''')
+            if touch > 0:
+                touch = cursor.fetchall()
+                sense_body.get("value").update(
+                    {"Toucher":
+                         {  "user_id": touch[0][0],
+                            "editor_id": touch[0][1]
+                         }
+                     })
+
+            # Includes the bodies if they have a value
             if sense_body.get("value"):
                 body.append(sense_body)
 
@@ -78,16 +133,12 @@ def getImageAnnotations(id):
                 "body": body,
                 "target": {
                     "source": id + '.jpg',
-                    "selector": {
-                        "type": "FragmentSelector",
-                        "conformsTo": "http://www.w3.org/TR/media-frags/",
-                        "value": f"xywh=pixel:{annotation[2]}"
-                    }
                 },
                 "@context": "http://www.w3.org/ns/anno.jsonld",
                 "id": f"{annotation[0]}"
             }
 
+            # Shape of the annotation (rectangle or polygon)
             if not annotation[1]:
                 annoObject.get("target").update(
                     { "selector": {
@@ -106,9 +157,8 @@ def getImageAnnotations(id):
 
             returnAnno.append(annoObject)
 
-        return jsonify(returnAnno)
-    else:
-        return "No annotations for this image"
+    return jsonify(returnAnno)
+
 
 
 @app.route("/adduser/<user>")
