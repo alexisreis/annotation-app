@@ -138,7 +138,8 @@ function initAnnotorious() {
 }
 
 const getDatabaseAnnotations = async (anno) => {
-	const response = await fetch(`http://localhost:5000/getImageAnnotations/3`, {
+	const id = imageName.replace(/\.[^/.]+$/, "");
+	const response = await fetch(`http://localhost:5000/getImageAnnotations/` + id, {
 		method: 'GET',
 	})
 	const json = await response.json()
