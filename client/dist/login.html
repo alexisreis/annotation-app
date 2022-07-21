@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Login page</title>
+</head>
+<body>
+<h1>Login page</h1>
+	<form>
+		<div id="alert-div">
+
+		</div>
+		<div>
+			<label for="mail">Adresse mail</label>
+			<input type="text" id="mail" name="mail"/>
+		</div>
+		<div>
+			<label for="password">Mot de passe</label>
+			<input type="password" id="password" name="password"/>
+		</div>
+		<input type="button" value="Login" onclick="login()"/>
+	</form>
+
+	<script type="text/javascript">
+		const login = async () => {
+			const mail = document.getElementById('mail').value;
+			const password = document.getElementById('password').value;
+			const formData = new FormData();
+			formData.append("mail", mail);
+			formData.append("password", password);
+
+			const response = await fetch(`http://localhost:5000/login`, {
+				method: 'POST',
+				body: formData,
+				contentType: false,
+				processData: false
+			});
+			if(response.ok){
+				const token = await response.json();
+				localStorage.setItem('token', token.token);
+				window.location.href = "home.html";
+			}
+			else {
+				document.getElementById('alert-div').innerHTML =
+					"Adresse mail ou mot de passe incorrect";
+			}
+		}
+	</script>
+</body>
+</html>

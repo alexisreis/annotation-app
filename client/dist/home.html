@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Homepage</title>
+</head>
+<body>
+	<h1>Homepage</h1>
+	<a href="login.html" onclick="disconnect()">Disconnect</a>
+	<p>Welcome <span id="mail"></span></p>
+	<button onclick="verify()">VERIFY</button>
+
+	<script type="text/javascript">
+		const disconnect = () => {
+			localStorage.removeItem('token');
+		}
+
+		const verify = async () => {
+			const response = await fetch(`http://localhost:5000/auth`, {
+				method: 'GET',
+				headers: {'x-access-tokens': localStorage.getItem('token')},
+			});
+
+			console.log(response.json());
+
+		}
+	</script>
+</body>
+</html>

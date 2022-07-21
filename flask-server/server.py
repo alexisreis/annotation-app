@@ -1,16 +1,16 @@
-# cd flask-server
-# .\venv\Scripts\activate
-# python server.py
-
-# pip install flask_mysqldb
-
-from flask import Flask, send_file, request, jsonify, render_template
+from flask import Flask, send_file, request, jsonify, render_template, \
+    session, make_response
+import jwt
+from datetime import datetime, timedelta
+from functools import wraps
 from flask_mysqldb import MySQL
 from flask_cors import CORS
 from imageProcessing import process_image
 from word_spotting import word_spotting
 
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = "holaquetal"
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -20,9 +20,68 @@ mysql = MySQL(app)
 CORS(app)
 
 
-@app.route("/members")
-def members():
-    return {"members": ["Alexis", "Tom", "Florian", "Verlaine"]}
+def token_required(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        token = None
+        if 'x-access-tokens' in request.headers:
+            token = request.headers['x-access-tokens']
+
+        if not token:
+            return jsonify({'message': 'a valid token is missing'})
+        try:
+            data = jwt.decode(token, key=app.config['SECRET_KEY'], algorithms=[
+                "HS256"])
+            return jsonify({'message': 'user authenticated'})
+            # current_user = Users.query.filter_by(public_id=data['public_id']).first()
+        except:
+            return jsonify({'message': 'token is invalid'})
+
+        return f(*args, **kwargs)
+    return decorator
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    # TODO : try / except
+    mail = request.values.get('mail')
+    password = request.values.get('password')
+
+    cursor = mysql.connection.cursor()
+    user = cursor.execute(f'''SELECT * FROM Users WHERE user_mail='{mail}'  ''')
+    if user > 0:
+        userDetails = cursor.fetchall()
+        user_id = userDetails[0][0]
+        user_name = userDetails[0][1]
+        user_type = userDetails[0][2]
+        user_password = userDetails[0][4]
+    else:
+        return make_response('User not found', 403, {'WWW-Authenticate':
+                                                           'Basic '
+                                                           'realm:"Authentification Failed!"'})
+
+    if password == user_password:
+        session['logged_in'] = True
+        token = jwt.encode({
+            'user_id': user_id,
+            'user_name': user_name,
+            'user_mail': mail,
+            'user_type': user_type,
+            # 'expiration': str(datetime.utcnow() + timedelta(seconds=30))
+            },
+            key=app.config['SECRET_KEY'],
+            algorithm="HS256")
+        return jsonify({'token': token})
+    else:
+        return make_response('Password is incorrect', 403, {'WWW-Authenticate':
+                                                           'Basic '
+                                                           'realm:"Authentification Failed!"'})
+
+
+@app.route('/auth')
+@token_required
+def auth():
+    return jsonify({"status": 'Verified'})
 
 
 @app.route("/getImageAnnotations/<id>")
@@ -49,9 +108,9 @@ def getImageAnnotations(id):
             if transcription > 0:
                 transcription = cursor.fetchall()
                 transcription_body = {"value": transcription[0][0], "purpose":
-                                                               "transcription"}
+                    "transcription"}
             # SENSE
-            sense_body = {"value" : {}, "purpose": "sense"}
+            sense_body = {"value": {}, "purpose": "sense"}
 
             # SOUND
             sound = cursor.execute(f''' SELECT sound_type, sound_volume, 
@@ -62,11 +121,11 @@ def getImageAnnotations(id):
                 sound = cursor.fetchall()
                 sense_body.get("value").update(
                     {"Son":
-                         {  "type": sound[0][0],
-                            "volume": sound[0][1],
-                            "user_id": sound[0][2],
-                            "editor_id": sound[0][3]
-                         }
+                         {"type": sound[0][0],
+                          "volume": sound[0][1],
+                          "user_id": sound[0][2],
+                          "editor_id": sound[0][3]
+                          }
                      })
 
             # VIEW
@@ -77,9 +136,9 @@ def getImageAnnotations(id):
                 view = cursor.fetchall()
                 sense_body.get("value").update(
                     {"Vue":
-                         {  "user_id": view[0][0],
-                            "editor_id": view[0][1]
-                         }
+                         {"user_id": view[0][0],
+                          "editor_id": view[0][1]
+                          }
                      })
 
             # TASTE
@@ -90,9 +149,9 @@ def getImageAnnotations(id):
                 taste = cursor.fetchall()
                 sense_body.get("value").update(
                     {"Gout":
-                         {  "user_id": taste[0][0],
-                            "editor_id": taste[0][1]
-                         }
+                         {"user_id": taste[0][0],
+                          "editor_id": taste[0][1]
+                          }
                      })
 
             # SMELL
@@ -103,9 +162,9 @@ def getImageAnnotations(id):
                 smell = cursor.fetchall()
                 sense_body.get("value").update(
                     {"Odeur":
-                         {  "user_id": smell[0][0],
-                            "editor_id": smell[0][1]
-                         }
+                         {"user_id": smell[0][0],
+                          "editor_id": smell[0][1]
+                          }
                      })
 
             # TOUCH
@@ -116,9 +175,9 @@ def getImageAnnotations(id):
                 touch = cursor.fetchall()
                 sense_body.get("value").update(
                     {"Toucher":
-                         {  "user_id": touch[0][0],
-                            "editor_id": touch[0][1]
-                         }
+                         {"user_id": touch[0][0],
+                          "editor_id": touch[0][1]
+                          }
                      })
 
             # Includes the bodies if they have a value
@@ -141,7 +200,7 @@ def getImageAnnotations(id):
             # Shape of the annotation (rectangle or polygon)
             if not annotation[1]:
                 annoObject.get("target").update(
-                    { "selector": {
+                    {"selector": {
                         "type": "FragmentSelector",
                         "conformsTo": "http://www.w3.org/TR/media-frags/",
                         "value": f"xywh=pixel:{annotation[2]}"
@@ -149,7 +208,7 @@ def getImageAnnotations(id):
                 )
             else:
                 annoObject.get("target").update(
-                    { "selector": {
+                    {"selector": {
                         "type": "SvgSelector",
                         "value": f"<svg><polygon points=\"{annotation[2]}\"/></svg>"
                     }}
@@ -160,19 +219,18 @@ def getImageAnnotations(id):
     return jsonify(returnAnno)
 
 
-
 @app.route("/adduser/<user>")
 def adduser(user):
-    #Creating a connection cursor
+    # Creating a connection cursor
     cursor = mysql.connection.cursor()
 
-    #Executing SQL Statements
+    # Executing SQL Statements
     cursor.execute(f''' INSERT INTO users (username) VALUES('{user}')''')
 
-    #Saving the Actions performed on the DB
+    # Saving the Actions performed on the DB
     mysql.connection.commit()
 
-    #Closing the cursor
+    # Closing the cursor
     cursor.close()
     return user
 
