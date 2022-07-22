@@ -1,7 +1,7 @@
 from flask import Flask, send_file, request, jsonify, render_template, \
     session, make_response
 import jwt
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 from functools import wraps
 from flask_mysqldb import MySQL
 from flask_cors import CORS
@@ -32,11 +32,10 @@ def token_required(f):
         try:
             data = jwt.decode(token, key=app.config['SECRET_KEY'], algorithms=[
                 "HS256"])
-            return jsonify({'message': 'user authenticated'})
-            # current_user = Users.query.filter_by(public_id=data['public_id']).first()
         except:
             return jsonify({'message': 'token is invalid'})
 
+        # Returns to the function that needs the authentication
         return f(*args, **kwargs)
     return decorator
 
@@ -51,11 +50,13 @@ def login():
     user = cursor.execute(f'''SELECT * FROM Users WHERE user_mail='{mail}'  ''')
     if user > 0:
         userDetails = cursor.fetchall()
+        cursor.close()
         user_id = userDetails[0][0]
         user_name = userDetails[0][1]
         user_type = userDetails[0][2]
         user_password = userDetails[0][4]
     else:
+        cursor.close()
         return make_response('User not found', 403, {'WWW-Authenticate':
                                                            'Basic '
                                                            'realm:"Authentification Failed!"'})
@@ -82,6 +83,34 @@ def login():
 @token_required
 def auth():
     return jsonify({"status": 'Verified'})
+
+
+@app.route('/addDocument', methods=['POST'])
+@token_required
+def addDocument():
+    nom = request.values.get('nom')
+    date = request.values.get('date')
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''INSERT INTO documents(document_name, document_date)
+    VALUES ('{nom}', {date}) 
+    ''')
+    mysql.connection.commit()
+    cursor.close()
+    return 'Successful insertion'
+
+
+@app.route('/getDocuments', methods=['GET'])
+@token_required
+def getDocuments():
+    cursor = mysql.connection.cursor()
+    doc = cursor.execute(f'''SELECT * FROM documents''')
+    if doc > 0:
+        documentsDetails = cursor.fetchall();
+        cursor.close()
+        return jsonify(documentsDetails)
+    cursor.close()
+    return 'No documents stored'
 
 
 @app.route("/getImageAnnotations/<id>")
@@ -215,7 +244,7 @@ def getImageAnnotations(id):
                 )
 
             returnAnno.append(annoObject)
-
+    cursor.close()
     return jsonify(returnAnno)
 
 
@@ -242,8 +271,10 @@ def getusers():
 
     if users > 0:
         userDetails = cursor.fetchall()
+        cursor.close()
         return jsonify(userDetails)
         # return render_template('users.html', userDetails=userDetails)
+    cursor.close()
     return "No data in users"
 
 

@@ -5,25 +5,66 @@
 	<title>Homepage</title>
 </head>
 <body>
-	<h1>Homepage</h1>
-	<a href="login.html" onclick="disconnect()">Disconnect</a>
-	<p>Welcome <span id="mail"></span></p>
-	<button onclick="verify()">VERIFY</button>
+<h1>Accueil</h1>
+<button onclick="disconnect()">Se déconnecter</button>
+<p>Bienvenue <span id="user-name"></span></p>
+<button onclick="verify()">Vérifier authentification</button>
+<a href="ajouter-document.html">Ajouter un document</a>
+<div id="document-list">
+</div>
+<script type="text/javascript">
+	window.onload = async () => {
+		document.getElementById('user-name').innerHTML =
+			localStorage.getItem('user_name');
 
-	<script type="text/javascript">
-		const disconnect = () => {
+		const list = document.getElementById('document-list')
+		const response = await fetch(`http://localhost:5000/getDocuments`, {
+			method: 'GET',
+			headers: {'x-access-tokens': localStorage.getItem('token')},
+		});
+		const documents = await response.json()
+
+		// Token is invalid or user is not logged in
+		if(documents.message){
+			list.innerHTML = "Not authorized (user is not logged in)";
+			return;
+		}
+
+		// No documents found in the database
+		if(documents.length === 0){
+			list.innerHTML = "No documents stored in database";
+			return;
+		}
+
+		const ul = document.createElement('ul')
+		documents.map((doc) => {
+			const li = document.createElement('li')
+			li.innerHTML = doc[0] + '\t' + doc[1] + '\t' + doc[2]
+			ul.appendChild(li)
+		})
+		list.appendChild(ul);
+	}
+
+	const disconnect = () => {
+		if (window.confirm('Voulez-vous vraiment vous déconnecter ?')) {
 			localStorage.removeItem('token');
+			localStorage.removeItem('user_id');
+			localStorage.removeItem('user_name');
+			localStorage.removeItem('user_mail');
+			localStorage.removeItem('user_type');
+
+			window.location.href = "login.html"
 		}
+	}
 
-		const verify = async () => {
-			const response = await fetch(`http://localhost:5000/auth`, {
-				method: 'GET',
-				headers: {'x-access-tokens': localStorage.getItem('token')},
-			});
+	const verify = async () => {
+		const response = await fetch(`http://localhost:5000/auth`, {
+			method: 'GET',
+			headers: {'x-access-tokens': localStorage.getItem('token')},
+		});
 
-			console.log(response.json());
-
-		}
-	</script>
+		console.log(response.json());
+	}
+</script>
 </body>
 </html>
