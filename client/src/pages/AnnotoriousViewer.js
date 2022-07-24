@@ -1,12 +1,15 @@
 import '../styles/App.css';
-import img from '../assets/id.jpg'
 
 function AnnotoriousViewer() {
+
 	return (
 		<div className="App">
 			<header className="App-header">
+				<input type="file" id="file" />
+				<button id="improve-image-button">Améliorer l'image</button>
+				<button id="export-json-button">Exporter JSON</button>
 				<div id="my-toolbar-container"/>
-				<img id="my-image" width="100%" src={img} alt='To annotate'/>
+				<img id="my-image" width="100%" alt='To annotate'/>
 			</header>
 		</div>
 	);
