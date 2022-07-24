@@ -28,12 +28,12 @@ def token_required(f):
             token = request.headers['x-access-tokens']
 
         if not token:
-            return jsonify({'message': 'a valid token is missing'})
+            return jsonify({'missing': 'a valid token is missing'})
         try:
             data = jwt.decode(token, key=app.config['SECRET_KEY'], algorithms=[
                 "HS256"])
         except:
-            return jsonify({'message': 'token is invalid'})
+            return jsonify({'invalid': 'token is invalid'})
 
         # Returns to the function that needs the authentication
         return f(*args, **kwargs)
@@ -97,7 +97,7 @@ def addDocument():
     ''')
     mysql.connection.commit()
     cursor.close()
-    return 'Successful insertion'
+    return jsonify({'success': 'Successful insertion'})
 
 
 @app.route('/getDocuments', methods=['GET'])
@@ -110,7 +110,33 @@ def getDocuments():
         cursor.close()
         return jsonify(documentsDetails)
     cursor.close()
-    return 'No documents stored'
+    return jsonify({'storage': 'No documents stored'})
+
+
+@app.route('/getImagesFromDocument/<id>', methods=['GET'])
+@token_required
+def getImagesFromDocument(id):
+    cursor = mysql.connection.cursor()
+    images = cursor.execute(f'''SELECT image_id FROM Images WHERE 
+    document_id = '{id}' ''')
+    if images > 0:
+        imagesDetails = cursor.fetchall();
+        cursor.close()
+        return jsonify(imagesDetails)
+    cursor.close()
+    return jsonify({'storage': 'No images stored'})
+
+
+@app.route('/addImageToDocument/<id>', methods=['POST'])
+def addImageToDocument(id):
+    image_id = request.values.get('image_id')
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''INSERT INTO images (image_id, document_id) VALUES ('
+    {image_id}', '{id}')''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
+
 
 
 @app.route("/getImageAnnotations/<id>")
