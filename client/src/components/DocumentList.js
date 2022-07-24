@@ -7,7 +7,7 @@ const DocumentList = ({setState}) => {
 	const [addMessage, setAddMessage] = useState("");
 
 	const [title, setTitle] = useState("");
-	const [date, setDate] = useState();
+	const [date, setDate] = useState('');
 
 	const fetchData = async () => {
 		await fetch('getDocuments', {
@@ -18,11 +18,9 @@ const DocumentList = ({setState}) => {
 				// Token is invalid or user is not logged in
 				if (docs.missing || docs.invalid) {
 					setMessage("Erreur: Utilisateur non connecté\"");
-					return;
 				}
-				if (docs.storage) {
+				else if (docs.storage) {
 					setMessage("Il n'y a pas de documents stockés ici");
-					return;
 				}
 				setDocuments(docs)
 				return docs;
@@ -38,7 +36,6 @@ const DocumentList = ({setState}) => {
 
 		if (title === '' || date === '') {
 			setAddMessage('Champs manquants');
-			return
 		} else {
 			const formData = new FormData();
 			formData.append("nom", title);
@@ -48,18 +45,14 @@ const DocumentList = ({setState}) => {
 				method: 'POST',
 				headers: {'x-access-tokens': localStorage.getItem('token')},
 				body: formData,
-				contentType: false,
-				processData: false
 			}).then((response) => response.json())
 				.then((docs) => {
 					// Token is invalid or user is not logged in
 					if (docs.missing || docs.invalid) {
 						setAddMessage("Erreur: Utilisateur non connecté\"");
-						return;
 					}
-					if (docs.success) {
+					else if (docs.success) {
 						setAddMessage("Insertion effectuée");
-						return;
 					}
 				})
 				.catch(console.error);

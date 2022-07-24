@@ -17,11 +17,9 @@ const ImageList = ({documentId}) => {
 					// Token is invalid or user is not logged in
 					if (img.missing || img.invalid) {
 						setMessage("Erreur: Utilisateur non connecté");
-						return;
 					}
-					if (img.storage) {
+					else if (img.storage) {
 						setMessage("Pas d'images stockées pour ce document");
-						return;
 					}
 					setImages(img)
 				}).catch(console.error)
@@ -36,8 +34,7 @@ const ImageList = ({documentId}) => {
 
 	const addImage = async () => {
 		if (imageId === '') {
-			// document.getElementById('infos').innerHTML = 'Champs manquants'
-			return
+			setAddMessage('Champs manquants')
 		} else {
 			const formData = new FormData();
 			formData.append("image_id", imageId);
@@ -46,20 +43,16 @@ const ImageList = ({documentId}) => {
 				method: 'POST',
 				headers: {'x-access-tokens': localStorage.getItem('token')},
 				body: formData,
-				contentType: false,
-				processData: false
 			}).then((response) => response.json())
 				.then((img) => {
 					// Token is invalid or user is not logged in
 					if (img.missing || img.invalid) {
 						setAddMessage("Erreur: Utilisateur non connecté\"");
-						return;
 					}
-					if (img.success) {
+					else if (img.success) {
 						setAddMessage("Insertion effectuée");
 						console.log(imageId)
 						setImages([...images, [imageId]])
-						return;
 					}
 				})
 				.catch(console.error);

@@ -12,7 +12,8 @@ function Login() {
 
 	const handleKeyDown = (e) => {
 		if(e.key === 'Enter'){
-			login();
+			login()
+				.catch(console.error);
 		}
 	}
 
@@ -25,8 +26,6 @@ function Login() {
 		const response = await fetch(`login`, {
 			method: 'POST',
 			body: formData,
-			contentType: false,
-			processData: false
 		});
 
 		if (response.ok) {
@@ -39,10 +38,10 @@ function Login() {
 					token.token.lastIndexOf(".")
 				)));
 
-			localStorage.setItem('user_id', data.user_id);
-			localStorage.setItem('user_name', data.user_name);
-			localStorage.setItem('user_mail', data.user_mail);
-			localStorage.setItem('user_type', data.user_type);
+			localStorage.setItem('user_id', data["user_id"]);
+			localStorage.setItem('user_name', data["user_name"]);
+			localStorage.setItem('user_mail', data["user_mail"]);
+			localStorage.setItem('user_type', data["user_type"]);
 
 			navigate('/')
 		} else {
