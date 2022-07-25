@@ -1,22 +1,33 @@
-import { Outlet, Link } from "react-router-dom";
+import {Outlet, Link, useNavigate} from "react-router-dom";
+import logo from '../assets/logo.png'
+import '../styles/Layout.css'
 
 const Layout = () => {
+	// TODO : recuperer infos utilisateur dans redux puis changer Layout
 
+	const navigate = useNavigate();
 	return (
 		<>
-			<nav>
-				<ul>
-					<li>
-						<Link to="/">Home</Link>
-					</li>
-					<li>
-						<Link to="/image">Image</Link>
-					</li>
-					<li>
-						<Link to="/login">Login</Link>
-					</li>
-				</ul>
-			</nav>
+			<div id="navbar-div" className="flex-column">
+				<div className="flex-column" onClick={() => navigate('/')}>
+					<img src={logo} alt='Logo'/>
+					<h1>ANNOTATION APP</h1>
+				</div>
+				<nav>
+					<ul className="flex-column">
+						<li onClick={() => navigate('/')}>
+							ACCUEIL
+						</li>
+						<li onClick={() => navigate('/image')}>
+							IMAGE
+						</li>
+						<li onClick={() => navigate('/login')}>
+							SE CONNECTER
+						</li>
+					</ul>
+				</nav>
+			</div>
+
 			<Outlet />
 		</>
 	)

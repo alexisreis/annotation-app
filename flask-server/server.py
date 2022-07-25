@@ -1,6 +1,7 @@
 from flask import Flask, send_file, request, jsonify, render_template, \
     session, make_response
 import jwt
+import json
 # from datetime import datetime, timedelta
 from functools import wraps
 from flask_mysqldb import MySQL
@@ -88,12 +89,14 @@ def auth():
 @app.route('/addDocument', methods=['POST'])
 @token_required
 def addDocument():
+    cote = request.values.get('cote')
     nom = request.values.get('nom')
     date = request.values.get('date')
 
     cursor = mysql.connection.cursor()
-    cursor.execute(f'''INSERT INTO documents(document_name, document_date)
-    VALUES ('{nom}', {date}) 
+    cursor.execute(f'''INSERT INTO documents(document_cote, document_name, 
+    document_date)
+    VALUES ('{cote}','{nom}', {date}) 
     ''')
     mysql.connection.commit()
     cursor.close()
@@ -113,12 +116,12 @@ def getDocuments():
     return jsonify({'storage': 'No documents stored'})
 
 
-@app.route('/getImagesFromDocument/<id>', methods=['GET'])
+@app.route('/getImagesFromDocument/<cote>', methods=['GET'])
 @token_required
-def getImagesFromDocument(id):
+def getImagesFromDocument(cote):
     cursor = mysql.connection.cursor()
     images = cursor.execute(f'''SELECT image_id FROM Images WHERE 
-    document_id = '{id}' ''')
+    document_cote = '{cote}' ''')
     if images > 0:
         imagesDetails = cursor.fetchall();
         cursor.close()
@@ -127,12 +130,13 @@ def getImagesFromDocument(id):
     return jsonify({'storage': 'No images stored'})
 
 
-@app.route('/addImageToDocument/<id>', methods=['POST'])
-def addImageToDocument(id):
+@app.route('/addImageToDocument/<cote>', methods=['POST'])
+@token_required
+def addImageToDocument(cote):
     image_id = request.values.get('image_id')
     cursor = mysql.connection.cursor()
-    cursor.execute(f'''INSERT INTO images (image_id, document_id) VALUES ('
-    {image_id}', '{id}')''')
+    cursor.execute(f'''INSERT INTO images (image_id, document_cote) VALUES ('
+    {image_id}', '{cote}')''')
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
@@ -140,6 +144,7 @@ def addImageToDocument(id):
 
 
 @app.route("/getImageAnnotations/<id>")
+@token_required
 def getImageAnnotations(id):
     returnAnno = []
     cursor = mysql.connection.cursor()
@@ -272,6 +277,88 @@ def getImageAnnotations(id):
             returnAnno.append(annoObject)
     cursor.close()
     return jsonify(returnAnno)
+
+
+@app.route("/createAnnotation/<imageId>", methods=['POST'])
+@token_required
+def createAnnotation(imageId):
+    body = json.loads(request.values.get('body'))
+    zone_type = request.values.get('zone_type')
+    zone_coord = request.values.get('zone_coord')
+    id = request.values.get('id')
+
+    # TODO : trouver l'id de l'utilsateur qui crée en déchiffrant token
+    user_id = 1
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(f''' 
+        INSERT INTO annotations (annotation_id, image_id, zone_type, zone_coord)
+        VALUES ('{id}', '{imageId}', '{zone_type}', '{zone_coord}') ''')
+
+    for object in body:
+        if object.get('purpose') == 'sense':
+            sense_body = object.get('value')
+
+            if sense_body.get('Son'):
+                # TODO : faire les multi type
+                print(sense_body.get('Son').get('type')[0])
+                print(sense_body.get('Son').get('volume'))
+
+            if sense_body.get('Vue'):
+                cursor.execute(f'''
+                    INSERT INTO sense_view(annotation_id, user_id)
+                    VALUES ('{id}', {user_id})''')
+
+            if sense_body.get('Toucher'):
+                cursor.execute(f'''
+                    INSERT INTO sense_touch(annotation_id, user_id)
+                    VALUES ('{id}', {user_id})''')
+
+            if sense_body.get('Gout'):
+                cursor.execute(f'''
+                    INSERT INTO sense_taste(annotation_id, user_id)
+                    VALUES ('{id}', {user_id})''')
+
+            if sense_body.get('Odeur'):
+                cursor.execute(f'''
+                    INSERT INTO sense_smell(annotation_id, user_id)
+                    VALUES ('{id}', {user_id})''')
+
+        elif object.get('purpose') == 'transcription':
+            cursor.execute(f'''
+                INSERT INTO transcription(annotation_id, transcription, 
+                user_id)
+                VALUES ('{id}', '{object.get('value')}', '{1}') ''')
+
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
+
+
+@app.route("/updateAnnotationCoord", methods=['POST'])
+@token_required
+def updateAnnotationCoord():
+    zone_coord = request.values.get('zone_coord')
+    id = request.values.get('id')
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        UPDATE annotations SET zone_coord = '{zone_coord}' WHERE annotation_id = '{id}' ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
+
+
+@app.route("/deleteAnnotation", methods=['POST'])
+@token_required
+def deleteAnnotation():
+    annoId = request.values.get('id')
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        DELETE FROM annotations WHERE annotation_id = '{annoId}' ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
 
 
 @app.route("/adduser/<user>")

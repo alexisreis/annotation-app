@@ -36,8 +36,9 @@ const ImageList = ({documentId}) => {
 		if (imageId === '') {
 			setAddMessage('Champs manquants')
 		} else {
+			const cleanedImageId = imageId.replace(/\.[^/.]+$/, "");
 			const formData = new FormData();
-			formData.append("image_id", imageId);
+			formData.append("image_id", cleanedImageId );
 
 			await fetch(`addImageToDocument/` + documentId , {
 				method: 'POST',
@@ -52,7 +53,7 @@ const ImageList = ({documentId}) => {
 					else if (img.success) {
 						setAddMessage("Insertion effectuée");
 						console.log(imageId)
-						setImages([...images, [imageId]])
+						setImages([...images, [cleanedImageId]])
 					}
 				})
 				.catch(console.error);

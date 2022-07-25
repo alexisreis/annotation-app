@@ -18,7 +18,6 @@ function Login() {
 	}
 
 	const login = async () => {
-		console.log(mail, password);
 		const formData = new FormData();
 		formData.append("mail", mail);
 		formData.append("password", password);
@@ -52,7 +51,7 @@ function Login() {
 	return (
 		<div className="App">
 			<header className="App-header">
-				<h1>Login</h1>
+				<h1>Se connecter</h1>
 				<form onKeyDown={handleKeyDown}>
 					{incorrect ?
 						<div id="alert-div">

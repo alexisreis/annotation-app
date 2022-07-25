@@ -4,10 +4,10 @@ let originalImage;
 let improvedImage;
 let imageName = "";
 
-let annotations = [];
+// let displayedAnnotations = [];
 let anno;
 
-let annotationCoordinates = "";
+// let annotationCoordinates = "";
 let selectedAnnotation = null;
 
 
@@ -60,10 +60,110 @@ const getDatabaseAnnotations = async (anno) => {
 	const id = imageName.replace(/\.[^/.]+$/, "");
 	const response = await fetch(`http://localhost:5000/getImageAnnotations/` + id, {
 		method: 'GET',
+		headers: {'x-access-tokens': localStorage.getItem('token')},
 	})
 	const json = await response.json()
 	anno.setAnnotations(json);
 	return json;
+}
+
+const createAnnotation = async (anno, annotation) => {
+	const id = imageName.replace(/\.[^/.]+$/, "");
+
+	const body = annotation.body;
+	const selector = annotation.target.selector;
+	let zone_type;
+	let zone_coord;
+
+	if(selector.type === 'FragmentSelector'){
+		zone_type = 0;
+		zone_coord = selector.value.slice(11);
+	}else {
+		zone_type = 1;
+		zone_coord = selector.value.slice(22, selector.value.length - 10);
+	}
+
+	const formData = new FormData()
+	formData.append('body', JSON.stringify(body))
+	formData.append('zone_type', zone_type)
+	formData.append('zone_coord', zone_coord)
+	formData.append('id', annotation.id)
+
+	await fetch(`http://localhost:5000/createAnnotation/` + id, {
+		method: 'POST',
+		body: formData,
+		headers: {'x-access-tokens': localStorage.getItem('token')},
+	}).then((response) => response.json())
+		.then((res) => {
+			// Token is invalid or user is not logged in
+			if (res.missing || res.invalid) {
+				alert("Erreur: Utilisateur non connecté\"");
+			} else if (!res.success) {
+				alert('Erreur')
+			}
+		}).catch(console.error)
+}
+
+var compareJSON = function(obj1, obj2) {
+	var ret = {};
+	for(var i in obj2) {
+		if(!obj1.hasOwnProperty(i) || obj2[i] !== obj1[i]) {
+			ret[i] = obj2[i];
+		}
+	}
+	return ret;
+};
+
+const updateAnnotation = async (annotation, oldAnnotation) => {
+
+	// Changement de coordonnées ?
+	if(annotation.target.selector.value !== oldAnnotation.target.selector.value){
+		let zone_coord;
+		if(annotation.target.selector.type === 'FragmentSelector'){
+			zone_coord = annotation.target.selector.value.slice(11);
+		}else {
+			zone_coord = annotation.target.selector.value.slice(22, annotation.target.selector.value.length - 10);
+		}
+
+		const formData = new FormData();
+		formData.append('id', annotation.id)
+		formData.append('zone_coord', zone_coord)
+		await fetch(`http://localhost:5000/updateAnnotationCoord`, {
+			method: 'POST',
+			body: formData,
+			headers: {'x-access-tokens': localStorage.getItem('token')},
+		}).then((response) => response.json())
+			.then((res) => {
+				// Token is invalid or user is not logged in
+				if (res.missing || res.invalid) {
+					alert("Erreur: Utilisateur non connecté\"");
+				} else if (!res.success) {
+					alert('Erreur')
+				}
+			}).catch(console.error)
+	}
+	// Changement de valeurs
+	// TODO : détecter dans le body les objets changés
+	console.log('body', compareJSON(annotation.body, oldAnnotation.body))
+}
+
+
+const deleteAnnotation = async (anno, annotation) => {
+	const formData = new FormData();
+	formData.append('id', annotation.id)
+	await fetch(`http://localhost:5000/deleteAnnotation`, {
+		method: 'POST',
+		body: formData,
+		headers: {'x-access-tokens': localStorage.getItem('token')},
+	}).then((response) => response.json())
+		.then((res) => {
+			// Token is invalid or user is not logged in
+			if (res.missing || res.invalid) {
+				alert("Erreur: Utilisateur non connecté\"");
+			} else if (!res.success) {
+				alert('Erreur')
+			}
+		}).catch(console.error)
 }
 
 const initAnnotorious = () => {
@@ -83,20 +183,21 @@ const initAnnotorious = () => {
 	Annotorious.Toolbar(anno, document.getElementById('my-toolbar-container'));
 
 	// FOR LOCAL STORAGE
-	// const storedAnnotation = getLocalAnnotations();
-	// if (storedAnnotation) {
-	// 	// console.log('storedAnnotations', storedAnnotation)
-	// 	const theannotations = window.JSON.parse(storedAnnotation)
-	// 	annotations = theannotations;
-	// 	anno.setAnnotations(annotations);
-	// }
+	/*	const storedAnnotation = getLocalAnnotations();
+	if (storedAnnotation) {
+		// console.log('storedAnnotations', storedAnnotation)
+		const theannotations = window.JSON.parse(storedAnnotation)
+		annotations = theannotations;
+		anno.setAnnotations(annotations);
+	}*/
 
 	// FOR DATA BASE
-	annotations = getDatabaseAnnotations(anno);
+	getDatabaseAnnotations(anno);
 
 	anno.on('createAnnotation', (annotation) => {
 		// annotations = [...annotations, annotation]
 		// setLocalAnnotation(annotations)
+		createAnnotation(anno, annotation);
 	});
 
 	anno.on('updateAnnotation', (annotation, previous) => {
@@ -106,22 +207,22 @@ const initAnnotorious = () => {
 		// })
 		// annotations = newAnnotations;
 		// setLocalAnnotation(annotations);
+		updateAnnotation(annotation, selectedAnnotation);
 	});
 
 	anno.on('deleteAnnotation', (annotation) => {
-		// const newAnnotations = annotations.filter(val => val.id !== annotation.id)
-		// annotations = newAnnotations;
-		// setLocalAnnotation(annotations);
+		deleteAnnotation(anno, annotation)
 	});
 
 	anno.on('clickAnnotation', function (annotation, element) {
 		// let value = annotation.target.selector.value;
 		// annotationCoordinates = value.substring(11, value.length);
-		// selectedAnnotation = annotation;
+		selectedAnnotation = annotation;
 	});
 
 	anno.on('cancelSelected', function (selection) {
 		// annotationCoordinates = "";
+		selectedAnnotation = null;
 	});
 }
 
@@ -206,7 +307,7 @@ const saveAnnotationsToJSON = () => {
 
 }
 
-
+// TODO : améliorer (détection de changement d'URL ou autre...)
 window.onclick = () => {
 	if (document.getElementById('my-image') && !anno) {
 		document.getElementById('file').setAttribute('onchange', 'upload()');

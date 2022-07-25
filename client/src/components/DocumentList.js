@@ -6,8 +6,9 @@ const DocumentList = ({setState}) => {
 	const [message, setMessage] = useState("");
 	const [addMessage, setAddMessage] = useState("");
 
+	const [cote, setCote] = useState("")
 	const [title, setTitle] = useState("");
-	const [date, setDate] = useState('');
+	const [date, setDate] = useState("");
 
 	const fetchData = async () => {
 		await fetch('getDocuments', {
@@ -38,6 +39,7 @@ const DocumentList = ({setState}) => {
 			setAddMessage('Champs manquants');
 		} else {
 			const formData = new FormData();
+			formData.append("cote", cote);
 			formData.append("nom", title);
 			formData.append("date", date);
 
@@ -53,6 +55,7 @@ const DocumentList = ({setState}) => {
 					}
 					else if (docs.success) {
 						setAddMessage("Insertion effectuée");
+						setDocuments([...documents, [cote, title, date]])
 					}
 				})
 				.catch(console.error);
@@ -64,7 +67,7 @@ const DocumentList = ({setState}) => {
 		{documents.length ? <table>
 			<thead>
 			<tr>
-				<th>id</th>
+				<th>cote</th>
 				<th>titre</th>
 				<th>date</th>
 			</tr>
@@ -79,14 +82,21 @@ const DocumentList = ({setState}) => {
 		<div>
 			<h4>Ajouter un document</h4>
 			<div>
-				<label>Nom :</label>
+				<p>Cote :</p>
+				<input
+					placeholder="AML_09999" type="text"
+					onChange={(e) => setCote(e.target.value)}/>
+			</div>
+
+			<div>
+				<p>Nom :</p>
 				<input
 					placeholder="Registre de la ville de Lyon" type="text"
 					onChange={(e) => setTitle(e.target.value)}/>
 			</div>
 
 			<div>
-				<label>Date :</label>
+				<p>Date :</p>
 				<input type="number" min="1700" max="2022"
 				       onChange={(e) => setDate(e.target.value)}/>
 			</div>

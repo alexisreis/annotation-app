@@ -35,7 +35,7 @@ function initAnnotorious() {
 	// }
 
 	// FOR DATA BASE
-	annotations = getDatabaseAnnotations(anno);
+	displayedAnnotations = getDatabaseAnnotations(anno);
 
 	anno.on('createAnnotation', (annotation) => {
 		annotations = [...annotations, annotation]
