@@ -6,6 +6,7 @@ import App from './pages/App';
 import Layout from "./components/Layout";
 import AnnotoriousViewer from "./pages/AnnotoriousViewer";
 import Login from "./pages/Login";
+import Test from "./pages/Test";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -16,6 +17,7 @@ root.render(
                   <Route index element={<App />} />
                   <Route path="image" element={<AnnotoriousViewer />} />
                   <Route path="login" element={<Login />} />
+                  <Route path="test" element={<Test />} />
               </Route>
           </Routes>
       </BrowserRouter>

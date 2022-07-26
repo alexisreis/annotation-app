@@ -104,15 +104,15 @@ const createAnnotation = async (anno, annotation) => {
 		}).catch(console.error)
 }
 
-var compareJSON = function (obj1, obj2) {
-	var ret = {};
-	for (var i in obj2) {
-		if (!obj1.hasOwnProperty(i) || obj2[i] !== obj1[i]) {
-			ret[i] = obj2[i];
+
+function jsonIsEqual(json1, json2) {
+	for (var key in json1) {
+		if (json1[key] != json2[key]) {
+			return false;
 		}
 	}
-	return ret;
-};
+	return true;
+}
 
 const updateAnnotation = async (annotation, oldAnnotation) => {
 
@@ -142,15 +142,13 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 				}
 			}).catch(console.error)
 	}
-	// Changement de valeurs
-	// TODO : détecter dans le body les objets changés
-	// console.log('body', compareJSON(annotation.body, oldAnnotation.body))
 
 	// Changement de transcription
 	const newTranscription = annotation.body.find(b => b.purpose === 'transcription');
 	const oldTransciption = oldAnnotation.body.find(b => b.purpose === 'transcription');
-	console.log(newTranscription)
-	if (oldTransciption.value && !newTranscription.value) {
+	if (!oldTransciption && !newTranscription) {
+		console.log('rien')
+	} else if (oldTransciption && !newTranscription?.value) {
 		// Delete the transcription
 		console.log('deleteTranscription')
 		const formData = new FormData();
@@ -168,7 +166,7 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 					alert('Erreur')
 				}
 			}).catch(console.error)
-	} else if(!oldTransciption || !oldTransciption.value){
+	} else if (!oldTransciption || !oldTransciption.value) {
 		// Create transcription
 		console.log('Create transcription')
 		const formData = new FormData();
@@ -212,60 +210,97 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 	const senseBody = annotation.body.find(b => b.purpose === 'sense')
 	const oldSenseBody = oldAnnotation.body.find(b => b.purpose === 'sense')
 
-	if (oldSenseBody && oldSenseBody.value['view'] && !senseBody.value['view']) {
-		console.log('deleteView')
-		const formData = new FormData();
-		formData.append('id', annotation.id)
-		await fetch(`http://localhost:5000/deleteSenseView`, {
-			method: 'POST',
-			body: formData,
-			headers: {'x-access-tokens': localStorage.getItem('token')},
-		}).then((response) => response.json())
-			.then((res) => {
-				// Token is invalid or user is not logged in
-				if (res.missing || res.invalid) {
-					alert("Erreur: Utilisateur non connecté\"");
-				} else if (!res.success) {
-					alert('Erreur')
+	// Delete all senses that are no longer present in the updated version
+	if (oldSenseBody) {
+		console.log('deleting')
+		for (let sense in oldSenseBody.value) {
+			if (senseBody && !senseBody.value[sense]) {
+				console.log('delete ' + sense)
+				const formData = new FormData();
+				formData.append('id', annotation.id)
+				await fetch(`http://localhost:5000/deleteSense/` + sense, {
+					method: 'POST',
+					body: formData,
+					headers: {'x-access-tokens': localStorage.getItem('token')},
+				}).then((response) => response.json())
+					.then((res) => {
+						// Token is invalid or user is not logged in
+						if (res.missing || res.invalid) {
+							alert("Erreur: Utilisateur non connecté\"");
+						} else if (!res.success) {
+							alert('Erreur')
+						}
+					}).catch(console.error)
+			}
+		}
+	}
+
+
+	if (senseBody) {
+		// Create senses that were not present in the old version
+		console.log('creating')
+		for (let sense in senseBody.value) {
+			if (!oldSenseBody || (oldSenseBody && !oldSenseBody.value[sense])) {
+				console.log('Create ' + sense)
+				const formData = new FormData();
+				formData.append('id', annotation.id)
+
+				if (sense === 'sound') {
+					const type = JSON.stringify(senseBody.value['sound'].type)
+					formData.append('sound_type', type);
+					formData.append('sound_volume', senseBody.value['sound'].volume)
 				}
-			}).catch(console.error)
-	} else if(!oldSenseBody || !oldSenseBody.value['view']){
-		// Create transcription
-		console.log('Create view')
-		const formData = new FormData();
-		formData.append('id', annotation.id)
-		await fetch(`http://localhost:5000/createSenseView`, {
-			method: 'POST',
-			body: formData,
-			headers: {'x-access-tokens': localStorage.getItem('token')},
-		}).then((response) => response.json())
-			.then((res) => {
-				// Token is invalid or user is not logged in
-				if (res.missing || res.invalid) {
-					alert("Erreur: Utilisateur non connecté\"");
-				} else if (!res.success) {
-					alert('Erreur')
+
+				await fetch(`http://localhost:5000/createSense/` + sense, {
+					method: 'POST',
+					body: formData,
+					headers: {'x-access-tokens': localStorage.getItem('token')},
+				}).then((response) => response.json())
+					.then((res) => {
+						// Token is invalid or user is not logged in
+						if (res.missing || res.invalid) {
+							alert("Erreur: Utilisateur non connecté\"");
+						} else if (!res.success) {
+							alert('Erreur')
+						}
+					}).catch(console.error)
+			}
+		}
+
+		// Update senses that are in the old and the updated version and are
+		// different
+
+		for (let sense in senseBody.value) {
+			if (oldSenseBody && oldSenseBody.value[sense] && !jsonIsEqual(senseBody.value[sense], oldSenseBody.value[sense])) {
+				console.log('update ' + sense)
+				const formData = new FormData();
+				formData.append('id', annotation.id)
+
+				if (sense === 'sound') {
+					const type = JSON.stringify(senseBody.value['sound'].type)
+					console.log(type)
+					formData.append('sound_type', type);
+					formData.append('sound_volume', senseBody.value['sound'].volume)
 				}
-			}).catch(console.error)
-	} /*else if (senseBody.value['Vue'] !== oldSenseBody.value['Vue']) {
-		// Edit the transcription
-		console.log('update View')
-		const formData = new FormData();
-		formData.append('id', annotation.id)
-		await fetch(`http://localhost:5000/updateSenseView`, {
-			method: 'POST',
-			body: formData,
-			headers: {'x-access-tokens': localStorage.getItem('token')},
-		}).then((response) => response.json())
-			.then((res) => {
-				// Token is invalid or user is not logged in
-				if (res.missing || res.invalid) {
-					alert("Erreur: Utilisateur non connecté\"");
-				} else if (!res.success) {
-					alert('Erreur')
-				}
-			}).catch(console.error)
-	}*/
+
+				await fetch(`http://localhost:5000/updateSense/` + sense, {
+					method: 'POST',
+					body: formData,
+					headers: {'x-access-tokens': localStorage.getItem('token')},
+				}).then((response) => response.json())
+					.then((res) => {
+						// Token is invalid or user is not logged in
+						if (res.missing || res.invalid) {
+							alert("Erreur: Utilisateur non connecté\"");
+						} else if (!res.success) {
+							alert('Erreur')
+						}
+					}).catch(console.error)
+			}
+		}
+
+	}
+
 }
 
 

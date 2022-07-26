@@ -1,0 +1,81 @@
+.sense-widget {
+  width: 350px;
+  border: 1px solid black;
+}
+
+.sense-widget-choice{
+  padding:5px;
+  border-bottom:1px solid #e5e5e5;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.sense-div.selected {
+  border-color: #009dff;
+  border-width: 3px;
+}
+
+.sense-div:hover {
+  background: #e5e5e5;
+}
+
+.sense-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3em;
+  width: 18%;
+  border: 1px solid gray;
+  background: white;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.sense-div button {
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.infos-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items:center;
+  width: 100%;
+  padding: 0px;
+  border-top: 1px solid darkgray;
+}
+
+.infos-div .infos-delimiter h3,
+.infos-div .infos-delimiter span {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2em;
+  line-height: 1.5em;
+  margin: 0.4em;
+}
+
+.infos-div .infos-delimiter span {
+  text-align: center;
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.infos-div input[type="range"]{
+  width: 80%;
+}
+
+.infos-div .choice-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.infos-div .infos-delimiter {
+  width: 80%;
+  border-top: 1px solid darkgray;
+  padding-bottom: 0.4em;
+}

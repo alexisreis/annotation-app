@@ -307,7 +307,7 @@ def createAnnotation(imageId):
 
             if sense_body.get('sound'):
                 # TODO : faire les multi type
-                print(sense_body.get('sound').get('type')[0])
+                print(sense_body.get('sound').get('type'))
                 print(sense_body.get('sound').get('volume'))
 
             if sense_body.get('view'):
@@ -336,6 +336,18 @@ def createAnnotation(imageId):
                 user_id)
                 VALUES ('{id}', '{object.get('value')}', '{1}') ''')
 
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
+
+
+@app.route("/deleteAnnotation", methods=['POST'])
+@token_required
+def deleteAnnotation():
+    annoId = request.values.get('id')
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        DELETE FROM annotations WHERE annotation_id = '{annoId}' ''')
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
@@ -404,105 +416,73 @@ def updateAnnotationTranscription():
     return jsonify({'success': 'success'})
 
 
-@app.route("/createSenseSound", methods=['POST'])
+@app.route("/createSense/<sense>", methods=['POST'])
 @token_required
-def createSenseSound():
-    transcription = request.values.get('transcription')
+def createSenseView(sense):
+    if sense not in['view', 'sound', 'smell', 'touch', 'taste']:
+        return jsonify({'no_tables': 'table sense_' + sense + ' does not '
+                                                              'exists'})
     id = request.values.get('id')
-
     user_id = getUserId(request.headers['x-access-tokens'])
 
     cursor = mysql.connection.cursor()
-    cursor.execute(f'''
-        INSERT INTO transcription (annotation_id, transcription, user_id)
-        VALUES ('{id}', '{transcription}', {user_id}) ''')
+
+    if sense == 'sound':
+        sound_type = request.values.get('sound_type')
+        sound_volume = request.values.get('sound_volume')
+        cursor.execute(f'''
+            INSERT INTO sense_sound (annotation_id, sound_type, sound_volume, user_id)
+            VALUES ('{id}', '{sound_type}', '{sound_volume}', {user_id}) ''')
+    else:
+        cursor.execute(f'''
+            INSERT INTO sense_{sense} (annotation_id, user_id)
+            VALUES ('{id}', {user_id}) ''')
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
 
 
-@app.route("/deleteSenseSound", methods=['POST'])
+@app.route("/deleteSense/<sense>", methods=['POST'])
 @token_required
-def deleteSenseSound():
+def deleteSenseView(sense):
+    if sense not in['view', 'sound', 'smell', 'touch', 'taste']:
+        return jsonify({'no_tables': 'table sense_' + sense + ' does not '
+                                                              'exists'})
+
     annoId = request.values.get('id')
     cursor = mysql.connection.cursor()
     cursor.execute(f'''
-        DELETE FROM transcription WHERE annotation_id = '{annoId}' ''')
+        DELETE FROM sense_{sense} WHERE annotation_id = '{annoId}' ''')
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
 
 
-@app.route("/updateSenseSound", methods=['POST'])
+@app.route("/updateSense/<sense>", methods=['POST'])
 @token_required
-def updateSenseSound():
-    transcription = request.values.get('transcription')
+def updateSenseView(sense):
+    if sense not in['view', 'sound', 'smell', 'touch', 'taste']:
+        return jsonify({'no_tables': 'table sense_' + sense + ' does not '
+                                                              'exists'})
     id = request.values.get('id')
-
     editor_id = getUserId(request.headers['x-access-tokens'])
 
     cursor = mysql.connection.cursor()
-    cursor.execute(f'''
-        UPDATE transcription 
-        SET transcription = '{transcription}', editor_id = {editor_id} 
-        WHERE annotation_id = '{id}' ''')
-    mysql.connection.commit()
-    cursor.close()
-    return jsonify({'success': 'success'})
 
+    if sense == 'sound':
+        sound_type = request.values.get('sound_type')
+        sound_volume = request.values.get('sound_volume')
 
-@app.route("/deleteAnnotation", methods=['POST'])
-@token_required
-def deleteAnnotation():
-    annoId = request.values.get('id')
-    cursor = mysql.connection.cursor()
-    cursor.execute(f'''
-        DELETE FROM annotations WHERE annotation_id = '{annoId}' ''')
-    mysql.connection.commit()
-    cursor.close()
-    return jsonify({'success': 'success'})
-
-
-@app.route("/createSenseView", methods=['POST'])
-@token_required
-def createSenseView():
-    id = request.values.get('id')
-
-    user_id = getUserId(request.headers['x-access-tokens'])
-
-    cursor = mysql.connection.cursor()
-    cursor.execute(f'''
-        INSERT INTO sense_view (annotation_id, user_id)
-        VALUES ('{id}', {user_id}) ''')
-    mysql.connection.commit()
-    cursor.close()
-    return jsonify({'success': 'success'})
-
-
-@app.route("/deleteSenseView", methods=['POST'])
-@token_required
-def deleteSenseView():
-    annoId = request.values.get('id')
-    cursor = mysql.connection.cursor()
-    cursor.execute(f'''
-        DELETE FROM sense_view WHERE annotation_id = '{annoId}' ''')
-    mysql.connection.commit()
-    cursor.close()
-    return jsonify({'success': 'success'})
-
-
-@app.route("/updateSenseView", methods=['POST'])
-@token_required
-def updateSenseView():
-    id = request.values.get('id')
-
-    editor_id = getUserId(request.headers['x-access-tokens'])
-
-    cursor = mysql.connection.cursor()
-    cursor.execute(f'''
-        UPDATE sense_view 
-        SET editor_id = {editor_id} /*, ...*/
-        WHERE annotation_id = '{id}' ''')
+        cursor.execute(f'''
+            UPDATE sense_sound 
+            SET editor_id = {editor_id}, sound_type='{sound_type}', 
+            sound_volume='{sound_volume}'
+            WHERE annotation_id = '{id}' ''')
+    else:
+        cursor.execute(f'''
+            UPDATE sense_{sense} 
+            SET editor_id = {editor_id} /*, ...*/
+            WHERE annotation_id = '{id}' ''')
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
