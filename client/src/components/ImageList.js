@@ -64,7 +64,12 @@ const ImageList = ({documentId}) => {
 		{images.length ? <table>
 			<thead>
 				<tr>
-					<th>titre</th>
+					<th>fichier</th>
+					<th>Son</th>
+					<th>Vue</th>
+					<th>Odeur</th>
+					<th>Toucher</th>
+					<th>Gout</th>
 				</tr>
 			</thead>
 			<tbody>

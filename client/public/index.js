@@ -212,7 +212,6 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 
 	// Delete all senses that are no longer present in the updated version
 	if (oldSenseBody) {
-		console.log('deleting')
 		for (let sense in oldSenseBody.value) {
 			if (senseBody && !senseBody.value[sense]) {
 				console.log('delete ' + sense)
@@ -238,7 +237,6 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 
 	if (senseBody) {
 		// Create senses that were not present in the old version
-		console.log('creating')
 		for (let sense in senseBody.value) {
 			if (!oldSenseBody || (oldSenseBody && !oldSenseBody.value[sense])) {
 				console.log('Create ' + sense)
@@ -272,7 +270,6 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 
 		for (let sense in senseBody.value) {
 			if (oldSenseBody && oldSenseBody.value[sense] && !jsonIsEqual(senseBody.value[sense], oldSenseBody.value[sense])) {
-				console.log('update ' + sense)
 				const formData = new FormData();
 				formData.append('id', annotation.id)
 

@@ -126,8 +126,22 @@ def getDocuments():
 @token_required
 def getImagesFromDocument(cote):
     cursor = mysql.connection.cursor()
-    images = cursor.execute(f'''SELECT image_id FROM Images WHERE 
-    document_cote = '{cote}' ''')
+    # images = cursor.execute(f'''SELECT image_id FROM Images WHERE
+    # document_cote = '{cote}' ''')
+
+    images = cursor.execute(f'''
+        SELECT a.image_id, count(s.sound_id), count(v.view_id), 
+        count(sm.smell_id), count(t.touch_id), count(ta.taste_id)
+        FROM annotations a 
+        LEFT JOIN sense_view v ON a.annotation_id = v.annotation_id
+        LEFT JOIN sense_sound s ON a.annotation_id = s.annotation_id
+        LEFT JOIN sense_smell sm ON a.annotation_id = sm.annotation_id
+        LEFT JOIN sense_touch t ON a.annotation_id = t.annotation_id
+        LEFT JOIN sense_taste ta ON a.annotation_id = ta.annotation_id
+        WHERE a.image_id IN (SELECT image_id FROM images WHERE 
+        document_cote='{cote}')
+        GROUP BY a.image_id; ''')
+
     if images > 0:
         imagesDetails = cursor.fetchall();
         cursor.close()
