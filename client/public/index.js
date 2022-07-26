@@ -75,10 +75,10 @@ const createAnnotation = async (anno, annotation) => {
 	let zone_type;
 	let zone_coord;
 
-	if(selector.type === 'FragmentSelector'){
+	if (selector.type === 'FragmentSelector') {
 		zone_type = 0;
 		zone_coord = selector.value.slice(11);
-	}else {
+	} else {
 		zone_type = 1;
 		zone_coord = selector.value.slice(22, selector.value.length - 10);
 	}
@@ -104,10 +104,10 @@ const createAnnotation = async (anno, annotation) => {
 		}).catch(console.error)
 }
 
-var compareJSON = function(obj1, obj2) {
+var compareJSON = function (obj1, obj2) {
 	var ret = {};
-	for(var i in obj2) {
-		if(!obj1.hasOwnProperty(i) || obj2[i] !== obj1[i]) {
+	for (var i in obj2) {
+		if (!obj1.hasOwnProperty(i) || obj2[i] !== obj1[i]) {
 			ret[i] = obj2[i];
 		}
 	}
@@ -117,11 +117,11 @@ var compareJSON = function(obj1, obj2) {
 const updateAnnotation = async (annotation, oldAnnotation) => {
 
 	// Changement de coordonnées ?
-	if(annotation.target.selector.value !== oldAnnotation.target.selector.value){
+	if (annotation.target.selector.value !== oldAnnotation.target.selector.value) {
 		let zone_coord;
-		if(annotation.target.selector.type === 'FragmentSelector'){
+		if (annotation.target.selector.type === 'FragmentSelector') {
 			zone_coord = annotation.target.selector.value.slice(11);
-		}else {
+		} else {
 			zone_coord = annotation.target.selector.value.slice(22, annotation.target.selector.value.length - 10);
 		}
 
@@ -144,7 +144,69 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 	}
 	// Changement de valeurs
 	// TODO : détecter dans le body les objets changés
-	console.log('body', compareJSON(annotation.body, oldAnnotation.body))
+	// console.log('body', compareJSON(annotation.body, oldAnnotation.body))
+
+	// Changement de transcription
+	const newTranscription = annotation.body.find(b => b.purpose === 'transcription');
+	const oldTransciption = oldAnnotation.body.find(b => b.purpose === 'transcription');
+	console.log(newTranscription)
+	if (!newTranscription.value) {
+		// Delete the transcription
+		console.log('deleteTranscription')
+		const formData = new FormData();
+		formData.append('id', annotation.id)
+		await fetch(`http://localhost:5000/deleteTranscription`, {
+			method: 'POST',
+			body: formData,
+			headers: {'x-access-tokens': localStorage.getItem('token')},
+		}).then((response) => response.json())
+			.then((res) => {
+				// Token is invalid or user is not logged in
+				if (res.missing || res.invalid) {
+					alert("Erreur: Utilisateur non connecté\"");
+				} else if (!res.success) {
+					alert('Erreur')
+				}
+			}).catch(console.error)
+	} else if(!oldTransciption || !oldTransciption.value){
+		// Create transcription
+		console.log('Create transcription')
+		const formData = new FormData();
+		formData.append('id', annotation.id)
+		formData.append('transcription', newTranscription.value)
+		await fetch(`http://localhost:5000/createTranscription`, {
+			method: 'POST',
+			body: formData,
+			headers: {'x-access-tokens': localStorage.getItem('token')},
+		}).then((response) => response.json())
+			.then((res) => {
+				// Token is invalid or user is not logged in
+				if (res.missing || res.invalid) {
+					alert("Erreur: Utilisateur non connecté\"");
+				} else if (!res.success) {
+					alert('Erreur')
+				}
+			}).catch(console.error)
+	} else if (newTranscription.value !== oldTransciption.value) {
+		// Edit the transcription
+		console.log('updateTranscription')
+		const formData = new FormData();
+		formData.append('id', annotation.id)
+		formData.append('transcription', newTranscription.value)
+		await fetch(`http://localhost:5000/updateTranscription`, {
+			method: 'POST',
+			body: formData,
+			headers: {'x-access-tokens': localStorage.getItem('token')},
+		}).then((response) => response.json())
+			.then((res) => {
+				// Token is invalid or user is not logged in
+				if (res.missing || res.invalid) {
+					alert("Erreur: Utilisateur non connecté\"");
+				} else if (!res.success) {
+					alert('Erreur')
+				}
+			}).catch(console.error)
+	}
 }
 
 
@@ -184,12 +246,12 @@ const initAnnotorious = () => {
 
 	// FOR LOCAL STORAGE
 	/*	const storedAnnotation = getLocalAnnotations();
-	if (storedAnnotation) {
-		// console.log('storedAnnotations', storedAnnotation)
-		const theannotations = window.JSON.parse(storedAnnotation)
-		annotations = theannotations;
-		anno.setAnnotations(annotations);
-	}*/
+	 if (storedAnnotation) {
+	 // console.log('storedAnnotations', storedAnnotation)
+	 const theannotations = window.JSON.parse(storedAnnotation)
+	 annotations = theannotations;
+	 anno.setAnnotations(annotations);
+	 }*/
 
 	// FOR DATA BASE
 	getDatabaseAnnotations(anno);
@@ -299,7 +361,7 @@ const download = (content, fileName, contentType) => {
 }
 
 const saveAnnotationsToJSON = () => {
-	if(anno){
+	if (anno) {
 		download(anno.getAnnotations(), `${imageName}.json`, 'text/plain');
 	} else {
 		alert("Aucune image n'est chargée...")

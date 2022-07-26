@@ -41,6 +41,12 @@ def token_required(f):
     return decorator
 
 
+def getUserId(token):
+    data = jwt.decode(token, key=app.config['SECRET_KEY'], algorithms=[
+        "HS256"])
+    return data['user_id']
+
+
 @app.route('/login', methods=['POST'])
 def login():
     # TODO : try / except
@@ -288,7 +294,7 @@ def createAnnotation(imageId):
     id = request.values.get('id')
 
     # TODO : trouver l'id de l'utilsateur qui crée en déchiffrant token
-    user_id = 1
+    user_id = getUserId(request.headers['x-access-tokens'])
 
     cursor = mysql.connection.cursor()
     cursor.execute(f''' 
@@ -343,7 +349,56 @@ def updateAnnotationCoord():
 
     cursor = mysql.connection.cursor()
     cursor.execute(f'''
-        UPDATE annotations SET zone_coord = '{zone_coord}' WHERE annotation_id = '{id}' ''')
+        UPDATE annotations 
+        SET zone_coord = '{zone_coord}' 
+        WHERE annotation_id = '{id}' ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
+
+
+@app.route("/createTranscription", methods=['POST'])
+@token_required
+def createTranscription():
+    transcription = request.values.get('transcription')
+    id = request.values.get('id')
+
+    user_id = getUserId(request.headers['x-access-tokens'])
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        INSERT INTO transcription (annotation_id, transcription, user_id)
+        VALUES ('{id}', '{transcription}', {user_id}) ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
+
+
+@app.route("/deleteTranscription", methods=['POST'])
+@token_required
+def deleteTranscription():
+    annoId = request.values.get('id')
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        DELETE FROM transcription WHERE annotation_id = '{annoId}' ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
+
+
+@app.route("/updateTranscription", methods=['POST'])
+@token_required
+def updateAnnotationTranscription():
+    transcription = request.values.get('transcription')
+    id = request.values.get('id')
+
+    editor_id = getUserId(request.headers['x-access-tokens'])
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        UPDATE transcription 
+        SET transcription = '{transcription}', editor_id = {editor_id} 
+        WHERE annotation_id = '{id}' ''')
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
