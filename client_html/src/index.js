@@ -1,7 +1,7 @@
 import React from 'preact/compat';
 
-// import './sense-widget.css';
-import './transcription-widget.css'
+import './sense-widget.css';
+// import './transcription-widget.css'
 
 const MySenseWidget = props => {
 
@@ -21,35 +21,35 @@ const MySenseWidget = props => {
 			newValue = new Map(Object.entries(currentSense.value));
 		}
 
-		if (senseName === 'Son') {
-			if (!currentSense?.value['Son']) {
-				newValue.set('Son', {type: [], volume: 0});
+		if (senseName === 'sound') {
+			if (!currentSense?.value['sound']) {
+				newValue.set('sound', {type: [], volume: 0});
 			} else {
-				newValue.delete('Son');
+				newValue.delete('sound');
 			}
-		} else if (senseName === 'Vue') {
-			if (!currentSense?.value['Vue']) {
-				newValue.set('Vue', {sense: 'Vue'});
+		} else if (senseName === 'view') {
+			if (!currentSense?.value['view']) {
+				newValue.set('view', {sense: 'view'});
 			} else {
-				newValue.delete('Vue');
+				newValue.delete('view');
 			}
-		} else if (senseName === 'Odeur') {
-			if (!currentSense?.value['Odeur']) {
-				newValue.set('Odeur', {sense: 'Odeur'});
+		} else if (senseName === 'smell') {
+			if (!currentSense?.value['smell']) {
+				newValue.set('smell', {sense: 'smell'});
 			} else {
-				newValue.delete('Odeur');
+				newValue.delete('smell');
 			}
-		} else if (senseName === 'Toucher') {
-			if (!currentSense?.value['Toucher']) {
-				newValue.set('Toucher', {sense: 'Toucher'});
+		} else if (senseName === 'touch') {
+			if (!currentSense?.value['touch']) {
+				newValue.set('touch', {sense: 'touch'});
 			} else {
-				newValue.delete('Toucher');
+				newValue.delete('touch');
 			}
-		} else if (senseName === 'Gout') {
-			if (!currentSense?.value['Gout']) {
-				newValue.set('Gout', {sense: 'Gout'});
+		} else if (senseName === 'taste') {
+			if (!currentSense?.value['taste']) {
+				newValue.set('taste', {sense: 'taste'});
 			} else {
-				newValue.delete('Gout');
+				newValue.delete('taste');
 			}
 		}
 
@@ -60,19 +60,19 @@ const MySenseWidget = props => {
 	// Edit the type of the sound (producer / terminology)
 	const editSoundType = (e) => {
 		let newValue = new Map(Object.entries(currentSense.value));
-		let newType = newValue.get('Son').type;
+		let newType = newValue.get('sound').type;
 
 		if (e.target.checked) {
 			newType.push(e.target.value)
-			newValue.set('Son', {
+			newValue.set('sound', {
 				type: newType,
-				volume: newValue.get('Son').volume
+				volume: newValue.get('sound').volume
 			})
 		} else {
 			newType = newType.filter((value) => value !== e.target.value);
-			newValue.set('Son', {
+			newValue.set('sound', {
 				type: newType,
-				volume: newValue.get('Son').volume
+				volume: newValue.get('sound').volume
 			})
 		}
 
@@ -84,8 +84,8 @@ const MySenseWidget = props => {
 	const editSoundIntensity = (e) => {
 		let newValue = new Map(Object.entries(currentSense.value));
 
-		newValue.set('Son', {
-			type: newValue.get('Son').type,
+		newValue.set('sound', {
+			type: newValue.get('sound').type,
 			volume: e.target.value,
 		})
 
@@ -94,11 +94,11 @@ const MySenseWidget = props => {
 	}
 
 	const senses = [
-		{name: 'Son', color: 'lightgreen', icon: '🔊'},
-		{name: 'Vue', color: 'lightblue', icon: '👀'},
-		{name: 'Odeur', color: 'brown', icon: '👃'},
-		{name: 'Toucher', color: 'yellow', icon: '🤚'},
-		{name: 'Gout', color: 'pink', icon: '👅'}];
+		{name: 'sound', color: 'lightgreen', icon: '🔊'},
+		{name: 'view', color: 'lightblue', icon: '👀'},
+		{name: 'smell', color: 'brown', icon: '👃'},
+		{name: 'touch', color: 'yellow', icon: '🤚'},
+		{name: 'taste', color: 'pink', icon: '👅'}];
 
 	// What is displayed :
 	return (
@@ -120,14 +120,14 @@ const MySenseWidget = props => {
 			</div>
 
 			{/*If the sense is chosen, display the options accordingly*/}
-			{currentSense?.value['Son'] ?
+			{currentSense?.value['sound'] ?
 				<div className="infos-div">
-					<h3>Son</h3>
-					<h4>Origine du son</h4>
+					<span>Son</span>
+					<p>Origine du son</p>
 					<div>
 						<input type="checkbox" id="son-origine-producteur"
 						       name="son-origine" value="producer"
-						       checked={currentSense.value['Son'].type.includes("producer")}
+						       checked={currentSense.value['sound'].type.includes("producer")}
 						       onClick={(e) => {
 							       editSoundType(e)
 						       }}/>
@@ -138,7 +138,7 @@ const MySenseWidget = props => {
 					<div>
 						<input type="checkbox" id="son-origine-terminologie"
 						       name="son-origine" value="terminology"
-						       checked={currentSense.value['Son'].type.includes("terminology")}
+						       checked={currentSense.value['sound'].type.includes("terminology")}
 						       onChange={(e) => {
 							       editSoundType(e)
 						       }}/>
@@ -147,37 +147,37 @@ const MySenseWidget = props => {
 
 					</div>
 					<hr/>
-					<h4>Intensité du son</h4>
+					<p>Intensité du son</p>
 					<input type="range" min="0" max="100"
-					       value={currentSense.value['Son'].volume}
+					       value={currentSense.value['sound'].volume}
 					       onMouseLeave={(e) => {
 						       editSoundIntensity(e)
 					       }}/>
 				</div> : null}
 
-			{currentSense?.value['Vue'] ?
+			{currentSense?.value['view'] ?
 				<div>
-					<h3>Vue</h3>
+					<span>Vue</span>
 				</div> : null}
 
-			{currentSense?.value['Odeur'] ?
+			{currentSense?.value['smell'] ?
 				<div>
-					<h3>Odeur</h3>
+					<span>Odeur</span>
 				</div> : null}
 
-			{currentSense?.value['Toucher'] ?
+			{currentSense?.value['touch'] ?
 				<div>
-					<h3>Toucher</h3>
+					<span>Toucher</span>
 				</div> : null}
 
-			{currentSense?.value['Gout'] ?
+			{currentSense?.value['taste'] ?
 				<div>
-					<h3>Gout</h3>
+					<span>Gout</span>
 				</div> : null}
 		</div>
 	)
 }
-// export default MySenseWidget;
+export default MySenseWidget;
 
 const MyTranscriptionWidget = props => {
 	// We'll be using 'transcription' as body purpose for
@@ -200,4 +200,4 @@ const MyTranscriptionWidget = props => {
 	)
 }
 
-export default MyTranscriptionWidget;
+// export default MyTranscriptionWidget;

@@ -186,7 +186,7 @@ def getImageAnnotations(id):
             if sound > 0:
                 sound = cursor.fetchall()
                 sense_body.get("value").update(
-                    {"Son":
+                    {"sound":
                          {"type": sound[0][0],
                           "volume": sound[0][1],
                           "user_id": sound[0][2],
@@ -201,7 +201,7 @@ def getImageAnnotations(id):
             if view > 0:
                 view = cursor.fetchall()
                 sense_body.get("value").update(
-                    {"Vue":
+                    {"view":
                          {"user_id": view[0][0],
                           "editor_id": view[0][1]
                           }
@@ -214,7 +214,7 @@ def getImageAnnotations(id):
             if taste > 0:
                 taste = cursor.fetchall()
                 sense_body.get("value").update(
-                    {"Gout":
+                    {"taste":
                          {"user_id": taste[0][0],
                           "editor_id": taste[0][1]
                           }
@@ -227,7 +227,7 @@ def getImageAnnotations(id):
             if smell > 0:
                 smell = cursor.fetchall()
                 sense_body.get("value").update(
-                    {"Odeur":
+                    {"smell":
                          {"user_id": smell[0][0],
                           "editor_id": smell[0][1]
                           }
@@ -240,7 +240,7 @@ def getImageAnnotations(id):
             if touch > 0:
                 touch = cursor.fetchall()
                 sense_body.get("value").update(
-                    {"Toucher":
+                    {"touch":
                          {"user_id": touch[0][0],
                           "editor_id": touch[0][1]
                           }
@@ -305,27 +305,27 @@ def createAnnotation(imageId):
         if object.get('purpose') == 'sense':
             sense_body = object.get('value')
 
-            if sense_body.get('Son'):
+            if sense_body.get('sound'):
                 # TODO : faire les multi type
-                print(sense_body.get('Son').get('type')[0])
-                print(sense_body.get('Son').get('volume'))
+                print(sense_body.get('sound').get('type')[0])
+                print(sense_body.get('sound').get('volume'))
 
-            if sense_body.get('Vue'):
+            if sense_body.get('view'):
                 cursor.execute(f'''
                     INSERT INTO sense_view(annotation_id, user_id)
                     VALUES ('{id}', {user_id})''')
 
-            if sense_body.get('Toucher'):
+            if sense_body.get('touch'):
                 cursor.execute(f'''
                     INSERT INTO sense_touch(annotation_id, user_id)
                     VALUES ('{id}', {user_id})''')
 
-            if sense_body.get('Gout'):
+            if sense_body.get('taste'):
                 cursor.execute(f'''
                     INSERT INTO sense_taste(annotation_id, user_id)
                     VALUES ('{id}', {user_id})''')
 
-            if sense_body.get('Odeur'):
+            if sense_body.get('smell'):
                 cursor.execute(f'''
                     INSERT INTO sense_smell(annotation_id, user_id)
                     VALUES ('{id}', {user_id})''')
@@ -404,6 +404,53 @@ def updateAnnotationTranscription():
     return jsonify({'success': 'success'})
 
 
+@app.route("/createSenseSound", methods=['POST'])
+@token_required
+def createSenseSound():
+    transcription = request.values.get('transcription')
+    id = request.values.get('id')
+
+    user_id = getUserId(request.headers['x-access-tokens'])
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        INSERT INTO transcription (annotation_id, transcription, user_id)
+        VALUES ('{id}', '{transcription}', {user_id}) ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
+
+
+@app.route("/deleteSenseSound", methods=['POST'])
+@token_required
+def deleteSenseSound():
+    annoId = request.values.get('id')
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        DELETE FROM transcription WHERE annotation_id = '{annoId}' ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
+
+
+@app.route("/updateSenseSound", methods=['POST'])
+@token_required
+def updateSenseSound():
+    transcription = request.values.get('transcription')
+    id = request.values.get('id')
+
+    editor_id = getUserId(request.headers['x-access-tokens'])
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        UPDATE transcription 
+        SET transcription = '{transcription}', editor_id = {editor_id} 
+        WHERE annotation_id = '{id}' ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
+
+
 @app.route("/deleteAnnotation", methods=['POST'])
 @token_required
 def deleteAnnotation():
@@ -415,6 +462,50 @@ def deleteAnnotation():
     cursor.close()
     return jsonify({'success': 'success'})
 
+
+@app.route("/createSenseView", methods=['POST'])
+@token_required
+def createSenseView():
+    id = request.values.get('id')
+
+    user_id = getUserId(request.headers['x-access-tokens'])
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        INSERT INTO sense_view (annotation_id, user_id)
+        VALUES ('{id}', {user_id}) ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
+
+
+@app.route("/deleteSenseView", methods=['POST'])
+@token_required
+def deleteSenseView():
+    annoId = request.values.get('id')
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        DELETE FROM sense_view WHERE annotation_id = '{annoId}' ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
+
+
+@app.route("/updateSenseView", methods=['POST'])
+@token_required
+def updateSenseView():
+    id = request.values.get('id')
+
+    editor_id = getUserId(request.headers['x-access-tokens'])
+
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        UPDATE sense_view 
+        SET editor_id = {editor_id} /*, ...*/
+        WHERE annotation_id = '{id}' ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'success'})
 
 @app.route("/adduser/<user>")
 def adduser(user):

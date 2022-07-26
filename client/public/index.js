@@ -13,31 +13,31 @@ let selectedAnnotation = null;
 
 const SenseFormatter = function (annotation) {
 	//TODO améliorer algos
-	const isVue = annotation.bodies.find(b => {
-		return b.purpose === 'sense' && b.value['Vue']
+	const isView = annotation.bodies.find(b => {
+		return b.purpose === 'sense' && b.value['view']
 	});
 
-	const isSon = annotation.bodies.find(b => {
-		return b.purpose === 'sense' && b.value['Son']
+	const isSound = annotation.bodies.find(b => {
+		return b.purpose === 'sense' && b.value['sound']
 	});
 
-	const isGout = annotation.bodies.find(b => {
-		return b.purpose === 'sense' && b.value['Gout']
+	const isTaste = annotation.bodies.find(b => {
+		return b.purpose === 'sense' && b.value['taste']
 	});
 
-	const isOdeur = annotation.bodies.find(b => {
-		return b.purpose === 'sense' && b.value['Odeur']
+	const isSmell = annotation.bodies.find(b => {
+		return b.purpose === 'sense' && b.value['smell']
 	});
 
-	const isToucher = annotation.bodies.find(b => {
-		return b.purpose === 'sense' && b.value['Toucher']
+	const isTouch = annotation.bodies.find(b => {
+		return b.purpose === 'sense' && b.value['touch']
 	});
 	// add the important css class if the tag is present
-	if (isVue) return 'vue'
-	if (isSon) return 'son'
-	if (isGout) return 'gout'
-	if (isOdeur) return 'odeur'
-	if (isToucher) return 'toucher'
+	if (isView) return 'view'
+	if (isSound) return 'sound'
+	if (isTaste) return 'taste'
+	if (isSmell) return 'smell'
+	if (isTouch) return 'touch'
 }
 
 const TranscriptionFormatter = function (annotation) {
@@ -150,7 +150,7 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 	const newTranscription = annotation.body.find(b => b.purpose === 'transcription');
 	const oldTransciption = oldAnnotation.body.find(b => b.purpose === 'transcription');
 	console.log(newTranscription)
-	if (!newTranscription.value) {
+	if (oldTransciption.value && !newTranscription.value) {
 		// Delete the transcription
 		console.log('deleteTranscription')
 		const formData = new FormData();
@@ -207,6 +207,65 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 				}
 			}).catch(console.error)
 	}
+
+	// Checks if changes in senses
+	const senseBody = annotation.body.find(b => b.purpose === 'sense')
+	const oldSenseBody = oldAnnotation.body.find(b => b.purpose === 'sense')
+
+	if (oldSenseBody && oldSenseBody.value['view'] && !senseBody.value['view']) {
+		console.log('deleteView')
+		const formData = new FormData();
+		formData.append('id', annotation.id)
+		await fetch(`http://localhost:5000/deleteSenseView`, {
+			method: 'POST',
+			body: formData,
+			headers: {'x-access-tokens': localStorage.getItem('token')},
+		}).then((response) => response.json())
+			.then((res) => {
+				// Token is invalid or user is not logged in
+				if (res.missing || res.invalid) {
+					alert("Erreur: Utilisateur non connecté\"");
+				} else if (!res.success) {
+					alert('Erreur')
+				}
+			}).catch(console.error)
+	} else if(!oldSenseBody || !oldSenseBody.value['view']){
+		// Create transcription
+		console.log('Create view')
+		const formData = new FormData();
+		formData.append('id', annotation.id)
+		await fetch(`http://localhost:5000/createSenseView`, {
+			method: 'POST',
+			body: formData,
+			headers: {'x-access-tokens': localStorage.getItem('token')},
+		}).then((response) => response.json())
+			.then((res) => {
+				// Token is invalid or user is not logged in
+				if (res.missing || res.invalid) {
+					alert("Erreur: Utilisateur non connecté\"");
+				} else if (!res.success) {
+					alert('Erreur')
+				}
+			}).catch(console.error)
+	} /*else if (senseBody.value['Vue'] !== oldSenseBody.value['Vue']) {
+		// Edit the transcription
+		console.log('update View')
+		const formData = new FormData();
+		formData.append('id', annotation.id)
+		await fetch(`http://localhost:5000/updateSenseView`, {
+			method: 'POST',
+			body: formData,
+			headers: {'x-access-tokens': localStorage.getItem('token')},
+		}).then((response) => response.json())
+			.then((res) => {
+				// Token is invalid or user is not logged in
+				if (res.missing || res.invalid) {
+					alert("Erreur: Utilisateur non connecté\"");
+				} else if (!res.success) {
+					alert('Erreur')
+				}
+			}).catch(console.error)
+	}*/
 }
 
 

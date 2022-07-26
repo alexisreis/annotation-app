@@ -1,6 +1,6 @@
 /* SenseWidget */
 
-.a9s-annotation.vue .a9s-inner {
+.a9s-annotation.view .a9s-inner {
     stroke-width:1px;
     stroke:rgb(70, 190, 255);
     fill:rgba(70, 190, 255,0.1);
@@ -8,13 +8,13 @@
     filter:drop-shadow(0 0 10px rgba(70, 190, 255, 0.8));
 }
 
-.a9s-annotation.vue .a9s-inner:hover {
+.a9s-annotation.view .a9s-inner:hover {
     stroke-width:2px;
     stroke:rgb(70, 190, 255);
     fill:rgba(70, 190, 255, 0.3);
 }
 
-.a9s-annotation.son .a9s-inner {
+.a9s-annotation.sound .a9s-inner {
     stroke-width:1px;
     stroke:rgb(110, 255, 75);
     fill:rgba(110, 255, 75,0.1);
@@ -22,13 +22,13 @@
     filter:drop-shadow(0 0 10px rgba(110, 255, 75, 0.8));
 }
 
-.a9s-annotation.son .a9s-inner:hover {
+.a9s-annotation.sound .a9s-inner:hover {
     stroke-width:2px;
     stroke:rgb(110, 255, 75);
     fill:rgba(110, 255, 75, 0.3);
 }
 
-.a9s-annotation.gout .a9s-inner {
+.a9s-annotation.taste .a9s-inner {
     stroke-width:1px;
     stroke:rgb(255, 160, 160);
     fill:rgba(255, 160, 160,0.1);
@@ -36,13 +36,13 @@
     filter:drop-shadow(0 0 10px rgba(255, 160, 160, 0.8));
 }
 
-.a9s-annotation.gout .a9s-inner:hover {
+.a9s-annotation.taste .a9s-inner:hover {
     stroke-width:2px;
     stroke:rgb(255, 160, 160);
     fill:rgba(255, 160, 160, 0.3);
 }
 
-.a9s-annotation.odeur .a9s-inner {
+.a9s-annotation.smell .a9s-inner {
     stroke-width:1px;
     stroke:rgb(160, 100, 60);
     fill:rgba(160, 100, 60,0.1);
@@ -50,13 +50,13 @@
     filter:drop-shadow(0 0 10px rgba(160, 100, 60, 0.8));
 }
 
-.a9s-annotation.odeur .a9s-inner:hover {
+.a9s-annotation.smell .a9s-inner:hover {
     stroke-width:2px;
     stroke:rgb(160, 100, 60);
     fill:rgba(160, 100, 60, 0.3);
 }
 
-.a9s-annotation.toucher .a9s-inner {
+.a9s-annotation.touch .a9s-inner {
     stroke-width:1px;
     stroke:rgb(255, 255, 0);
     fill:rgba(255, 255, 0,0.1);
@@ -64,7 +64,7 @@
     filter:drop-shadow(0 0 10px rgba(255, 255, 0, 0.8));
 }
 
-.a9s-annotation.toucher .a9s-inner:hover {
+.a9s-annotation.touch .a9s-inner:hover {
     stroke-width:2px;
     stroke:rgb(255, 255, 0);
     fill:rgba(255, 255, 0, 0.3);
@@ -94,22 +94,22 @@
     background-color: white;
 }
 
-.a9s-annotation.son label {
+.a9s-annotation.sound label {
     background-color: rgb(110, 255, 75, 0.75);
 }
 
-.a9s-annotation.vue label {
+.a9s-annotation.view label {
     background-color: rgb(70, 190, 255, 0.75);
 }
 
-.a9s-annotation.odeur label {
+.a9s-annotation.smell label {
     background-color: rgb(160, 100, 60, 0.75);
 }
 
-.a9s-annotation.gout label {
+.a9s-annotation.taste label {
     background-color: rgb(255, 160, 160, 0.75);
 }
 
-.a9s-annotation.toucher label {
+.a9s-annotation.touch label {
     background-color: rgb(255, 255, 0, 0.75);
 }

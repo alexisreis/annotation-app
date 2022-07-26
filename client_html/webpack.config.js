@@ -11,7 +11,7 @@ module.exports = {
   entry: resolveAppPath('src'),
   output: {
     // TranscriptionWidget : Uncomment the next two lines
-    filename: 'transcription-widget.js',
+    filename: 'sense-widget.js',
     library: ['recogito', 'TranscriptionWidget'],
 
     // SenseWidget

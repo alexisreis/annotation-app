@@ -2,10 +2,10 @@
   "name": "@alexisreis/annotation-app",
   "version": "0.1.0",
   "description": "React widgets for annotorious JS",
-  "main": "../client/public/transcription-widget.js",
-  "module": "../client/public/transcription-widget.js",
+  "main": "dist/sense-widget.js",
+  "module": "dist/sense-widget.js",
   "scripts": {
-    "build": "../client/node_modules/.bin/webpack --mode=development",
+    "build": "webpack --mode=development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Reis Alexis",

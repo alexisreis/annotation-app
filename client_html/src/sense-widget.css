@@ -74,3 +74,13 @@
 .infos-div input[type="range"]{
   width: 80%;
 }
+
+span {
+  font-size: 1em;
+  margin: auto;
+}
+
+p {
+  font-size: 0.7em;
+  margin: auto;
+}
