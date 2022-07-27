@@ -1,15 +1,17 @@
 import React, {useState, useEffect} from 'react'
-import Image from "./Image";
+import ImageItem from "./ImageItem";
+import TranscriptionTab from "./TranscriptionTab";
 
-const ImageList = ({documentId}) => {
+const ImageList = ({state, setState}) => {
 	const [images, setImages] = useState([]);
 	const [message, setMessage] = useState("");
 	const [addMessage, setAddMessage] = useState("");
 	const [imageId, setImageId] = useState("");
+	const [transcriptions, setTranscriptions] = useState([]);
 
 	const fetchData = async () => {
-		if(documentId){
-			await fetch('getImagesFromDocument/' + documentId, {
+		if(state.document_cote){
+			await fetch('getImagesFromDocument/' + state.document_cote, {
 				method: 'GET',
 				headers: {'x-access-tokens': localStorage.getItem('token')}
 			}).then((response) => response.json())
@@ -26,8 +28,31 @@ const ImageList = ({documentId}) => {
 		}
 	}
 
+	const fetchTranscriptions = async () => {
+		if(state.document_cote){
+			await fetch('getMostTranscribed/' + state.document_cote, {
+				method: 'GET',
+				headers: {'x-access-tokens': localStorage.getItem('token')}
+			}).then((response) => response.json())
+				.then((img) => {
+					// Token is invalid or user is not logged in
+					if (img.missing || img.invalid) {
+						setMessage("Erreur: Utilisateur non connecté");
+					}
+					else if (img.storage) {
+						setMessage("Pas de transcriptions");
+					} else if (!img.success) {
+						setMessage('Erreur - transcriptions')
+					}
+					setTranscriptions(img)
+				}).catch(console.error)
+		}
+	}
+
 	useEffect(() => {
 		fetchData()
+			.catch(console.error);
+		fetchTranscriptions()
 			.catch(console.error);
 	}, [])
 
@@ -40,7 +65,7 @@ const ImageList = ({documentId}) => {
 			const formData = new FormData();
 			formData.append("image_id", cleanedImageId );
 
-			await fetch(`addImageToDocument/` + documentId , {
+			await fetch(`addImageToDocument/` + state.document_cote , {
 				method: 'POST',
 				headers: {'x-access-tokens': localStorage.getItem('token')},
 				body: formData,
@@ -52,7 +77,6 @@ const ImageList = ({documentId}) => {
 					}
 					else if (img.success) {
 						setAddMessage("Insertion effectuée");
-						console.log(imageId)
 						setImages([...images, [cleanedImageId]])
 					}
 				})
@@ -60,21 +84,25 @@ const ImageList = ({documentId}) => {
 		}
 	}
 
-	return (<div>
-		{images.length ? <table>
+	return (<div style={{display: "flex", flexDirection:"column", justifyContent:"center"}}>
+		<button onClick={() => setState({'image': false})}>Documents</button>
+
+		<div className="document-dashboard">
+			<h3>{state.document_name}</h3>
+			<TranscriptionTab transcriptions={transcriptions}/>
+		</div>
+
+		{images.length ?
+			<table>
 			<thead>
 				<tr>
 					<th>fichier</th>
-					<th>Son</th>
-					<th>Vue</th>
-					<th>Odeur</th>
-					<th>Toucher</th>
-					<th>Gout</th>
+					<th>Répartition des sens</th>
 				</tr>
 			</thead>
 			<tbody>
 				{images.map((doc, i) =>
-					<Image key={i} data={doc}/>
+					<ImageItem key={i} data={doc}/>
 				)}
 			</tbody>
 

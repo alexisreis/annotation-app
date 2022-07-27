@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react'
-import Document from "./Document";
+import DocumentItem from "./DocumentItem";
 
 const DocumentList = ({setState}) => {
 	const [documents, setDocuments] = useState([]);
+	const [displayedDocuments, setDisplayedDocument] = useState([]);
+
 	const [message, setMessage] = useState("");
 	const [addMessage, setAddMessage] = useState("");
 
@@ -19,11 +21,11 @@ const DocumentList = ({setState}) => {
 				// Token is invalid or user is not logged in
 				if (docs.missing || docs.invalid) {
 					setMessage("Erreur: Utilisateur non connecté\"");
-				}
-				else if (docs.storage) {
+				} else if (docs.storage) {
 					setMessage("Il n'y a pas de documents stockés ici");
 				}
 				setDocuments(docs)
+				setDisplayedDocument(docs);
 				return docs;
 			}).catch(console.error)
 	}
@@ -52,8 +54,7 @@ const DocumentList = ({setState}) => {
 					// Token is invalid or user is not logged in
 					if (docs.missing || docs.invalid) {
 						setAddMessage("Erreur: Utilisateur non connecté\"");
-					}
-					else if (docs.success) {
+					} else if (docs.success) {
 						setAddMessage("Insertion effectuée");
 						setDocuments([...documents, [cote, title, date]])
 					}
@@ -62,23 +63,39 @@ const DocumentList = ({setState}) => {
 		}
 	}
 
+	const search = (title) => {
+		if (title !== '') {
+			setDisplayedDocument(documents.filter(
+				d => d[0].toLowerCase().includes(title.toLowerCase())
+					|| d[1].toLowerCase().includes(title.toLowerCase())
+					|| d[2].toString().includes(title)
+			));
+		}
+	}
+
+	const sortByCote = () => {
+		// TODO
+	}
+
 	return (<div>
+		<span>Rechercher</span>
+		<input type="text" onChange={e => search(e.target.value)}/>
 		{message ? <span>{message}</span> : null}
-		{documents.length ? <table>
+		{displayedDocuments ? <table>
 			<thead>
 			<tr>
-				<th>cote</th>
+				<th onClick={sortByCote}>cote</th>
 				<th>titre</th>
 				<th>date</th>
 			</tr>
 			</thead>
 			<tbody>
-			{documents.map((doc, i) =>
-				<Document key={i} data={doc} setState={setState}/>
+			{displayedDocuments.map((doc, i) =>
+				<DocumentItem key={i} data={doc} setState={setState}/>
 			)}
 			</tbody>
 
-		</table> : <span>Pas de documents dans la base de données</span>}
+		</table> : <span>Aucun document ne correspond</span>}
 		<div>
 			<h4>Ajouter un document</h4>
 			<div>

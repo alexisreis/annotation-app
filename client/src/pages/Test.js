@@ -1,9 +1,9 @@
 import '../styles/App.css';
 import {useState} from "react";
-
+import ReactECharts from 'echarts-for-react'
 // import './sense-widget.css'
 
-function Test() {
+function SenseWidget() {
 
 	const [currentSense, setCurrentSense] = useState({value: [], purpose: 'sense'});
 
@@ -180,5 +180,69 @@ function Test() {
 		</div>
 	)
 }
+
+function Test(){
+
+	const colorSense = {
+		Son: '#19ff00',
+		Vue: '#00e0ff',
+		Odeur: '#a8482c',
+		Toucher: '#fff200',
+		Goût: '#ff00ae'
+	}
+
+	const options = {
+		title: {
+			text: ''
+		},
+		tooltip: {
+			trigger: 'axis',
+			axisPointer: {
+				type: 'shadow'
+			}
+		},
+		legend: {},
+		grid: {
+			top: '15%',
+			left: '3%',
+			right: '4%',
+			bottom: '3%',
+			containLabel: true
+		},
+		xAxis: {
+			type: 'value',
+		},
+		yAxis: {
+			type: 'category',
+			data: ['Son', 'Vue', 'Odeur', 'Toucher', 'Goût'],
+		},
+		series: [
+			{
+				name: '',
+				type: 'bar',
+				data: [10, 15, 3, 5, 4],
+				itemStyle: {
+					color: function (param) {
+						return colorSense[param.name] || '#82c654';
+					}
+				},
+				label: {
+					show: true,
+					precision: 1,
+					position: 'right',
+					valueAnimation: true,
+					fontFamily: 'monospace'
+				}
+			}
+		]
+	};
+
+	return (
+		<div>
+			<ReactECharts option={options} />
+		</div>
+	)
+}
+
 
 export default Test;

@@ -99,7 +99,7 @@ const createAnnotation = async (anno, annotation) => {
 			if (res.missing || res.invalid) {
 				alert("Erreur: Utilisateur non connecté\"");
 			} else if (!res.success) {
-				alert('Erreur')
+				alert('Erreur lors de la création de l\'annotation')
 			}
 		}).catch(console.error)
 }
@@ -137,8 +137,11 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 				// Token is invalid or user is not logged in
 				if (res.missing || res.invalid) {
 					alert("Erreur: Utilisateur non connecté\"");
+				} else if (res.failure) {
+					alert('Erreur - vous n\'avez pas les droits de modifier' +
+						' les annotations déjà faites')
 				} else if (!res.success) {
-					alert('Erreur')
+					alert('Erreur lors de la modification de la zone annotée')
 				}
 			}).catch(console.error)
 	}
@@ -147,10 +150,9 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 	const newTranscription = annotation.body.find(b => b.purpose === 'transcription');
 	const oldTransciption = oldAnnotation.body.find(b => b.purpose === 'transcription');
 	if (!oldTransciption && !newTranscription) {
-		console.log('rien')
+
 	} else if (oldTransciption && !newTranscription?.value) {
 		// Delete the transcription
-		console.log('deleteTranscription')
 		const formData = new FormData();
 		formData.append('id', annotation.id)
 		await fetch(`http://localhost:5000/deleteTranscription`, {
@@ -162,13 +164,15 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 				// Token is invalid or user is not logged in
 				if (res.missing || res.invalid) {
 					alert("Erreur: Utilisateur non connecté\"");
-				} else if (!res.success) {
-					alert('Erreur')
+				} else if (res.failure) {
+					alert('Erreur - vous n\'avez pas les droits de supprimer' +
+						' les annotations déjà faites')
+				}  else if (!res.success) {
+					alert('Erreur lors de la suppression de la transcription')
 				}
 			}).catch(console.error)
 	} else if (!oldTransciption || !oldTransciption.value) {
 		// Create transcription
-		console.log('Create transcription')
 		const formData = new FormData();
 		formData.append('id', annotation.id)
 		formData.append('transcription', newTranscription.value)
@@ -180,14 +184,13 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 			.then((res) => {
 				// Token is invalid or user is not logged in
 				if (res.missing || res.invalid) {
-					alert("Erreur: Utilisateur non connecté\"");
+					alert("Erreur - Utilisateur non connecté\"");
 				} else if (!res.success) {
-					alert('Erreur')
+					alert('Erreur lors de la création de la transcription')
 				}
 			}).catch(console.error)
 	} else if (newTranscription.value !== oldTransciption.value) {
 		// Edit the transcription
-		console.log('updateTranscription')
 		const formData = new FormData();
 		formData.append('id', annotation.id)
 		formData.append('transcription', newTranscription.value)
@@ -199,9 +202,12 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 			.then((res) => {
 				// Token is invalid or user is not logged in
 				if (res.missing || res.invalid) {
-					alert("Erreur: Utilisateur non connecté\"");
+					alert("Erreur - Utilisateur non connecté\"");
+				} else if (res.failure) {
+					alert('Erreur - vous n\'avez pas les droits de modifier' +
+						' les annotations déjà faites')
 				} else if (!res.success) {
-					alert('Erreur')
+					alert('Erreur lors de la modification de la transcription')
 				}
 			}).catch(console.error)
 	}
@@ -225,9 +231,13 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 					.then((res) => {
 						// Token is invalid or user is not logged in
 						if (res.missing || res.invalid) {
-							alert("Erreur: Utilisateur non connecté\"");
+							alert("Erreur - Utilisateur non connecté\"");
+						} else if (res.failure) {
+							alert('Erreur - vous n\'avez pas les droits de' +
+								' supprimer un sens sur une annotation déja' +
+								' faite')
 						} else if (!res.success) {
-							alert('Erreur')
+							alert('Erreur lors de la suppression du sens ' + sense)
 						}
 					}).catch(console.error)
 			}
@@ -239,7 +249,6 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 		// Create senses that were not present in the old version
 		for (let sense in senseBody.value) {
 			if (!oldSenseBody || (oldSenseBody && !oldSenseBody.value[sense])) {
-				console.log('Create ' + sense)
 				const formData = new FormData();
 				formData.append('id', annotation.id)
 
@@ -257,9 +266,9 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 					.then((res) => {
 						// Token is invalid or user is not logged in
 						if (res.missing || res.invalid) {
-							alert("Erreur: Utilisateur non connecté\"");
+							alert("Erreur - Utilisateur non connecté\"");
 						} else if (!res.success) {
-							alert('Erreur')
+							alert('Erreur lors de l\'ajout du sens ' + sense)
 						}
 					}).catch(console.error)
 			}
@@ -288,16 +297,18 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 					.then((res) => {
 						// Token is invalid or user is not logged in
 						if (res.missing || res.invalid) {
-							alert("Erreur: Utilisateur non connecté\"");
+							alert("Erreur - Utilisateur non connecté\"");
+						} else if (res.failure) {
+							alert('Erreur - vous n\'avez pas le droit de' +
+								' modifier' +
+								' les infos sensorielles déjà remplies')
 						} else if (!res.success) {
-							alert('Erreur')
+							alert('Erreur lors de la mise à jour du sens ' + sense)
 						}
 					}).catch(console.error)
 			}
 		}
-
 	}
-
 }
 
 
@@ -312,7 +323,10 @@ const deleteAnnotation = async (anno, annotation) => {
 		.then((res) => {
 			// Token is invalid or user is not logged in
 			if (res.missing || res.invalid) {
-				alert("Erreur: Utilisateur non connecté\"");
+				alert("Erreur - Utilisateur non connecté\"");
+			} else if (res.failure){
+				alert('Erreur - vous n\'avez pas les droits de' +
+					' supprimer une annotation déja faite')
 			} else if (!res.success) {
 				alert('Erreur')
 			}
@@ -380,7 +394,6 @@ const initAnnotorious = () => {
 }
 
 const upload = () => {
-	console.log('upload')
 	isImproved = false;
 	if (anno) {
 		var toolbar = document.getElementsByClassName('a9s-toolbar')[0];

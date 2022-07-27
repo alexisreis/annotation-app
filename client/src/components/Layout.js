@@ -1,5 +1,5 @@
 import {Outlet,/* Link,*/ useNavigate} from "react-router-dom";
-import logo from '../assets/logo.png'
+import logo from '../assets/folder.svg'
 import '../styles/Layout.css'
 
 const Layout = () => {
@@ -11,17 +11,17 @@ const Layout = () => {
 			<div id="navbar-div" className="flex-column">
 				<div className="flex-column" onClick={() => navigate('/')}>
 					<img src={logo} alt='Logo'/>
-					<h1>ANNOTATION APP</h1>
+					<h1 className="unselectable">ANNOTATION APP</h1>
 				</div>
 				<nav>
 					<ul className="flex-column">
-						<li onClick={() => navigate('/')}>
+						<li className="unselectable" onClick={() => navigate('/')}>
 							ACCUEIL
 						</li>
-						<li onClick={() => navigate('/image')}>
+						<li className="unselectable" onClick={() => navigate('/image')}>
 							IMAGE
 						</li>
-						<li onClick={() => navigate('/login')}>
+						<li className="unselectable" onClick={() => navigate('/login')}>
 							SE CONNECTER
 						</li>
 					</ul>

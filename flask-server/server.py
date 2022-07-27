@@ -21,6 +21,8 @@ mysql = MySQL(app)
 CORS(app)
 
 
+edition_type = ['A', 'M', 'E']
+
 def token_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
@@ -31,7 +33,7 @@ def token_required(f):
         if not token:
             return jsonify({'missing': 'a valid token is missing'})
         try:
-            data = jwt.decode(token, key=app.config['SECRET_KEY'], algorithms=[
+            jwt.decode(token, key=app.config['SECRET_KEY'], algorithms=[
                 "HS256"])
         except:
             return jsonify({'invalid': 'token is invalid'})
@@ -44,7 +46,7 @@ def token_required(f):
 def getUserId(token):
     data = jwt.decode(token, key=app.config['SECRET_KEY'], algorithms=[
         "HS256"])
-    return data['user_id']
+    return data['user_id'], data['user_type']
 
 
 @app.route('/login', methods=['POST'])
@@ -130,17 +132,16 @@ def getImagesFromDocument(cote):
     # document_cote = '{cote}' ''')
 
     images = cursor.execute(f'''
-        SELECT a.image_id, count(s.sound_id), count(v.view_id), 
+        SELECT i.image_id, count(s.sound_id), count(v.view_id), 
         count(sm.smell_id), count(t.touch_id), count(ta.taste_id)
-        FROM annotations a 
+        FROM images i LEFT JOIN annotations a on i.image_id = a.image_id 
         LEFT JOIN sense_view v ON a.annotation_id = v.annotation_id
         LEFT JOIN sense_sound s ON a.annotation_id = s.annotation_id
         LEFT JOIN sense_smell sm ON a.annotation_id = sm.annotation_id
         LEFT JOIN sense_touch t ON a.annotation_id = t.annotation_id
         LEFT JOIN sense_taste ta ON a.annotation_id = ta.annotation_id
-        WHERE a.image_id IN (SELECT image_id FROM images WHERE 
-        document_cote='{cote}')
-        GROUP BY a.image_id; ''')
+        WHERE i.document_cote = '{cote}'
+        GROUP BY i.image_id; ''')
 
     if images > 0:
         imagesDetails = cursor.fetchall();
@@ -155,12 +156,33 @@ def getImagesFromDocument(cote):
 def addImageToDocument(cote):
     image_id = request.values.get('image_id')
     cursor = mysql.connection.cursor()
-    cursor.execute(f'''INSERT INTO images (image_id, document_cote) VALUES ('
-    {image_id}', '{cote}')''')
+    cursor.execute(f'''INSERT INTO images (image_id, document_cote) VALUES ('{image_id}', '{cote}')''')
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
 
+
+@app.route('/getMostTranscribed/<cote>', methods=['GET'])
+@token_required
+def getMostTranscribed(cote):
+    cursor = mysql.connection.cursor()
+    transcriptions = cursor.execute(f'''
+        SELECT t1.transcription, count(t2.transcription_id)+1
+        FROM images i 
+        JOIN annotations a ON i.image_id = a.image_id 
+        JOIN transcription t1 ON a.annotation_id = t1.annotation_id
+        JOIN transcription t2 ON t1.transcription = t2.transcription
+        WHERE i.document_cote = '{cote}'
+        AND t1.transcription_id < t2.transcription_id
+        GROUP BY t1.transcription_id, t2.transcription_id
+        LIMIT 5; ''')
+
+    if transcriptions > 0:
+        transcriptions_infos = cursor.fetchall()
+        cursor.close()
+        return jsonify(transcriptions_infos)
+    cursor.close()
+    return jsonify({'storage': 'Not most used transcriptions'})
 
 
 @app.route("/getImageAnnotations/<id>")
@@ -308,7 +330,7 @@ def createAnnotation(imageId):
     id = request.values.get('id')
 
     # TODO : trouver l'id de l'utilsateur qui crée en déchiffrant token
-    user_id = getUserId(request.headers['x-access-tokens'])
+    user_id, _ = getUserId(request.headers['x-access-tokens'])
 
     cursor = mysql.connection.cursor()
     cursor.execute(f''' 
@@ -320,9 +342,13 @@ def createAnnotation(imageId):
             sense_body = object.get('value')
 
             if sense_body.get('sound'):
-                # TODO : faire les multi type
-                print(sense_body.get('sound').get('type'))
-                print(sense_body.get('sound').get('volume'))
+                sound_type = str(sense_body.get('sound').get('type')).replace('\'', '"')
+                print(sound_type)
+                sound_volume = sense_body.get('sound').get('volume')
+                cursor.execute(f'''
+                    INSERT INTO sense_sound (annotation_id, sound_type, sound_volume, user_id)
+                    VALUES ('{id}', '{sound_type}', '{sound_volume}',
+                     {user_id}) ''')
 
             if sense_body.get('view'):
                 cursor.execute(f'''
@@ -358,6 +384,10 @@ def createAnnotation(imageId):
 @app.route("/deleteAnnotation", methods=['POST'])
 @token_required
 def deleteAnnotation():
+    _, user_type = getUserId(request.headers['x-access-tokens'])
+    if user_type not in edition_type:
+        return jsonify({'failure': 'user has no rights to delete annotation'})
+
     annoId = request.values.get('id')
     cursor = mysql.connection.cursor()
     cursor.execute(f'''
@@ -370,6 +400,10 @@ def deleteAnnotation():
 @app.route("/updateAnnotationCoord", methods=['POST'])
 @token_required
 def updateAnnotationCoord():
+    _, user_type = getUserId(request.headers['x-access-tokens'])
+    if user_type not in edition_type:
+        return jsonify({'failure': 'user has no rights to edit'})
+
     zone_coord = request.values.get('zone_coord')
     id = request.values.get('id')
 
@@ -389,7 +423,7 @@ def createTranscription():
     transcription = request.values.get('transcription')
     id = request.values.get('id')
 
-    user_id = getUserId(request.headers['x-access-tokens'])
+    user_id, _ = getUserId(request.headers['x-access-tokens'])
 
     cursor = mysql.connection.cursor()
     cursor.execute(f'''
@@ -403,6 +437,10 @@ def createTranscription():
 @app.route("/deleteTranscription", methods=['POST'])
 @token_required
 def deleteTranscription():
+    _, user_type = getUserId(request.headers['x-access-tokens'])
+    if user_type not in edition_type:
+        return jsonify({'failure': 'user has no rights to delete annotation'})
+
     annoId = request.values.get('id')
     cursor = mysql.connection.cursor()
     cursor.execute(f'''
@@ -415,16 +453,19 @@ def deleteTranscription():
 @app.route("/updateTranscription", methods=['POST'])
 @token_required
 def updateAnnotationTranscription():
+    editor_id, user_type = getUserId(request.headers['x-access-tokens'])
+    if user_type not in edition_type:
+        return jsonify({'failure': 'user has no rights to edit'})
+
     transcription = request.values.get('transcription')
     id = request.values.get('id')
-
-    editor_id = getUserId(request.headers['x-access-tokens'])
 
     cursor = mysql.connection.cursor()
     cursor.execute(f'''
         UPDATE transcription 
         SET transcription = '{transcription}', editor_id = {editor_id} 
         WHERE annotation_id = '{id}' ''')
+
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
@@ -437,12 +478,13 @@ def createSenseView(sense):
         return jsonify({'no_tables': 'table sense_' + sense + ' does not '
                                                               'exists'})
     id = request.values.get('id')
-    user_id = getUserId(request.headers['x-access-tokens'])
+    user_id, _ = getUserId(request.headers['x-access-tokens'])
 
     cursor = mysql.connection.cursor()
 
     if sense == 'sound':
         sound_type = request.values.get('sound_type')
+        print(sound_type)
         sound_volume = request.values.get('sound_volume')
         cursor.execute(f'''
             INSERT INTO sense_sound (annotation_id, sound_type, sound_volume, user_id)
@@ -463,6 +505,10 @@ def deleteSenseView(sense):
         return jsonify({'no_tables': 'table sense_' + sense + ' does not '
                                                               'exists'})
 
+    _, user_type = getUserId(request.headers['x-access-tokens'])
+    if user_type not in edition_type:
+        return jsonify({'failure': 'user has no rights to delete annotation'})
+
     annoId = request.values.get('id')
     cursor = mysql.connection.cursor()
     cursor.execute(f'''
@@ -479,7 +525,9 @@ def updateSenseView(sense):
         return jsonify({'no_tables': 'table sense_' + sense + ' does not '
                                                               'exists'})
     id = request.values.get('id')
-    editor_id = getUserId(request.headers['x-access-tokens'])
+    editor_id, user_type = getUserId(request.headers['x-access-tokens'])
+    if user_type not in edition_type:
+        return jsonify({'failure': 'user has no rights to edit'})
 
     cursor = mysql.connection.cursor()
 
@@ -493,6 +541,7 @@ def updateSenseView(sense):
             sound_volume='{sound_volume}'
             WHERE annotation_id = '{id}' ''')
     else:
+        # TODO : update les autres sens quand on les aura définis
         cursor.execute(f'''
             UPDATE sense_{sense} 
             SET editor_id = {editor_id} /*, ...*/
@@ -500,35 +549,6 @@ def updateSenseView(sense):
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
-
-@app.route("/adduser/<user>")
-def adduser(user):
-    # Creating a connection cursor
-    cursor = mysql.connection.cursor()
-
-    # Executing SQL Statements
-    cursor.execute(f''' INSERT INTO users (username) VALUES('{user}')''')
-
-    # Saving the Actions performed on the DB
-    mysql.connection.commit()
-
-    # Closing the cursor
-    cursor.close()
-    return user
-
-
-@app.route("/getusers")
-def getusers():
-    cursor = mysql.connection.cursor()
-    users = cursor.execute('''SELECT username FROM users''')
-
-    if users > 0:
-        userDetails = cursor.fetchall()
-        cursor.close()
-        return jsonify(userDetails)
-        # return render_template('users.html', userDetails=userDetails)
-    cursor.close()
-    return "No data in users"
 
 
 @app.route("/getImage")
