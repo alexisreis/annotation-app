@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react"
+import React, {useMemo, useState, useEffect} from "react"
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
@@ -10,10 +10,24 @@ import {UserContext} from "./utils/UserContext";
 function App(){
 
 	const [user, setUser] = useState(null);
-	const userprovider = useMemo(() => ({user, setUser}), [user, setUser])
+	const userProvider = useMemo(() => ({user, setUser}), [user, setUser])
+
+	useEffect(() => {
+		if(localStorage.getItem('token')){
+			const data = JSON.parse(
+				atob(localStorage.getItem('token').substring(
+					localStorage.getItem('token').indexOf(".") + 1,
+					localStorage.getItem('token').lastIndexOf(".")
+				)));
+			setUser({
+				name: data["user_name"],
+				type: data["user_type"],
+			})
+		}
+	}, [])
 
 	return(
-		<UserContext.Provider value={userprovider}>
+		<UserContext.Provider value={userProvider}>
 			<BrowserRouter>
 				<Routes>
 					<Route path="/" element={<Layout />}>

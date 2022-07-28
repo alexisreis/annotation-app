@@ -19,6 +19,11 @@
   color: black;
 }
 
+table {
+  width: 50vw;
+  align-self: center;
+}
+
 table, th, td{
   border: 1px solid darkgray;
   border-collapse: collapse;

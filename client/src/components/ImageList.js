@@ -101,7 +101,8 @@ const ImageList = ({state, setState}) => {
 				</tr>
 			</thead>
 			<tbody>
-				{images.map((doc, i) =>
+				{images.sort((a, b) => a[0] - b[0])
+					.map((doc, i) =>
 					<ImageItem key={i} data={doc}/>
 				)}
 			</tbody>

@@ -81,6 +81,7 @@ const DocumentList = ({setState}) => {
 		<span>Rechercher</span>
 		<input type="text" onChange={e => search(e.target.value)}/>
 		{message ? <span>{message}</span> : null}
+
 		{displayedDocuments ? <table>
 			<thead>
 			<tr>
@@ -90,7 +91,8 @@ const DocumentList = ({setState}) => {
 			</tr>
 			</thead>
 			<tbody>
-			{displayedDocuments.map((doc, i) =>
+			{displayedDocuments.sort((a, b) => a[0] - b[0])
+				.map((doc, i) =>
 				<DocumentItem key={i} data={doc} setState={setState}/>
 			)}
 			</tbody>
