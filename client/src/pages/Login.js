@@ -1,9 +1,11 @@
 import '../styles/App.css';
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {UserContext} from "../utils/UserContext";
 
 function Login() {
 
+	const {user, setUser} = useContext(UserContext);
 	const [mail, setMail] = useState("");
 	const [password, setPassword] = useState("");
 	const [incorrect, setIncorrect] = useState(false);
@@ -37,11 +39,16 @@ function Login() {
 					token.token.lastIndexOf(".")
 				)));
 
-			localStorage.setItem('user_id', data["user_id"]);
+			/*localStorage.setItem('user_id', data["user_id"]);
 			localStorage.setItem('user_name', data["user_name"]);
 			localStorage.setItem('user_mail', data["user_mail"]);
 			localStorage.setItem('user_type', data["user_type"]);
+*/
 
+			setUser({
+				name: data["user_name"],
+				type: data["user_type"],
+			})
 			navigate('/')
 		} else {
 			setIncorrect(true);

@@ -9,7 +9,7 @@
 }
 
 .App-header {
-  background-color: #f8f8f8;
+  background-color: var(--bg-color);
   min-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -35,3 +35,4 @@ tbody tr:hover{
   cursor: pointer;
   background-color: lightgray;
 }
+

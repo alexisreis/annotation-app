@@ -5,6 +5,12 @@
     align-items: center;
 }
 
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .unselectable {
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
@@ -13,8 +19,14 @@
 }
 
 #navbar-div{
-    height: 4em;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--bg-color);
+    height: var(--nav-size);
     border-bottom: solid 1px lightgray;
+    padding-left: 1em;
+    padding-right: 1em;
 }
 
 #navbar-div h1 {
@@ -28,9 +40,7 @@
 
 #navbar-div img {
     height: 2.5em;
-    margin-left: 1em;
     margin-right: 1em;
-    border-radius: 25%;
 }
 
 #navbar-div li {

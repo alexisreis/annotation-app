@@ -1,0 +1,84 @@
+#user-menu-div{
+    transition: all 300ms;
+    color: var(--text-color);
+    border-radius: 2em;
+    padding-left: 0.5em;
+}
+
+#user-menu-div:hover{
+    background-color: #efefef;
+    color: black;
+}
+
+#user-name-span{
+    font-size: 1em;
+    font-weight: 600;
+    margin-right: 0.5em;
+}
+
+#user-menu-arrow {
+    max-height: 15px;
+    margin-top: 0.2em;
+    transition: 0.5s ease-in-out;
+}
+
+.user-menu-arrow-reverted {
+    rotate: 180deg;
+}
+
+.user-pic-div-A{
+    border-color: #fff200;
+    background-color: rgba(255, 242, 0, 0.4);
+}
+.user-pic-div-M{
+    border-color: #ff0000;
+    background-color: rgba(255, 0, 0, 0.4);
+}
+.user-pic-div-E{
+    border-color: #00d200;
+    background-color: rgba(0, 210, 0, 0.4);
+}
+.user-pic-div-S{
+    border-color: #0095ff;
+    background-color: rgba(0, 150, 255, 0.4);
+}
+
+#user-pic-div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--nav-size) * 0.6);
+    height: calc(var(--nav-size) * 0.6);
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 50%;
+}
+
+
+
+.dropdown{
+    position: absolute;
+    top: calc(var(--nav-size) - 2px);
+    width: 200px;
+    transform: translateX(-30%);
+    background-color: #efefef;
+    border: 1px solid darkgray;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.menu-item {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    transition: background 300ms;
+    padding: 0.5rem;
+}
+
+.menu-item:hover {
+    background-color: #dedede;
+}
+
+.menu-item-svg {
+    max-height: 25px;
+}

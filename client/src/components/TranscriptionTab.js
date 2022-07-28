@@ -5,8 +5,10 @@ const TranscriptionTab = ({transcriptions}) => {
 			{transcriptions.length ?
 				<table>
 					<thead>
-					<th>mot</th>
-					<th></th>
+					<tr>
+						<th>mot</th>
+						<th></th>
+					</tr>
 					</thead>
 					<tbody>
 					{transcriptions.map((transcription, i) =>

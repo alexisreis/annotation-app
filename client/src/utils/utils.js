@@ -1,11 +1,12 @@
-const disconnect = () => {
+const disconnect = (setUser) => {
 	if (window.confirm('Voulez-vous vraiment vous déconnecter ?')) {
-		localStorage.removeItem('token');
+/*		localStorage.removeItem('token');
 		localStorage.removeItem('user_id');
 		localStorage.removeItem('user_name');
 		localStorage.removeItem('user_mail');
-		localStorage.removeItem('user_type');
+		localStorage.removeItem('user_type');*/
 
+		setUser(null)
 		window.location.reload()
 	}
 }

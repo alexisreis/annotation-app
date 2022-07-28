@@ -1,19 +1,18 @@
 import '../styles/App.css';
 import DocumentList from "../components/DocumentList";
 import ImageList from "../components/ImageList";
-import {disconnect, verifyAuthentication} from "../utils/utils";
-import {useState} from "react";
+import {useState, useContext} from "react";
+import {UserContext} from "../utils/UserContext";
 
 
-function Home() {
+function HomeClient() {
 
 	const [state, setState] = useState({'image': false});
+	const {user, setUser} = useContext(UserContext);
+
 	return (
 		<div id="home-div">
-			<h1>Bienvenue {localStorage.getItem('user_name')},</h1>
-			<br/>
-			<button onClick={() => disconnect()}>Se déconnecter</button>
-			<button onClick={() => verifyAuthentication()}>Vérifier authentification</button>
+			<h1>Bienvenue {user.name},</h1>
 			<br/>
 			{/*TODO: TABBAR*/}
 			{!state.image ?
@@ -25,4 +24,4 @@ function Home() {
 	);
 }
 
-export default Home;
+export default HomeClient;
