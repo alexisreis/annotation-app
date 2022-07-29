@@ -1,7 +1,7 @@
 
 const TranscriptionTab = ({transcriptions}) => {
 	return (
-		<div>
+		<div class={"flex-center"}>
 			{transcriptions.length ?
 				<table>
 					<thead>

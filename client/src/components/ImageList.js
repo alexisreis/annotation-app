@@ -1,17 +1,20 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import ImageItem from "./ImageItem";
 import TranscriptionTab from "./TranscriptionTab";
+import {PageContext} from "../utils/PageContext";
 
-const ImageList = ({state, setState}) => {
+const ImageList = () => {
 	const [images, setImages] = useState([]);
 	const [message, setMessage] = useState("");
 	const [addMessage, setAddMessage] = useState("");
 	const [imageId, setImageId] = useState("");
 	const [transcriptions, setTranscriptions] = useState([]);
 
+	const {page, setPage} = useContext(PageContext);
+
 	const fetchData = async () => {
-		if(state.document_cote){
-			await fetch('getImagesFromDocument/' + state.document_cote, {
+		if(page.document_cote){
+			await fetch('getImagesFromDocument/' + page.document_cote, {
 				method: 'GET',
 				headers: {'x-access-tokens': localStorage.getItem('token')}
 			}).then((response) => response.json())
@@ -29,8 +32,8 @@ const ImageList = ({state, setState}) => {
 	}
 
 	const fetchTranscriptions = async () => {
-		if(state.document_cote){
-			await fetch('getMostTranscribed/' + state.document_cote, {
+		if(page.document_cote){
+			await fetch('getMostTranscribed/' + page.document_cote, {
 				method: 'GET',
 				headers: {'x-access-tokens': localStorage.getItem('token')}
 			}).then((response) => response.json())
@@ -65,7 +68,7 @@ const ImageList = ({state, setState}) => {
 			const formData = new FormData();
 			formData.append("image_id", cleanedImageId );
 
-			await fetch(`addImageToDocument/` + state.document_cote , {
+			await fetch(`addImageToDocument/` + page.document_cote , {
 				method: 'POST',
 				headers: {'x-access-tokens': localStorage.getItem('token')},
 				body: formData,
@@ -85,10 +88,10 @@ const ImageList = ({state, setState}) => {
 	}
 
 	return (<div style={{display: "flex", flexDirection:"column", justifyContent:"center"}}>
-		<button onClick={() => setState({'image': false})}>Documents</button>
+		<button onClick={() => setPage({page: 'home'})}>Retour à la liste</button>
 
 		<div className="document-dashboard">
-			<h3>{state.document_name}</h3>
+			<h3>{page.document_name}</h3>
 			<TranscriptionTab transcriptions={transcriptions}/>
 		</div>
 
@@ -96,7 +99,7 @@ const ImageList = ({state, setState}) => {
 			<table>
 			<thead>
 				<tr>
-					<th>fichier</th>
+					<th>image</th>
 					<th>Répartition des sens</th>
 				</tr>
 			</thead>

@@ -6,11 +6,15 @@ import AnnotoriousViewer from "./pages/AnnotoriousViewer";
 import Login from "./pages/Login";
 import Test from "./pages/Test";
 import {UserContext} from "./utils/UserContext";
+import {PageContext} from "./utils/PageContext";
 
 function App(){
 
 	const [user, setUser] = useState(null);
 	const userProvider = useMemo(() => ({user, setUser}), [user, setUser])
+
+	const [page, setPage] = useState(null)
+	const pageProvider = useMemo(() => ({page, setPage}), [page, setPage])
 
 	useEffect(() => {
 		if(localStorage.getItem('token')){
@@ -28,16 +32,18 @@ function App(){
 
 	return(
 		<UserContext.Provider value={userProvider}>
-			<BrowserRouter>
-				<Routes>
-					<Route path="/" element={<Layout />}>
-						<Route index element={<HomePage />} />
-						<Route path="image" element={<AnnotoriousViewer />} />
-						<Route path="login" element={<Login />} />
-						<Route path="test" element={<Test />} />
-					</Route>
-				</Routes>
-			</BrowserRouter>
+			<PageContext.Provider value={pageProvider}>
+				<BrowserRouter>
+					<Routes>
+						<Route path="/" element={<Layout />}>
+							<Route index element={<HomePage />} />
+							<Route path="image" element={<AnnotoriousViewer />} />
+							<Route path="login" element={<Login />} />
+							<Route path="test" element={<Test />} />
+						</Route>
+					</Routes>
+				</BrowserRouter>
+			</PageContext.Provider>
 		</UserContext.Provider>
 
 	)

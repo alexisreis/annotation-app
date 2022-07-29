@@ -1,8 +1,10 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import DocumentItem from "./DocumentItem";
+import {PageContext} from "../utils/PageContext";
 
-const DocumentList = ({setState}) => {
+const DocumentList = () => {
 	const [documents, setDocuments] = useState([]);
+	// TODO : enlever ça
 	const [displayedDocuments, setDisplayedDocument] = useState([]);
 
 	const [message, setMessage] = useState("");
@@ -73,9 +75,6 @@ const DocumentList = ({setState}) => {
 		}
 	}
 
-	const sortByCote = () => {
-		// TODO
-	}
 
 	return (<div>
 		<span>Rechercher</span>
@@ -85,7 +84,7 @@ const DocumentList = ({setState}) => {
 		{displayedDocuments ? <table>
 			<thead>
 			<tr>
-				<th onClick={sortByCote}>cote</th>
+				<th>cote</th>
 				<th>titre</th>
 				<th>date</th>
 			</tr>
@@ -93,7 +92,7 @@ const DocumentList = ({setState}) => {
 			<tbody>
 			{displayedDocuments.sort((a, b) => a[0] - b[0])
 				.map((doc, i) =>
-				<DocumentItem key={i} data={doc} setState={setState}/>
+				<DocumentItem key={i} data={doc}/>
 			)}
 			</tbody>
 

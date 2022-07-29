@@ -1,0 +1,53 @@
+#pathbar {
+    position: fixed;
+    top: calc(var(--nav-size) + 1px);
+    z-index: 1;
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 0.25em 1em;
+    background-color: var(--bg-color);
+    border-bottom: solid 1px lightgray;
+    border-right: solid 1px lightgray;
+}
+
+.pathbar-element {
+    margin-right: 1em;
+    border-radius: 10px;
+    padding: 0.4em;
+    transition: 0.3s ease-in-out;
+}
+
+.pathbar-element:hover {
+    background-color: #eaeaea;
+}
+
+.pathbar-element:active {
+    background-color: #cccccc;
+}
+
+#pathbar h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-weight: 600;
+    font-size: 1.2em;
+}
+
+.pathbar-element span {
+    background-color: #eaeaea;
+    border-radius: 5px;
+    margin: 0.1em;
+    padding: 0.2em;
+    font-size: 0.8em;
+    transition: 0.3s ease-in-out;
+}
+
+.pathbar-element:hover span {
+    background-color: #cccccc;
+}
+
+.pathbar-element:active span {
+    background-color: #aaaaaa;
+}

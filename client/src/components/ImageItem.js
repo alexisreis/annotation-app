@@ -1,5 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import ReactECharts from 'echarts-for-react'
+import {useContext} from "react";
+import {PageContext} from "../utils/PageContext";
 
 const colorSense = {
 	Son: '#19ff00',
@@ -13,6 +15,7 @@ const colorSense = {
 const ImageItem = ({data}) => {
 
 	const navigate = useNavigate();
+	const {page, setPage} = useContext(PageContext);
 
 	const options = {
 		title: {
@@ -26,7 +29,7 @@ const ImageItem = ({data}) => {
 		},
 		legend: {},
 		grid: {
-/*			height: '100px',*/
+			/*			height: '100px',*/
 			top: '0%',
 			left: '0%',
 			right: '10%',
@@ -68,14 +71,20 @@ const ImageItem = ({data}) => {
 
 	return (
 		<tr onClick={() => {
-		navigate('image')
-	}}>
-		<td>{data[0]}</td>
-		<td>
-			<ReactECharts option={options} />
-		</td>
+			setPage({
+				page: 'image',
+				image_id: data[0],
+				document_cote: page.document_cote,
+				document_name: page.document_name
+			})
+			navigate('image')
+		}}>
+			<td>{data[0]}</td>
+			<td>
+				<ReactECharts option={options}/>
+			</td>
 
-	</tr>)
+		</tr>)
 }
 
 export default ImageItem;

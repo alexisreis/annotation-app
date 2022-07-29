@@ -4,16 +4,27 @@ import '../styles/Layout.css'
 import {UserContext} from "../utils/UserContext";
 import {useContext} from "react";
 import UserDropDownMenu from "./UserDropDownMenu";
+import PathBar from "./PathBar";
+import {PageContext} from "../utils/PageContext";
 
 const Layout = () => {
-	// TODO : recuperer infos utilisateurpuis changer Layout
+
 	const {user} = useContext(UserContext);
+	const {page, setPage} = useContext(PageContext);
 
 	const navigate = useNavigate();
 	return (
 		<>
 			<div id="navbar-div" className="flex-column">
-				<div className="flex-column" onClick={() => navigate('/')}>
+				<div className="flex-column" onClick={() => {
+					if(page.page === 'image'){
+						navigate('/')
+					}
+
+					if(page && page.page !== 'home'){
+						setPage({page: 'home'})
+					}
+				}}>
 					<img src={logo} alt='Logo'/>
 					<h1 className="unselectable">ANNOTATION APP</h1>
 				</div>
@@ -28,22 +39,16 @@ const Layout = () => {
 							</li>
 						</ul>
 					</nav> : <nav>
-						<ul className="flex-column">
-							<li className="unselectable"
-							    onClick={() => navigate('/')}>
-								ACCUEIL
-							</li>
-							<li className="unselectable"
-							    onClick={() => navigate('/image')}>
-								IMAGE
-							</li>
+						<div className="flex-column">
 							<UserDropDownMenu/>
-						</ul>
+						</div>
 
 					</nav>}
 
 			</div>
-
+			<div>
+				<PathBar />
+			</div>
 			<Outlet/>
 		</>
 	)
