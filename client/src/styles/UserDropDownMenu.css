@@ -65,6 +65,7 @@
     border: 1px solid darkgray;
     border-radius: 10px;
     overflow: hidden;
+    z-index: 1;
 }
 
 .menu-item {
