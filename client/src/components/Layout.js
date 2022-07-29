@@ -46,9 +46,9 @@ const Layout = () => {
 					</nav>}
 
 			</div>
-			<div>
+			{user ? <div>
 				<PathBar />
-			</div>
+			</div> : null}
 			<Outlet/>
 		</>
 	)

@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Test from "./pages/Test";
 import {UserContext} from "./utils/UserContext";
 import {PageContext} from "./utils/PageContext";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App(){
 
@@ -39,7 +40,7 @@ function App(){
 							<Route index element={<HomePage />} />
 							<Route path="image" element={<AnnotoriousViewer />} />
 							<Route path="login" element={<Login />} />
-							<Route path="test" element={<Test />} />
+							<Route path="admin" element={<AdminDashboard />} />
 						</Route>
 					</Routes>
 				</BrowserRouter>

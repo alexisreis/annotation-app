@@ -1,11 +1,3 @@
-const disconnect = (setUser) => {
-	if (window.confirm('Voulez-vous vraiment vous déconnecter ?')) {
-		localStorage.removeItem('token');
-		setUser(null)
-		window.location.reload()
-	}
-}
-
 const verifyAuthentication = async () => {
 	const response = await fetch(`auth`, {
 		method: 'GET',
@@ -15,4 +7,4 @@ const verifyAuthentication = async () => {
 	console.log(response.json());
 }
 
-export {disconnect, verifyAuthentication}
+export {verifyAuthentication}

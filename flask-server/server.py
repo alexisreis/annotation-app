@@ -94,6 +94,30 @@ def auth():
     return jsonify({"status": 'Verified'})
 
 
+@app.route('/addUser', methods=['POST'])
+@token_required
+def addUser():
+    _, user_type = getUserId(request.headers['x-access-tokens'])
+    if user_type != 'A':
+        return jsonify({'failure': 'user is not admin and cannot add users'})
+
+    name = request.values.get('name')
+    type = request.values.get('type')
+    mail = request.values.get('mail')
+    password = request.values.get('password')
+
+    if name and type and mail and password:
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'''
+        INSERT INTO users(user_name, user_type, user_mail, user_password) 
+        VALUES ('{name}', '{type}','{mail}','{password}')''')
+        mysql.connection.commit()
+        cursor.close()
+        return jsonify({'success': 'Successful  insertion'})
+    else:
+        return jsonify({'blank': 'Blank name, type, mail or password'})
+
+
 @app.route('/addDocument', methods=['POST'])
 @token_required
 def addDocument():

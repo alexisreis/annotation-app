@@ -37,12 +37,12 @@ function PathBar() {
 			<div className={"pathbar-element"} onClick={goToHome}>
 				<h2>Mon projet {' >'}</h2>
 			</div>
-			{page && (page.page == 'document' || page.page == 'image') ?
+			{page && (page.page === 'document' || page.page === 'image') ?
 				<div className={"pathbar-element"} onClick={goToDocument}>
 					<h2>Document {' >'}</h2>
 					<span>{page.document_cote}</span>
 				</div> : null}
-			{page && page.page == 'image' ?
+			{page && page.page === 'image' ?
 				<div className={"pathbar-element"}>
 					<h2>Image</h2>
 					<span>{page.image_id}</span>
