@@ -100,6 +100,7 @@ const ImageList = () => {
 			<thead>
 				<tr>
 					<th>image</th>
+					<th>image</th>
 					<th>Répartition des sens</th>
 				</tr>
 			</thead>

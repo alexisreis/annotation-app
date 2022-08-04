@@ -1,6 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import ReactECharts from 'echarts-for-react'
-import {useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {PageContext} from "../utils/PageContext";
 
 const colorSense = {
@@ -69,6 +69,19 @@ const ImageItem = ({data}) => {
 		]
 	};
 
+	const [image, setImage] = useState(null);
+
+	const fetchImage = async () => {
+		const data = await fetch('/get/1/resized');
+		const blob = await data.blob()
+		const url = URL.createObjectURL(blob)
+		setImage(url);
+	}
+
+	useEffect(() => {
+		fetchImage()
+	}, [])
+
 	return (
 		<tr onClick={() => {
 			setPage({
@@ -80,6 +93,7 @@ const ImageItem = ({data}) => {
 			navigate('image')
 		}}>
 			<td>{data[0]}</td>
+			<td><img src={image} alt="Previs"/></td>
 			<td>
 				<ReactECharts option={options}/>
 			</td>

@@ -17,7 +17,8 @@ const Layout = () => {
 		<>
 			<div id="navbar-div" className="flex-column">
 				<div className="flex-column" onClick={() => {
-					if(page.page === 'image'){
+					console.log(page.page)
+					if(page && page.page === 'image'){
 						navigate('/')
 					}
 
