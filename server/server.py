@@ -1,12 +1,13 @@
 from flask import Flask
-from extension import mysql
+from utils.extension import mysql
 from flask_cors import CORS
 # Blueprints import
 from images import images
-from auth import auth
-from documents import documents
-from annotations import annotations
-from transcription import transcription
+from api.auth import auth
+from api.documents import documents
+from api.annotations import annotations
+from api.transcription import transcription
+from api.senses import senses
 
 app = Flask(__name__)
 
@@ -24,6 +25,7 @@ app.register_blueprint(auth)
 app.register_blueprint(documents)
 app.register_blueprint(annotations)
 app.register_blueprint(transcription)
+app.register_blueprint(senses)
 
 
 if __name__ == "__main__":

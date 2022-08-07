@@ -8,10 +8,10 @@ A flask server is used to send images to the OpenCV library to enhanced them.
 ### \> Installation
 You need a virtual environment to run Python with the libraries used.
 ```bash
-cd flask-server
+cd server
 python -m venv venv
 .\venv\Scripts\activate
-pip install flask flask_cors opencv-python
+pip install flask flask_cors opencv-python flask_mysqldb PyJWT
 ```
 
 ### \> Run

@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from extension import mysql, token_required, getUserId, edition_type
+from utils.extension import mysql, token_required, getUserId, edition_type
 
 senses = Blueprint('senses', __name__)
 

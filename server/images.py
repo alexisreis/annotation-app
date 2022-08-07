@@ -7,7 +7,7 @@ images = Blueprint('images', __name__)
 
 @images.route("/get/<cote>/<img>")
 def getImage(cote, img):
-    path_to_processed_image = f'''images/{cote}/{img}.jpg'''
+    path_to_processed_image = f'''images\\{cote}\\{img}.jpg'''
     return send_file(path_to_processed_image, mimetype='image/jpg')
 
 

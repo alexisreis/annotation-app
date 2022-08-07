@@ -17,7 +17,7 @@
   justify-content: flex-start;
   font-size: calc(10px + 2vmin);
   color: black;
-  margin-top: 2em;
+  padding-top: 2em;
 }
 
 table {

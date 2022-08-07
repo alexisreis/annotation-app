@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from extension import mysql, token_required
+from utils.extension import mysql, token_required
 
 
 documents = Blueprint('documents', __name__)

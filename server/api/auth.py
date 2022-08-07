@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, make_response, current_app, request, \
     session
-from extension import mysql, token_required, getUserId
+from utils.extension import mysql, token_required, getUserId
 import jwt
 
 auth = Blueprint('auth', __name__)
