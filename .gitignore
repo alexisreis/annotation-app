@@ -23,8 +23,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # Flask env
-server/venv
+/server/venv/
 
 .idea
 *.txt
 *.jpg
+
