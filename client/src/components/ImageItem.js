@@ -46,13 +46,13 @@ const ImageItem = ({data}) => {
 		},
 		yAxis: {
 			type: 'category',
-			data: ['Son', 'Vue', 'Odeur', 'Toucher', 'Goût'],
+			data: ['Goût', 'Toucher','Odeur', 'Vue', 'Son'],
 		},
 		series: [
 			{
 				name: '',
 				type: 'bar',
-				data: [data[1], data[2], data[3], data[4], data[5]],
+				data: [data[5], data[4], data[3], data[2], data[1]],
 				itemStyle: {
 					color: function (param) {
 						return colorSense[param.name] || '#82c654';
@@ -94,7 +94,7 @@ const ImageItem = ({data}) => {
 			navigate('image')
 		}}>
 			<td>{data[0]}</td>
-			<td><img src={image} alt="Previs"/></td>
+			<td><img src={image} alt="Previs" className={"image_previs"} loading={"lazy"}/></td>
 			<td>
 				<ReactECharts option={options}/>
 			</td>

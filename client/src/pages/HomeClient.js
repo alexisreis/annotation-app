@@ -14,9 +14,6 @@ function HomeClient() {
 
 	return (
 		<div id="home-div">
-			<h1>Bienvenue {user.name},</h1>
-			<br/>
-			{/*TODO: TABBAR*/}
 			{!page || page.page == 'home' ?
 				<DocumentList/>
 				: null}

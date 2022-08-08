@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react'
 import DocumentItem from "./DocumentItem";
 import {PageContext} from "../utils/PageContext";
+import {UserContext} from "../utils/UserContext";
 
 const DocumentList = () => {
 	const [documents, setDocuments] = useState([]);
@@ -13,6 +14,8 @@ const DocumentList = () => {
 	const [cote, setCote] = useState("")
 	const [title, setTitle] = useState("");
 	const [date, setDate] = useState("");
+
+	const {user} = useContext(UserContext)
 
 	const fetchData = async () => {
 		await fetch('getDocuments', {
@@ -77,6 +80,8 @@ const DocumentList = () => {
 
 
 	return (<div>
+		<h1>Bienvenue {user.name},</h1>
+		<br/>
 		<span>Rechercher</span>
 		<input type="text" onChange={e => search(e.target.value)}/>
 		{message ? <span>{message}</span> : null}

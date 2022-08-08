@@ -88,7 +88,6 @@ const ImageList = () => {
 	}
 
 	return (<div style={{display: "flex", flexDirection:"column", justifyContent:"center"}}>
-		<button onClick={() => setPage({page: 'home'})}>Retour à la liste</button>
 
 		<div className="document-dashboard">
 			<h3>{page.document_name}</h3>

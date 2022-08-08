@@ -42,3 +42,10 @@ tbody tr:hover{
   background-color: lightgray;
 }
 
+.image_previs {
+  transition: transform 0.5s ease-in-out;
+}
+
+.image_previs:hover{
+  transform: scale(110%);
+}
