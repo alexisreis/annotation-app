@@ -18,8 +18,8 @@
 }
 
 #user-menu-arrow {
-    max-height: 15px;
-    margin-top: 0.2em;
+    max-height: 12px;
+    margin-top: 0.15em;
     transition: 0.5s ease-in-out;
 }
 
@@ -81,5 +81,5 @@
 }
 
 .menu-item-svg {
-    max-height: 25px;
+    max-height: 20px;
 }

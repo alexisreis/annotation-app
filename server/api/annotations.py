@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
-from utils.extension import mysql, token_required, getUserId, edition_type
+from utils.extension import mysql, token_required, getUserId, \
+    edition_type
 from json import loads
 
 annotations = Blueprint('annotations', __name__)

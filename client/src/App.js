@@ -14,7 +14,7 @@ function App(){
 	const [user, setUser] = useState(null);
 	const userProvider = useMemo(() => ({user, setUser}), [user, setUser])
 
-	const [page, setPage] = useState(null)
+	const [page, setPage] = useState({page: 'home'})
 	const pageProvider = useMemo(() => ({page, setPage}), [page, setPage])
 
 	useEffect(() => {

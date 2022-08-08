@@ -71,19 +71,20 @@ const ImageItem = ({data}) => {
 
 	const [image, setImage] = useState(null);
 
-	const fetchImage = async () => {
-		const data = await fetch('/get/1/resized');
+	const fetchImage = async (image_id) => {
+		const data = await fetch(`/getResizedImage/${page.document_cote}/${image_id}`);
 		const blob = await data.blob()
 		const url = URL.createObjectURL(blob)
 		setImage(url);
 	}
 
 	useEffect(() => {
-		fetchImage()
-	}, [])
+		fetchImage(data[0])
+	}, [data])
 
 	return (
 		<tr onClick={() => {
+			localStorage.setItem('image_id', data[0])
 			setPage({
 				page: 'image',
 				image_id: data[0],

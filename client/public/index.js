@@ -57,7 +57,8 @@ const TranscriptionFormatter = function (annotation) {
 }
 
 const getDatabaseAnnotations = async (anno) => {
-	const id = imageName.replace(/\.[^/.]+$/, "");
+	// const id = imageName.replace(/\.[^/.]+$/, "");
+	const id = localStorage.getItem('image_id');
 	const response = await fetch(`http://localhost:5000/getImageAnnotations/` + id, {
 		method: 'GET',
 		headers: {'x-access-tokens': localStorage.getItem('token')},
@@ -68,8 +69,8 @@ const getDatabaseAnnotations = async (anno) => {
 }
 
 const createAnnotation = async (anno, annotation) => {
-	const id = imageName.replace(/\.[^/.]+$/, "");
-
+	// const id = imageName.replace(/\.[^/.]+$/, "");
+	const id = localStorage.getItem('image_id');
 	const body = annotation.body;
 	const selector = annotation.target.selector;
 	let zone_type;
@@ -335,6 +336,7 @@ const deleteAnnotation = async (anno, annotation) => {
 
 const initAnnotorious = () => {
 	console.log('initAnno')
+
 	anno = Annotorious.init({
 		image: 'my-image',
 		widgets: [
@@ -420,6 +422,7 @@ const upload = () => {
 }
 
 const improveImage = async () => {
+	// TODO
 	if (!isImproved) {
 		// Create a FormData to POST to backend
 		const formData = new FormData();
@@ -476,9 +479,10 @@ const saveAnnotationsToJSON = () => {
 // TODO : améliorer (détection de changement d'URL ou autre...)
 window.onclick = () => {
 	if (document.getElementById('my-image') && !anno) {
-		document.getElementById('file').setAttribute('onchange', 'upload()');
-		document.getElementById('improve-image-button').setAttribute('onclick', 'improveImage()');
+		/*document.getElementById('file').setAttribute('onchange', 'upload()');
+		document.getElementById('improve-image-button').setAttribute('onclick', 'improveImage()');*/
 		document.getElementById('export-json-button').setAttribute('onclick', 'saveAnnotationsToJSON()');
+		initAnnotorious()
 	} else if (anno && !document.getElementById('my-image')) {
 		anno.destroy();
 		anno = undefined;
