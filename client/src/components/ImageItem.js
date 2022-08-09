@@ -2,6 +2,7 @@ import {useNavigate} from "react-router-dom";
 import ReactECharts from 'echarts-for-react'
 import React, {useContext, useEffect, useState} from "react";
 import {PageContext} from "../utils/PageContext";
+import "../styles/ImageItem.css"
 
 const colorSense = {
 	Son: '#19ff00',
@@ -16,6 +17,7 @@ const ImageItem = ({data}) => {
 
 	const navigate = useNavigate();
 	const {page, setPage} = useContext(PageContext);
+	const [showGraph, setShowGraph] = useState(false);
 
 	const options = {
 		title: {
@@ -29,20 +31,16 @@ const ImageItem = ({data}) => {
 		},
 		legend: {},
 		grid: {
-			/*			height: '100px',*/
-			top: '0%',
-			left: '0%',
+			height: '200px',
+			top: '15%',
+			left: '5%',
 			right: '10%',
-			bottom: '0%',
+			bottom: '15%',
 			containLabel: true
 		},
-		media: [{
-			query: {
-				height: '150px'
-			}
-		}],
 		xAxis: {
 			type: 'value',
+			show: false,
 		},
 		yAxis: {
 			type: 'category',
@@ -83,7 +81,7 @@ const ImageItem = ({data}) => {
 	}, [data])
 
 	return (
-		<tr onClick={() => {
+		<div className="image-div" onClick={() => {
 			localStorage.setItem('image_id', data[0])
 			setPage({
 				page: 'image',
@@ -92,14 +90,21 @@ const ImageItem = ({data}) => {
 				document_name: page.document_name
 			})
 			navigate('image')
-		}}>
-			<td>{data[0]}</td>
-			<td><img src={image} alt="Previs" className={"image_previs"} loading={"lazy"}/></td>
-			<td>
-				<ReactECharts option={options}/>
-			</td>
+		}} onMouseEnter={() => setShowGraph(true)} onMouseLeave={()=>setShowGraph(false)}>
+			<div className={"image-infos-div"}>
+				<span>{data[0]}</span>
+				<span>{data[1]+data[2]+data[3]+data[4]+data[5]}</span>
+			</div>
 
-		</tr>)
+			<img src={image} alt="Previs" className={"image_previs"} loading={"lazy"}/>
+
+			<div className={"graph-div"}>
+				{showGraph ?
+					<ReactECharts option={options}/>
+					: null}
+			</div>
+
+		</div>)
 }
 
 export default ImageItem;

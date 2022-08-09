@@ -71,3 +71,25 @@ def addImageToDocument(cote):
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
+
+
+@documents.route('/getSensesStats/<cote>')
+@token_required
+def getSensesStats(cote):
+    cursor = mysql.connection.cursor()
+    stats = cursor.execute(f'''
+        SELECT count(s.sound_id), count(v.view_id), 
+        count(sm.smell_id), count(t.touch_id), count(ta.taste_id)
+        FROM (SELECT im.image_id FROM images im WHERE im.document_cote = '{cote}') i
+        LEFT JOIN annotations a on i.image_id = a.image_id 
+        LEFT JOIN sense_view v ON a.annotation_id = v.annotation_id
+        LEFT JOIN sense_sound s ON a.annotation_id = s.annotation_id
+        LEFT JOIN sense_smell sm ON a.annotation_id = sm.annotation_id
+        LEFT JOIN sense_touch t ON a.annotation_id = t.annotation_id
+        LEFT JOIN sense_taste ta ON a.annotation_id = ta.annotation_id; ''')
+
+    if stats > 0:
+        statsDetails = cursor.fetchall()
+        cursor.close()
+        return jsonify(statsDetails)
+    return jsonify({'storage': 'No senses'})

@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react'
 import DocumentItem from "./DocumentItem";
-import {PageContext} from "../utils/PageContext";
 import {UserContext} from "../utils/UserContext";
+import DocumentDashboard from "./DocumentDashboard";
 
 const DocumentList = () => {
 	const [documents, setDocuments] = useState([]);
@@ -82,8 +82,9 @@ const DocumentList = () => {
 	return (<div>
 		<h1>Bienvenue {user.name},</h1>
 		<br/>
-		<span>Rechercher</span>
-		<input type="text" onChange={e => search(e.target.value)}/>
+		<input type="text" onChange={e => search(e.target.value)}
+		       id={"document-search-bar"}
+		       placeholder={"Rechercher un titre, une date, une cote..."}/>
 		{message ? <span>{message}</span> : null}
 
 		{displayedDocuments ? <table>
@@ -97,8 +98,8 @@ const DocumentList = () => {
 			<tbody>
 			{displayedDocuments.sort((a, b) => a[0] - b[0])
 				.map((doc, i) =>
-				<DocumentItem key={i} data={doc}/>
-			)}
+					<DocumentItem key={i} data={doc}/>
+				)}
 			</tbody>
 
 		</table> : <span>Aucun document ne correspond</span>}

@@ -1,0 +1,60 @@
+:root{
+    --image-item-width:360px;
+    --image-item-border-radius: 20px;
+    --image-item-background: #e8e8e8;
+    --image-item-infos-background: #1e47a2;
+}
+
+.image-div {
+    width: var(--image-item-width);
+    height: calc(var(--image-item-width)*0.8);
+    border-radius: var(--image-item-border-radius);
+    background-color: var(--image-item-background);
+    border: 1px solid darkgrey;
+    margin: 0.5em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.5s ease-in-out;
+}
+
+.image-infos-div{
+    position: absolute;
+    bottom: 0;
+    width: var(--image-item-width);
+    min-width: 300px;
+    border-radius: 0 0 var(--image-item-border-radius) var(--image-item-border-radius);
+    background-color: var(--image-item-infos-background);
+    height: 1.5em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.image-infos-div span {
+    color: white;
+    font-weight: 600;
+    margin-left: 0.7em;
+    margin-right: 0.7em;
+}
+
+.image-div:hover {
+    transform: scale(110%);
+}
+
+.image_previs {
+    width: var(--image-item-width);
+}
+.image-div:hover .image_previs{
+    filter: opacity(20%);
+}
+
+.graph-div {
+    position: absolute;
+    top: 0;
+    width: var(--image-item-width);
+    border-radius: var(--image-item-border-radius);
+    padding-left: 0.5em;
+}

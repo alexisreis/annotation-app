@@ -1,16 +1,18 @@
 import React, {useState, useEffect, useContext} from 'react'
 import ImageItem from "./ImageItem";
-import TranscriptionTab from "./TranscriptionTab";
 import {PageContext} from "../utils/PageContext";
+import DocumentDashboard from "./DocumentDashboard";
 
 const ImageList = () => {
+
 	const [images, setImages] = useState([]);
 	const [message, setMessage] = useState("");
 	const [addMessage, setAddMessage] = useState("");
 	const [imageId, setImageId] = useState("");
-	const [transcriptions, setTranscriptions] = useState([]);
+	const [stats, setStats] = useState([]);
 
-	const {page, setPage} = useContext(PageContext);
+
+	const {page} = useContext(PageContext);
 
 	const fetchData = async () => {
 		if(page.document_cote){
@@ -31,9 +33,9 @@ const ImageList = () => {
 		}
 	}
 
-	const fetchTranscriptions = async () => {
+	const fetchStats = async () => {
 		if(page.document_cote){
-			await fetch('getMostTranscribed/' + page.document_cote, {
+			await fetch('getSensesStats/' + page.document_cote, {
 				method: 'GET',
 				headers: {'x-access-tokens': localStorage.getItem('token')}
 			}).then((response) => response.json())
@@ -43,20 +45,20 @@ const ImageList = () => {
 						setMessage("Erreur: Utilisateur non connecté");
 					}
 					else if (img.storage) {
-						setMessage("Pas de transcriptions");
-					} else if (!img.success) {
-						setMessage('Erreur - transcriptions')
+						setMessage("Pas de stats pour ce document");
 					}
-					setTranscriptions(img)
+					setStats(img[0])
 				}).catch(console.error)
 		}
 	}
 
+
+
 	useEffect(() => {
 		fetchData()
 			.catch(console.error);
-		fetchTranscriptions()
-			.catch(console.error);
+		fetchStats()
+			.catch(console.error)
 	}, [])
 
 
@@ -89,28 +91,16 @@ const ImageList = () => {
 
 	return (<div style={{display: "flex", flexDirection:"column", justifyContent:"center"}}>
 
-		<div className="document-dashboard">
-			<h3>{page.document_name}</h3>
-			<TranscriptionTab transcriptions={transcriptions}/>
-		</div>
+		<DocumentDashboard senseStats={stats}/>
 
 		{images.length ?
-			<table>
-			<thead>
-				<tr>
-					<th>image</th>
-					<th>image</th>
-					<th>Répartition des sens</th>
-				</tr>
-			</thead>
-			<tbody>
+			<div style={{display: "flex", flexWrap: "wrap", justifyContent: "center"}}>
 				{images.sort((a, b) => a[0] - b[0])
 					.map((doc, i) =>
 					<ImageItem key={i} data={doc}/>
 				)}
-			</tbody>
-
-		</table> : <span>{message}</span>}
+			</div>
+			 : <span>{message}</span>}
 		<div>
 			<h4>Ajouter une image au document</h4>
 			<div>

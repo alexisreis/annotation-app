@@ -42,10 +42,15 @@ tbody tr:hover{
   background-color: lightgray;
 }
 
-.image_previs {
-  transition: transform 0.5s ease-in-out;
-}
-
-.image_previs:hover{
-  transform: scale(110%);
+#document-search-bar {
+  max-width: 720px;
+  width: 720px;
+  height: 2em;
+  border-width: 1px;
+  border-color: darkgray;
+  padding-left: 18px;
+  background-color: lightgray;
+  margin-top: 0.5em;
+  font-size: 1em;
+  justify-content: center;
 }
