@@ -1,24 +1,15 @@
+import '../styles/TranscriptionTab.css'
 
 const TranscriptionTab = ({transcriptions}) => {
 	return (
-		<div className={"flex-center"}>
+		<div className={"transcription-tab flex-center"}>
+			<span>Mots les plus transcrits</span>
 			{transcriptions.length ?
-				<table>
-					<thead>
-					<tr>
-						<th>mot</th>
-						<th></th>
-					</tr>
-					</thead>
-					<tbody>
+				<ul>
 					{transcriptions.map((transcription, i) =>
-						<tr key={i}>
-							<td>{transcription[0]}</td>
-							<td>{transcription[1]}</td>
-						</tr>
+						<li key={i}>{transcription[0] + '     '}{transcription[1]}</li>
 					)}
-					</tbody>
-				</table> : null
+				</ul> : null
 			}
 		</div>
 	)

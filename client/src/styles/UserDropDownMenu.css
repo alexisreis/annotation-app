@@ -43,6 +43,10 @@
     border-color: #0095ff;
     background-color: rgba(0, 150, 255, 0.4);
 }
+.user-pic-div-W{
+    border-color: #3f3f3f;
+    background-color: rgba(47, 47, 47, 0.4);
+}
 
 #user-pic-div{
     display: flex;

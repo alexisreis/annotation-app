@@ -65,7 +65,6 @@ function Login() {
 
 	return (
 		<div className="App">
-			<header className="App-header">
 				<h1>Se connecter</h1>
 				<form onKeyDown={handleKeyDown}>
 					{incorrect ?
@@ -84,7 +83,6 @@ function Login() {
 					<input type="button" value="Login"
 					       onClick={() => login()}/>
 				</form>
-			</header>
 		</div>
 	);
 }

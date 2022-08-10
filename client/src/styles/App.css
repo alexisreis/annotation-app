@@ -6,9 +6,6 @@
 
 .App {
   text-align: center;
-}
-
-.App-header {
   background-color: var(--bg-color);
   min-height: 80vh;
   display: flex;

@@ -1,19 +1,14 @@
-import React, {useContext, useEffect, useState} from "react"
+import React, {useContext, useEffect} from "react"
 import ReactECharts from 'echarts-for-react'
 import TranscriptionTab from "./TranscriptionTab";
 import {PageContext} from "../utils/PageContext";
+import "../styles/DocumentDashboard.css"
+import {colorSense} from "../utils/utils";
 
-const colorSense = {
-	Son: '#19ff00',
-	Vue: '#00e0ff',
-	Odeur: '#a8482c',
-	Toucher: '#fff200',
-	Goût: '#ff00ae'
-}
 
-const DocumentDashboard = ({senseStats}) => {
+const DocumentDashboard = ({senseStats, transcriptions}) => {
 
-	const option = {
+	const option = senseStats ? {
 		/*backgroundColor: '#fff',*/
 		title: {
 			text: 'Répartition des sens',
@@ -26,6 +21,10 @@ const DocumentDashboard = ({senseStats}) => {
 		tooltip: {
 			trigger: 'item'
 		},
+		grid: {
+			height: '200px',
+			containLabel: true
+		},
 		series: [
 			{
 				name: 'Sens',
@@ -33,11 +32,11 @@ const DocumentDashboard = ({senseStats}) => {
 				radius: '55%',
 				center: ['50%', '50%'],
 				data: [
-					{ value: senseStats[0], name: 'Son',},
-					{ value: senseStats[1], name: 'Vue' },
-					{ value: senseStats[2], name: 'Odeur' },
-					{ value: senseStats[3], name: 'Toucher' },
-					{ value: senseStats[4], name: 'Goût' }
+					{value: senseStats[0], name: 'Son',},
+					{value: senseStats[1], name: 'Vue'},
+					{value: senseStats[2], name: 'Odeur'},
+					{value: senseStats[3], name: 'Toucher'},
+					{value: senseStats[4], name: 'Goût'}
 				].sort(function (a, b) {
 					return a.value - b.value;
 				}),
@@ -62,42 +61,20 @@ const DocumentDashboard = ({senseStats}) => {
 				},
 			}
 		]
-	};
-	const {page} = useContext(PageContext);
-
-	const [transcriptions, setTranscriptions] = useState([]);
-
-	const fetchTranscriptions = async () => {
-		if(page.document_cote){
-			await fetch('getMostTranscribed/' + page.document_cote, {
-				method: 'GET',
-				headers: {'x-access-tokens': localStorage.getItem('token')}
-			}).then((response) => response.json())
-				.then((img) => {
-					// Token is invalid or user is not logged in
-					if (img.missing || img.invalid) {
-						alert("Erreur: Utilisateur non connecté");
-					}
-					else if (img.storage) {
-						alert("Pas de transcriptions");
-					} else if (!img.success) {
-						alert('Erreur - transcriptions')
-					}
-					setTranscriptions(img)
-				}).catch(console.error)
-		}
-	}
-
-	useEffect(() => {
-		fetchTranscriptions()
-			.catch(console.error);
-	}, [])
+	} : null;
 
 	return (
 		<div className="document-dashboard">
-			<h3>{page.document_name}</h3>
-			<ReactECharts option={option}/>
-			<TranscriptionTab transcriptions={transcriptions}/>
+			<div className={"document-stats-div"}>
+				{senseStats.length > 0 ?
+					<div className={"document-graph-div"}>
+						<ReactECharts option={option}/>
+					</div>:
+					null}
+				{transcriptions.length > 0 ?
+					<TranscriptionTab transcriptions={transcriptions}/> :
+					null}
+			</div>
 		</div>)
 }
 

@@ -1,25 +1,45 @@
 import '../styles/App.css';
 import DocumentList from "../components/DocumentList";
-import ImageList from "../components/ImageList";
-import {useState, useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {UserContext} from "../utils/UserContext";
-import {PageContext} from "../utils/PageContext";
+import DocumentAdder from "../components/DocumentAdder";
 
 
 function HomeClient() {
 
-	const [state, setState] = useState({'image': false});
-	const {user, setUser} = useContext(UserContext);
-	const {page, setPage} = useContext(PageContext)
+	const {user} = useContext(UserContext)
+
+	const [documents, setDocuments] = useState([]);
+
+	const fetchData = async () => {
+		await fetch('getDocuments', {
+			method: 'GET',
+			headers: {'x-access-tokens': localStorage.getItem('token')}
+		}).then((response) => response.json())
+			.then((docs) => {
+				// Token is invalid or user is not logged in
+				if (docs.missing || docs.invalid) {
+					alert("Erreur: Utilisateur non connecté\"");
+				} else if (docs.storage) {
+					alert("Il n'y a pas de documents stockés ici");
+				}
+				setDocuments(docs)
+				return docs;
+			}).catch(console.error)
+	}
+
+	useEffect(() => {
+		fetchData()
+			.catch(console.error);
+	}, [])
+
 
 	return (
 		<div id="home-div">
-			{!page || page.page == 'home' ?
-				<DocumentList/>
-				: null}
-			{page && page.page == 'document' ?
-				<ImageList state={state} setState={setState} />
-				: null}
+			<h1>Bienvenue {user.name},</h1>
+			<br/>
+			<DocumentList documents={documents}/>
+			<DocumentAdder documents={documents} setDocuments={setDocuments}/>
 		</div>
 	);
 }

@@ -2,15 +2,10 @@ import {useNavigate} from "react-router-dom";
 import ReactECharts from 'echarts-for-react'
 import React, {useContext, useEffect, useState} from "react";
 import {PageContext} from "../utils/PageContext";
+import {colorSense} from "../utils/utils";
 import "../styles/ImageItem.css"
 
-const colorSense = {
-	Son: '#19ff00',
-	Vue: '#00e0ff',
-	Odeur: '#a8482c',
-	Toucher: '#fff200',
-	Goût: '#ff00ae'
-}
+
 
 
 const ImageItem = ({data}) => {

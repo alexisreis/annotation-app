@@ -1,10 +1,11 @@
 from flask import Blueprint, jsonify, make_response, current_app, request, \
     session
-from utils.extension import mysql, token_required, getUserId
+from utils.extension import mysql, token_required, getUserId, admin
 import jwt
 
 auth = Blueprint('auth', __name__)
 
+# $2a$10$w6pb68tKZnpNiR/U7kURfu7fyP1nITGqlkp4sS4roCK7rWWsDzaVi (admin admin)
 
 @auth.route('/login', methods=['POST'])
 def login():
@@ -51,28 +52,38 @@ def authenticate():
     return jsonify({"status": 'Verified'})
 
 
-@auth.route('/addUser', methods=['POST'])
-@token_required
-def addUser():
-    _, user_type = getUserId(request.headers['x-access-tokens'])
-    if user_type != 'A':
-        return jsonify({'failure': 'user is not admin and cannot add users'})
-
+@auth.route('/createNewUser', methods=['POST'])
+def createNewUser():
     name = request.values.get('name')
-    type = request.values.get('type')
     mail = request.values.get('mail')
     password = request.values.get('password')
 
-    if name and type and mail and password:
-        cursor = mysql.connection.cursor()
-        cursor.execute(f'''
-        INSERT INTO users(user_name, user_type, user_mail, user_password) 
-        VALUES ('{name}', '{type}','{mail}','{password}')''')
-        mysql.connection.commit()
-        cursor.close()
-        return jsonify({'success': 'Successful  insertion'})
-    else:
+    if not name or not mail or not password:
         return jsonify({'blank': 'Blank name, type, mail or password'})
 
+    cursor = mysql.connection.cursor()
+
+    user = cursor.execute(f'''SELECT user_id FROM users WHERE user_mail='{mail}' ''')
+    if user > 0:
+        return jsonify({'exists': 'This email has already an account'})
+
+    cursor.execute(f'''
+    INSERT INTO users(user_name, user_type, user_mail, user_password) 
+    VALUES ('{name}', 'W','{mail}','{password}')''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'Successful  insertion'})
 
 
+@auth.route('/getUsersList')
+@admin
+def getUsers():
+    cursor = mysql.connection.cursor()
+    user = cursor.execute('''
+        SELECT user_id, user_name, user_mail, user_type 
+        FROM Users ''')
+    if user > 0:
+        userDetails = cursor.fetchall()
+        return jsonify(userDetails)
+
+    return jsonify({'no_users': 'what ?'});

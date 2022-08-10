@@ -1,4 +1,4 @@
-import React, {useContext} from "react"
+import React, {useContext, useEffect} from "react"
 import {PageContext} from "../utils/PageContext";
 
 import '../styles/PathBar.css'
@@ -10,28 +10,37 @@ function PathBar() {
 	const navigate = useNavigate()
 
 	const goToHome = () => {
-		if(page.page === 'image'){
-			navigate('/')
-		}
-
-		if(page && page.page !== 'home'){
+		if (!page) {
 			setPage({page: 'home'})
+		} else if (page.document_cote && page.image_id) {
+			setPage({
+				page: 'home',
+				document_cote: page.document_cote,
+				document_name: page.document_name,
+				image_id: page.image_id
+			})
+		} else if (page.document_cote && !page.image_id) {
+			setPage({
+				page: 'home',
+				document_cote: page.document_cote,
+				document_name: page.document_name,
+			})
 		}
+		navigate('/')
 	}
 
 	const goToDocument = () => {
-		if(page.page === 'image'){
-			navigate('/')
-		}
-
-		if(page.page !== 'document'){
+		if(page.page !== 'document' && page.document_cote && page.document_name && page.image_id){
 			setPage({
 				page: 'document',
 				document_cote: page.document_cote,
-				document_name: page.document_name
+				document_name: page.document_name,
+				image_id: page.image_id
 			})
+			navigate('document')
 		}
 	}
+
 	return (
 		<div id={"pathbar"}>
 			<div className={"pathbar-element"} onClick={goToHome}>
@@ -41,6 +50,7 @@ function PathBar() {
 				<div className={"pathbar-element"} onClick={goToDocument}>
 					<h2>Document {' >'}</h2>
 					<span>{page.document_cote}</span>
+					<span>{page.document_name.substr(0, 15)}</span>
 				</div> : null}
 			{page && page.page === 'image' ?
 				<div className={"pathbar-element"}>

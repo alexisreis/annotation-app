@@ -4,17 +4,15 @@ import {useContext} from "react";
 import {UserContext} from "../utils/UserContext";
 
 function HomePage() {
-    const {user, setUser} = useContext(UserContext)
+    const {user} = useContext(UserContext)
   return (
     <div className="App">
-      <header className="App-header">
           {user ?
               <HomeClient />
               :
               <div>
                   <h1>Annotation HomePage</h1>
               </div>}
-      </header>
     </div>
   );
 }

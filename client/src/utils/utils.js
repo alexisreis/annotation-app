@@ -7,4 +7,12 @@ const verifyAuthentication = async () => {
 	console.log(response.json());
 }
 
-export {verifyAuthentication}
+const colorSense = {
+	Son: '#19ff00',
+	Vue: '#00e0ff',
+	Odeur: '#a8482c',
+	Toucher: '#fff200',
+	Goût: '#ff00ae'
+}
+
+export {verifyAuthentication, colorSense}

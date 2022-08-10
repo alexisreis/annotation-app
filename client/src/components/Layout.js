@@ -17,14 +17,23 @@ const Layout = () => {
 		<>
 			<div id="navbar-div" className="flex-column">
 				<div className="flex-column" onClick={() => {
-					console.log(page.page)
-					if(page && page.page === 'image'){
-						navigate('/')
-					}
-
-					if(page && page.page !== 'home'){
+					if (!page) {
 						setPage({page: 'home'})
+					} else if (page.document_cote && page.image_id) {
+						setPage({
+							page: 'home',
+							document_cote: page.document_cote,
+							document_name: page.document_name,
+							image_id: page.image_id
+						})
+					} else if (page.document_cote && !page.image_id) {
+						setPage({
+							page: 'home',
+							document_cote: page.document_cote,
+							document_name: page.document_name,
+						})
 					}
+					navigate('/')
 				}}>
 					<img src={logo} alt='Logo'/>
 					<h1 className="unselectable">ANNOTATION APP</h1>
@@ -35,6 +44,12 @@ const Layout = () => {
 					<nav>
 						<ul className="flex-column">
 							<li className="unselectable"
+							    id="sign-up-button"
+							    onClick={() => navigate('/signup')}>
+								Créer un compte
+							</li>
+							<li className="unselectable"
+							    id="login-button"
 							    onClick={() => navigate('/login')}>
 								SE CONNECTER
 							</li>
@@ -48,7 +63,7 @@ const Layout = () => {
 
 			</div>
 			{user ? <div>
-				<PathBar />
+				<PathBar/>
 			</div> : null}
 			<Outlet/>
 		</>

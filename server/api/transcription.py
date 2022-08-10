@@ -56,26 +56,3 @@ def updateAnnotationTranscription():
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
-
-
-@transcription.route('/getMostTranscribed/<cote>', methods=['GET'])
-@token_required
-def getMostTranscribed(cote):
-    cursor = mysql.connection.cursor()
-    transcriptions = cursor.execute(f'''
-        SELECT t1.transcription, count(t2.transcription_id)+1
-        FROM images i 
-        JOIN annotations a ON i.image_id = a.image_id 
-        JOIN transcription t1 ON a.annotation_id = t1.annotation_id
-        JOIN transcription t2 ON t1.transcription = t2.transcription
-        WHERE i.document_cote = '{cote}'
-        AND t1.transcription_id < t2.transcription_id
-        GROUP BY t1.transcription_id, t2.transcription_id
-        LIMIT 5; ''')
-
-    if transcriptions > 0:
-        transcriptions_infos = cursor.fetchall()
-        cursor.close()
-        return jsonify(transcriptions_infos)
-    cursor.close()
-    return jsonify({'storage': 'Not most used transcriptions'})

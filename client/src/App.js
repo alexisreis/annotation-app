@@ -8,6 +8,8 @@ import Test from "./pages/Test";
 import {UserContext} from "./utils/UserContext";
 import {PageContext} from "./utils/PageContext";
 import AdminDashboard from "./pages/AdminDashboard";
+import DocumentPage from "./pages/DocumentPage";
+import SignUp from "./pages/SignUp";
 
 function App(){
 
@@ -38,8 +40,10 @@ function App(){
 					<Routes>
 						<Route path="/" element={<Layout />}>
 							<Route index element={<HomePage />} />
-							<Route path="image" element={<AnnotoriousViewer />} />
+							<Route path="document" element={<DocumentPage />} />
+							<Route path="document/image" element={<AnnotoriousViewer />} />
 							<Route path="login" element={<Login />} />
+							<Route path="signup" element={<SignUp />} />
 							<Route path="admin" element={<AdminDashboard />} />
 						</Route>
 					</Routes>
