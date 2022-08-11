@@ -8,7 +8,7 @@ function AnnotoriousViewer() {
 	const {page, setPage} = useContext(PageContext)
 
 	const fetchImage = async (document_cote, image_id) => {
-		const data = await fetch(`/getOriginalImage/${document_cote}/${image_id}`);
+		const data = await fetch(`/getOriginalImage/${document_cote}/${image_id}`, {headers: {'x-access-tokens': localStorage.getItem('token')},});
 		const blob = await data.blob()
 		const url = URL.createObjectURL(blob)
 		setImage(url);
@@ -27,7 +27,7 @@ function AnnotoriousViewer() {
 				document_name: page.document_name
 			})
 		}
-	}, [page])
+	}, [page, setPage])
 
 	return (
 		<div className="App">

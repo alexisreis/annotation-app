@@ -1,11 +1,11 @@
 from flask import Blueprint, jsonify, request
-from utils.extension import mysql, token_required, getUserId, edition_type
+from utils.extension import mysql, token_required, getUserId, creator, editor
 
 transcription = Blueprint('transcription', __name__)
 
 
 @transcription.route("/createTranscription", methods=['POST'])
-@token_required
+@creator
 def createTranscription():
     transcription = request.values.get('transcription')
     id = request.values.get('id')
@@ -22,12 +22,8 @@ def createTranscription():
 
 
 @transcription.route("/deleteTranscription", methods=['POST'])
-@token_required
+@editor
 def deleteTranscription():
-    _, user_type = getUserId(request.headers['x-access-tokens'])
-    if user_type not in edition_type:
-        return jsonify({'failure': 'user has no rights to delete annotation'})
-
     annoId = request.values.get('id')
     cursor = mysql.connection.cursor()
     cursor.execute(f'''
@@ -38,11 +34,9 @@ def deleteTranscription():
 
 
 @transcription.route("/updateTranscription", methods=['POST'])
-@token_required
+@editor
 def updateAnnotationTranscription():
-    editor_id, user_type = getUserId(request.headers['x-access-tokens'])
-    if user_type not in edition_type:
-        return jsonify({'failure': 'user has no rights to edit'})
+    editor_id, _ = getUserId(request.headers['x-access-tokens'])
 
     transcription = request.values.get('transcription')
     id = request.values.get('id')

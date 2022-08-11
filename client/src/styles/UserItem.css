@@ -1,0 +1,7 @@
+.user-options {
+    font-size: 0.7em;
+}
+
+.user-options:hover {
+    filter: brightness(60%);
+}

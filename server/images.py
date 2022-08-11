@@ -1,23 +1,27 @@
 from flask import Blueprint, jsonify, send_file, request
 from image_processing import process_image
 from word_spotting import word_spotting
+from utils.extension import token_required, admin
 
 images = Blueprint('images', __name__)
 
 
 @images.route("/getResizedImage/<cote>/<img>")
+@token_required
 def getResizedImage(cote, img):
     path_to_processed_image = f'''images\\resized\\{cote}\\{img}.jpg'''
-    return send_file(path_to_processed_image, mimetype='image/jpg')\
+    return send_file(path_to_processed_image, mimetype='image/jpg')
 
 
 @images.route("/getOriginalImage/<cote>/<img>")
+@token_required
 def getOriginalImage(cote, img):
     path_to_processed_image = f'''images\\original\\{cote}\\{img}.jpg'''
     return send_file(path_to_processed_image, mimetype='image/jpg')
 
 
 @images.route("/getImageTest")
+@token_required
 def getImageTest():
     path_to_processed_image = process_image(
         "../client/public/wallpaper.jpg")
@@ -25,6 +29,7 @@ def getImageTest():
 
 
 @images.route('/uploadImage', methods=['POST'])
+@admin
 def uploadImage():
     """
     POST route handler that accepts an image, manipulates it and returns a JSON containing a possibly different image with more fields
@@ -38,6 +43,7 @@ def uploadImage():
 
 
 @images.route('/findWordInImage', methods=['POST'])
+@token_required
 def findWordInImage():
     """
     POST route handler that accepts an image, manipulates it and returns a JSON containing a possibly different image with more fields

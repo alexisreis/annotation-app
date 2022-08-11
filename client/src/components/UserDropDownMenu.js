@@ -27,7 +27,7 @@ function UserDropDownMenu() {
 		     onClick={() => setOpen(!open)}>
 			<span id="user-name-span"
 			      className="unselectable">{user.name}</span>
-			<img id="user-menu-arrow" src={arrow}
+			<img id="user-menu-arrow" src={arrow} alt="Drop down menu"
 			     className={open ? 'user-menu-arrow-reverted' : ''}/>
 			<div id="user-pic-div" className={`user-pic-div-${user.type}`}>
 				👤
@@ -37,13 +37,13 @@ function UserDropDownMenu() {
 			<div className={"dropdown"} onClick={() => setOpen(false)}>
 				<div className={"menu-item"}
 				     onClick={() => disconnect()}>
-					<img className={"menu-item-svg"} src={signOut}/>
+					<img className={"menu-item-svg"} src={signOut} alt="sign-out"/>
 					<span>Se déconnecter</span>
 				</div>
 				{user.type === 'A' ?
 					<div className={"menu-item"}
 					     onClick={() =>  navigate("/admin")}>
-						<img className={"menu-item-svg"} src={signOut}/>
+						<img className={"menu-item-svg"} src={signOut} alt="sign-out"/>
 						<span>Dashboard (admin)</span>
 					</div> : null}
 			</div> : null}

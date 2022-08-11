@@ -99,12 +99,14 @@ const createAnnotation = async (anno, annotation) => {
 			// Token is invalid or user is not logged in
 			if (res.missing || res.invalid) {
 				alert("Erreur: Utilisateur non connecté\"");
+			} else if(res.failure){
+				alert('Erreur: vous n\'avez pas les droits de créer une' +
+					' annotation')
 			} else if (!res.success) {
 				alert('Erreur lors de la création de l\'annotation')
 			}
 		}).catch(console.error)
 }
-
 
 function jsonIsEqual(json1, json2) {
 	for (var key in json1) {
@@ -268,6 +270,9 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 						// Token is invalid or user is not logged in
 						if (res.missing || res.invalid) {
 							alert("Erreur - Utilisateur non connecté\"");
+						} else if(res.failure){
+							alert('Erreur: vous n\'avez pas les droits de créer une' +
+								' annotation')
 						} else if (!res.success) {
 							alert('Erreur lors de l\'ajout du sens ' + sense)
 						}

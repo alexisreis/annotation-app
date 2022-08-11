@@ -65,7 +65,7 @@ const ImageItem = ({data}) => {
 	const [image, setImage] = useState(null);
 
 	const fetchImage = async (image_id) => {
-		const data = await fetch(`/getResizedImage/${page.document_cote}/${image_id}`);
+		const data = await fetch(`/getResizedImage/${page.document_cote}/${image_id}`, {headers: {'x-access-tokens': localStorage.getItem('token')},});
 		const blob = await data.blob()
 		const url = URL.createObjectURL(blob)
 		setImage(url);

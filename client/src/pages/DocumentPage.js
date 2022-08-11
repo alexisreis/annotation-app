@@ -10,7 +10,7 @@ export default function DocumentPage() {
 	const [stats, setStats] = useState([]);
 	const [transcriptions, setTranscriptions] = useState([]);
 
-	const {page, setPage} = useContext(PageContext);
+	const {page} = useContext(PageContext);
 
 	const fetchData = async () => {
 		if (page.document_cote) {

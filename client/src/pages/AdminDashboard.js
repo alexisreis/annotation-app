@@ -36,7 +36,8 @@ function AdminDashboard() {
 		<div className="App">
 			{user && user.type === 'A' ? <header className="App-header">
 				<h1>Console d'administration</h1>
-				<UserList users={usersList} />
+				<h4>Liste des utilisateurs</h4>
+				<UserList users={usersList} setUsers={setUsersList}/>
 			</header> : <h1>Not authorized</h1>}
 
 		</div>

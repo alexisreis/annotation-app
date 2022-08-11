@@ -7,6 +7,7 @@ auth = Blueprint('auth', __name__)
 
 # $2a$10$w6pb68tKZnpNiR/U7kURfu7fyP1nITGqlkp4sS4roCK7rWWsDzaVi (admin admin)
 
+
 @auth.route('/login', methods=['POST'])
 def login():
     # TODO : try / except
@@ -86,4 +87,34 @@ def getUsers():
         userDetails = cursor.fetchall()
         return jsonify(userDetails)
 
-    return jsonify({'no_users': 'what ?'});
+    return jsonify({'no_users': 'what ?'})
+
+
+@auth.route('/editUserType', methods=['POST'])
+@admin
+def editUserType():
+    user_type = request.values.get('user_type')
+    user_id = request.values.get('user_id')
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        UPDATE users 
+        SET user_type = '{user_type}' 
+        WHERE user_id = '{user_id}' ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'Successful update'})
+
+
+@auth.route('/deleteUser', methods=['POST'])
+@admin
+def deleteUser():
+    user_id = request.values.get('user_id')
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'''
+        DELETE FROM users 
+        WHERE user_id = '{user_id}' ''')
+    mysql.connection.commit()
+    cursor.close()
+    return jsonify({'success': 'Successful delete'})
+
+

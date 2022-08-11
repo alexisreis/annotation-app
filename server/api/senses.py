@@ -1,11 +1,12 @@
 from flask import Blueprint, jsonify, request
-from utils.extension import mysql, token_required, getUserId, edition_type
+from utils.extension import mysql, token_required, getUserId, editor, admin, \
+    creator
 
 senses = Blueprint('senses', __name__)
 
 
 @senses.route("/createSense/<sense>", methods=['POST'])
-@token_required
+@creator
 def createSenseView(sense):
     if sense not in['view', 'sound', 'smell', 'touch', 'taste']:
         return jsonify({'no_tables': 'table sense_' + sense + ' does not '
@@ -32,15 +33,11 @@ def createSenseView(sense):
 
 
 @senses.route("/deleteSense/<sense>", methods=['POST'])
-@token_required
+@editor
 def deleteSenseView(sense):
     if sense not in['view', 'sound', 'smell', 'touch', 'taste']:
         return jsonify({'no_tables': 'table sense_' + sense + ' does not '
                                                               'exists'})
-
-    _, user_type = getUserId(request.headers['x-access-tokens'])
-    if user_type not in edition_type:
-        return jsonify({'failure': 'user has no rights to delete annotation'})
 
     annoId = request.values.get('id')
     cursor = mysql.connection.cursor()
@@ -52,15 +49,13 @@ def deleteSenseView(sense):
 
 
 @senses.route("/updateSense/<sense>", methods=['POST'])
-@token_required
+@editor
 def updateSenseView(sense):
     if sense not in['view', 'sound', 'smell', 'touch', 'taste']:
         return jsonify({'no_tables': 'table sense_' + sense + ' does not '
                                                               'exists'})
     id = request.values.get('id')
-    editor_id, user_type = getUserId(request.headers['x-access-tokens'])
-    if user_type not in edition_type:
-        return jsonify({'failure': 'user has no rights to edit'})
+    editor_id, _ = getUserId(request.headers['x-access-tokens'])
 
     cursor = mysql.connection.cursor()
 

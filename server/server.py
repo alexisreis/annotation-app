@@ -12,6 +12,8 @@ from api.senses import senses
 from os import listdir
 from os.path import exists
 
+from utils.extension import admin
+
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = "holaquetal"
@@ -57,6 +59,7 @@ def add_images(path):
 
 
 @app.route('/setdata')
+@admin
 def setdata():
     add_images('images/original/1')
     return "DONE"

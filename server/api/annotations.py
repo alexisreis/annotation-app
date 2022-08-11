@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from utils.extension import mysql, token_required, getUserId, \
-    edition_type
+    edition_type, creator, editor
 from json import loads
 
 annotations = Blueprint('annotations', __name__)
@@ -143,7 +143,7 @@ def getImageAnnotations(id):
 
 
 @annotations.route("/createAnnotation/<imageId>", methods=['POST'])
-@token_required
+@creator
 def createAnnotation(imageId):
     body = loads(request.values.get('body'))
     zone_type = request.values.get('zone_type')
@@ -203,12 +203,8 @@ def createAnnotation(imageId):
 
 
 @annotations.route("/deleteAnnotation", methods=['POST'])
-@token_required
+@editor
 def deleteAnnotation():
-    _, user_type = getUserId(request.headers['x-access-tokens'])
-    if user_type not in edition_type:
-        return jsonify({'failure': 'user has no rights to delete annotation'})
-
     annoId = request.values.get('id')
     cursor = mysql.connection.cursor()
     cursor.execute(f'''
@@ -219,7 +215,7 @@ def deleteAnnotation():
 
 
 @annotations.route("/updateAnnotationCoord", methods=['POST'])
-@token_required
+@editor
 def updateAnnotationCoord():
     _, user_type = getUserId(request.headers['x-access-tokens'])
     if user_type not in edition_type:

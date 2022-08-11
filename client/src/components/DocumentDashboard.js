@@ -1,7 +1,6 @@
-import React, {useContext, useEffect} from "react"
+import React from "react"
 import ReactECharts from 'echarts-for-react'
 import TranscriptionTab from "./TranscriptionTab";
-import {PageContext} from "../utils/PageContext";
 import "../styles/DocumentDashboard.css"
 import {colorSense} from "../utils/utils";
 

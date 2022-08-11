@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify, request
-from utils.extension import mysql, token_required
+from utils.extension import mysql, token_required, admin
 
 
 documents = Blueprint('documents', __name__)
 
 
 @documents.route('/addDocument', methods=['POST'])
-@token_required
+@admin
 def addDocument():
     cote = request.values.get('cote')
     nom = request.values.get('nom')
@@ -94,7 +94,7 @@ def getImagesFromDocument(cote):
 
 
 @documents.route('/addImageToDocument/<cote>', methods=['POST'])
-@token_required
+@admin
 def addImageToDocument(cote):
     image_id = request.values.get('image_id')
     cursor = mysql.connection.cursor()

@@ -4,7 +4,6 @@ import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import AnnotoriousViewer from "./pages/AnnotoriousViewer";
 import Login from "./pages/Login";
-import Test from "./pages/Test";
 import {UserContext} from "./utils/UserContext";
 import {PageContext} from "./utils/PageContext";
 import AdminDashboard from "./pages/AdminDashboard";

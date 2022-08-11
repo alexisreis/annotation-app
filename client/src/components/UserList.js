@@ -1,10 +1,35 @@
 import React from 'react'
+import UserItem from "./UserItem";
 
-const UserList = ({users}) => {
+const UserList = ({users, setUsers}) => {
+
+	const deleteUser = async (user_id, user_mail) => {
+		if(prompt('Voulez-vous vraiment-supprimer le compte de ' + user_mail + ' ?' + '\nCette action est irréversible. Taper supprimer si oui') === 'supprimer'){
+			const formData = new FormData();
+			formData.append("user_id", user_id);
+
+			await fetch('deleteUser', {
+				method: 'POST',
+				body: formData,
+				headers: {'x-access-tokens': localStorage.getItem('token')}
+			}).then((response) => response.json())
+				.then((res) => {
+					// Token is invalid or user is not logged in
+					if (res.missing || res.invalid) {
+						alert("Erreur: Utilisateur non connecté\"");
+					} else if (res.failure) {
+						alert("Non autorisé")
+					} else {
+						setUsers(users.filter((a) => a[0] !== user_id))
+						alert("Utilisateur supprimé")
+					}
+				}).catch(console.error)
+		}
+	}
 
 	return (<div>
 
-		{users ? <table>
+		{users && users.length > 0 ? <table>
 			<thead>
 			<tr>
 				<th>id</th>
@@ -15,14 +40,7 @@ const UserList = ({users}) => {
 			</thead>
 			<tbody>
 			{users.sort((a, b) => a[0] - b[0])
-				.map((doc, i) =>
-					<tr>
-						<td>{doc[0]}</td>
-						<td>{doc[1]}</td>
-						<td>{doc[2]}</td>
-						<td>{doc[3]}</td>
-					</tr>
-				)}
+				.map((user, i) => <UserItem key={i} user={user} deleteUser={deleteUser}/>)}
 			</tbody>
 
 		</table> : <span>Aucun utilisateur...</span>}
