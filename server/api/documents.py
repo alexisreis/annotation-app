@@ -33,7 +33,7 @@ def getDocuments():
     if doc > 0:
         documentsDetails = cursor.fetchall();
         cursor.close()
-        return jsonify(documentsDetails)
+        return make_response(jsonify(documentsDetails), 200)
     cursor.close()
     return make_response(jsonify({'storage': 'No documents stored'}), 200)
 
