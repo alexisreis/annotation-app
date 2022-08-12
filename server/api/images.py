@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, send_file, request, make_response
 from image_processing import process_image
 from word_spotting import word_spotting
 from utils.extension import token_required, admin
+from utils.image_processing import process_image
+from utils.word_spotting import word_spotting
 from os.path import exists
 
 images = Blueprint('images', __name__)
@@ -28,7 +30,7 @@ def getOriginalImage(cote, img):
 
 
 @images.route("/getImageTest")
-# @token_required
+@token_required
 def getImageTest():
     path_to_image = "../client/public/wallpaper.jpg"
     if not exists(path_to_image):

@@ -182,7 +182,6 @@ def createAnnotation(imageId):
             if sense_body.get('sound'):
                 sound_type = str(sense_body.get('sound').get('type')).replace(
                     '\'', '"')
-                print(sound_type)
                 sound_volume = sense_body.get('sound').get('volume')
                 cursor.execute("""
                     INSERT INTO sense_sound (annotation_id, sound_type, sound_volume, user_id)

@@ -5,8 +5,6 @@ import jwt
 
 auth = Blueprint('auth', __name__)
 
-# $2a$10$w6pb68tKZnpNiR/U7kURfu7fyP1nITGqlkp4sS4roCK7rWWsDzaVi (admin admin)
-
 
 @auth.route('/login', methods=['POST'])
 def login():
