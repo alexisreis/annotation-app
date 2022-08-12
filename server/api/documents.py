@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 from utils.extension import mysql, token_required, admin
 
 documents = Blueprint('documents', __name__)
@@ -22,7 +22,7 @@ def addDocument():
                    })
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'Successful insertion'})
+    return make_response(jsonify({'success': 'Successful insertion'}), 201)
 
 
 @documents.route('/getDocuments', methods=['GET'])
@@ -35,7 +35,7 @@ def getDocuments():
         cursor.close()
         return jsonify(documentsDetails)
     cursor.close()
-    return jsonify({'storage': 'No documents stored'})
+    return make_response(jsonify({'storage': 'No documents stored'}), 200)
 
 
 @documents.route('/getDocument/<cote>', methods=['GET'])
@@ -97,9 +97,9 @@ def getImagesFromDocument(cote):
             response.update({'transcriptions': transcriptionsDetails})
 
         cursor.close()
-        return jsonify(response)
+        return make_response(jsonify(response), 200)
     cursor.close()
-    return jsonify({'storage': 'No images stored'})
+    return make_response(jsonify({'storage': 'No images stored'}), 200)
 
 
 @documents.route('/addImageToDocument/<cote>', methods=['POST'])
@@ -113,4 +113,4 @@ def addImageToDocument(cote):
                    {'image_id': image_id, 'cote': cote})
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'success'})
+    return make_response(jsonify({'success': 'success'}), 201)

@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 from utils.extension import mysql, token_required, getUserId, editor, admin, \
     creator
 
@@ -9,8 +9,8 @@ senses = Blueprint('senses', __name__)
 @creator
 def createSenseView(sense):
     if sense not in['view', 'sound', 'smell', 'touch', 'taste']:
-        return jsonify({'no_tables': 'table sense_' + sense + ' does not '
-                                                              'exists'})
+        return make_response(jsonify({'no_tables': 'table sense_' + sense + ' does not '
+                                                              'exists'}), 404)
     annotation_id = request.values.get('id')
     user_id, _ = getUserId(request.headers['x-access-tokens'])
 
@@ -28,47 +28,69 @@ def createSenseView(sense):
                            'sound_volume': sound_volume,
                            'user_id': user_id,
                        })
-    else:
+    elif sense == 'view':
         cursor.execute("""
-            INSERT INTO %(table)s (annotation_id, user_id)
+            INSERT INTO sense_view (annotation_id, user_id)
             VALUES (%(annotation_id)s, %(user_id)s)""",
                        {
-                           'table': 'sense_' + sense,
+                           'annotation_id': annotation_id,
+                           'user_id': user_id,
+                       })
+    elif sense == 'smell':
+        cursor.execute("""
+            INSERT INTO sense_smell (annotation_id, user_id)
+            VALUES (%(annotation_id)s, %(user_id)s)""",
+                       {
+                           'annotation_id': annotation_id,
+                           'user_id': user_id,
+                       })
+    elif sense == 'touch':
+        cursor.execute("""
+            INSERT INTO sense_touch (annotation_id, user_id)
+            VALUES (%(annotation_id)s, %(user_id)s)""",
+                       {
+                           'annotation_id': annotation_id,
+                           'user_id': user_id,
+                       })
+    elif sense == 'taste':
+        cursor.execute("""
+            INSERT INTO sense_taste (annotation_id, user_id)
+            VALUES (%(annotation_id)s, %(user_id)s)""",
+                       {
                            'annotation_id': annotation_id,
                            'user_id': user_id,
                        })
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'success'})
+    return make_response(jsonify({'success': 'success'}), 201)
 
 
 @senses.route("/deleteSense/<sense>", methods=['POST'])
 @editor
 def deleteSenseView(sense):
     if sense not in['view', 'sound', 'smell', 'touch', 'taste']:
-        return jsonify({'no_tables': 'table sense_' + sense + ' does not '
-                                                              'exists'})
+        return make_response(jsonify({'no_tables': 'table sense_' + sense + ' does not '
+                                                                            'exists'}), 404)
 
     annotation_id = request.values.get('id')
     cursor = mysql.connection.cursor()
-    cursor.execute("""
-        DELETE FROM %(table)s 
+    cursor.execute(f"""
+        DELETE FROM sense_{sense}
         WHERE annotation_id = %(annotation_id)s """,
                    {
-                       'table': 'sense_' + sense,
                        'annotation_id': annotation_id,
                    })
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'success'})
+    return make_response(jsonify({'success': 'success'}), 200)
 
 
 @senses.route("/updateSense/<sense>", methods=['POST'])
 @editor
 def updateSenseView(sense):
     if sense not in['view', 'sound', 'smell', 'touch', 'taste']:
-        return jsonify({'no_tables': 'table sense_' + sense + ' does not '
-                                                              'exists'})
+        return make_response(jsonify({'no_tables': 'table sense_' + sense + ' does not '
+                                                                            'exists'}), 404)
     annotation_id = request.values.get('id')
     editor_id, _ = getUserId(request.headers['x-access-tokens'])
 
@@ -89,16 +111,18 @@ def updateSenseView(sense):
                            'sound_volume': sound_volume,
                            'annotation_id': annotation_id,
                        })
-    else:
-        cursor.execute("""
-            UPDATE %(table)s 
-            SET editor_id = %(editor_id)s 
-            WHERE annotation_id = %(annotation_id)s """,
-                       {
-                           'table': 'sense_'+sense,
-                           'editor_id': editor_id,
-                           'annotation_id': annotation_id,
-                       })
+    # TODO : once you can update other senses (now you can only create /
+    #  delete)
+    # else:
+    #     cursor.execute("""
+    #         UPDATE %(table)s
+    #         SET editor_id = %(editor_id)s
+    #         WHERE annotation_id = %(annotation_id)s """,
+    #                    {
+    #                        'table': 'sense_'+sense,
+    #                        'editor_id': editor_id,
+    #                        'annotation_id': annotation_id,
+    #                    })
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'success'})
+    return make_response(jsonify({'success': 'success'}), 200)

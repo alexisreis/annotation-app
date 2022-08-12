@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 from utils.extension import mysql, token_required, getUserId, creator, editor
 
 transcription = Blueprint('transcription', __name__)
@@ -23,7 +23,7 @@ def createTranscription():
                    })
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'success'})
+    return make_response(jsonify({'success': 'success'}), 201)
 
 
 @transcription.route("/deleteTranscription", methods=['POST'])
@@ -39,7 +39,7 @@ def deleteTranscription():
                    })
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'success'})
+    return make_response(jsonify({'success': 'success'}), 200)
 
 
 @transcription.route("/updateTranscription", methods=['POST'])
@@ -63,4 +63,4 @@ def updateAnnotationTranscription():
 
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'success'})
+    return make_response(jsonify({'success': 'success'}), 200)

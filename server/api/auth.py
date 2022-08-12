@@ -23,9 +23,7 @@ def login():
                           })
     if user == 0:
         cursor.close()
-        return make_response('User not found', 403, {'WWW-Authenticate':
-                                                         'Basic '
-                                                         'realm:"Authentification Failed!"'})
+        return make_response(jsonify({'not_found': 'User not found'}), 403)
 
     userDetails = cursor.fetchall()
     cursor.close()
@@ -35,9 +33,7 @@ def login():
     user_password = userDetails[0][4]
 
     if password != user_password:
-        return make_response('Password is incorrect', 403, {'WWW-Authenticate':
-                                                                'Basic '
-                                                                'realm:"Authentification Failed!"'})
+        return make_response(jsonify({'password': 'Incorrect'}), 403)
 
     session['logged_in'] = True
     token = jwt.encode({
@@ -49,13 +45,13 @@ def login():
     },
         key=current_app.config['SECRET_KEY'],
         algorithm="HS256")
-    return jsonify({'token': token})
+    return make_response(jsonify({'token': token}), 200)
 
 
 @auth.route('/auth')
 @token_required
 def authenticate():
-    return jsonify({"status": 'Verified'})
+    return make_response(jsonify({"status": 'Verified'}), 200)
 
 
 @auth.route('/createNewUser', methods=['POST'])
@@ -65,7 +61,8 @@ def createNewUser():
     password = request.values.get('password')
 
     if not name or not mail or not password:
-        return jsonify({'blank': 'Blank name, type, mail or password'})
+        return make_response(jsonify({'blank': 'Blank name, type, mail or '
+                                               'password'}), 400)
 
     cursor = mysql.connection.cursor()
 
@@ -74,7 +71,8 @@ def createNewUser():
         FROM users 
         WHERE user_mail=%(mail)s """, {'mail': mail})
     if user > 0:
-        return jsonify({'exists': 'This email has already an account'})
+        return make_response(jsonify({'exists': 'This email has already an '
+                                                'account'}), 418)
 
     cursor.execute("""
     INSERT INTO users(user_name, user_type, user_mail, user_password) 
@@ -86,7 +84,7 @@ def createNewUser():
                    })
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'Successful  insertion'})
+    return make_response(jsonify({'success': 'Successful  insertion'}), 201)
 
 
 @auth.route('/getUsersList')
@@ -97,11 +95,13 @@ def getUsers():
         SELECT user_id, user_name, user_mail, user_type 
         FROM Users """)
 
-    if user > 0:
-        userDetails = cursor.fetchall()
-        return jsonify(userDetails)
+    if user == 0:
+        return make_response(jsonify({'error': 'what ?'}), 500)
 
-    return jsonify({'no_users': 'what ?'})
+    userDetails = cursor.fetchall()
+    return make_response(jsonify(userDetails), 200)
+
+
 
 
 @auth.route('/editUserType', methods=['POST'])
@@ -121,7 +121,7 @@ def editUserType():
                    })
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'Successful update'})
+    return make_response(jsonify({'success': 'Successful update'}), 200)
 
 
 @auth.route('/deleteUser', methods=['POST'])
@@ -138,6 +138,6 @@ def deleteUser():
                    })
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'Successful delete'})
+    return make_response(jsonify({'success': 'Successful delete'}), 200)
 
 

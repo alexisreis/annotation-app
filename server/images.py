@@ -1,7 +1,8 @@
-from flask import Blueprint, jsonify, send_file, request
+from flask import Blueprint, jsonify, send_file, request, make_response
 from image_processing import process_image
 from word_spotting import word_spotting
 from utils.extension import token_required, admin
+from os.path import exists
 
 images = Blueprint('images', __name__)
 
@@ -9,23 +10,31 @@ images = Blueprint('images', __name__)
 @images.route("/getResizedImage/<cote>/<img>")
 @token_required
 def getResizedImage(cote, img):
-    path_to_processed_image = f'''images\\resized\\{cote}\\{img}.jpg'''
-    return send_file(path_to_processed_image, mimetype='image/jpg')
+    path_to_resized_image = f'''images\\resized\\{cote}\\{img}.jpg'''
+    if not exists(path_to_resized_image):
+        return make_response(jsonify({'not_found': 'No files'}), 404)
+    return make_response(send_file(path_to_resized_image,
+                                   mimetype='image/jpg'), 200)
 
 
 @images.route("/getOriginalImage/<cote>/<img>")
 @token_required
 def getOriginalImage(cote, img):
-    path_to_processed_image = f'''images\\original\\{cote}\\{img}.jpg'''
-    return send_file(path_to_processed_image, mimetype='image/jpg')
+    path_to_original_image = f'''images\\original\\{cote}\\{img}.jpg'''
+    if not exists(path_to_original_image):
+        return make_response(jsonify({'not_found': 'No files'}), 404)
+    return make_response(send_file(path_to_original_image,
+                                   mimetype='image/jpg'), 200)
 
 
 @images.route("/getImageTest")
-@token_required
+# @token_required
 def getImageTest():
-    path_to_processed_image = process_image(
-        "../client/public/wallpaper.jpg")
-    return send_file(path_to_processed_image, mimetype='image/jpg')
+    path_to_image = "../client/public/wallpaper.jpg"
+    if not exists(path_to_image):
+        return make_response(jsonify({'not_found': 'No files'}), 404)
+    return make_response(send_file(path_to_image,
+                                   mimetype='image/jpg'), 200)
 
 
 @images.route('/uploadImage', methods=['POST'])
@@ -39,7 +48,8 @@ def uploadImage():
     data.save('save_pic.jpg')
 
     path_to_processed_image = process_image('save_pic.jpg')
-    return send_file(path_to_processed_image, mimetype='image/jpg')
+    return make_response(send_file(path_to_processed_image,
+                                   mimetype='image/jpg'), 200)
 
 
 @images.route('/findWordInImage', methods=['POST'])
@@ -65,5 +75,5 @@ def findWordInImage():
     best_potential = word_spotting('save_pic.jpg', x, y, w, h)
 
     # return send_file(best_potential, mimetype='image/jpg')
-    return jsonify(best_potential)
+    return make_response(jsonify(best_potential), 200)
 

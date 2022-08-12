@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 from utils.extension import mysql, token_required, getUserId, creator, editor
 from json import loads
 
@@ -152,7 +152,7 @@ def getImageAnnotations(id):
 
             returnAnno.append(annoObject)
     cursor.close()
-    return jsonify(returnAnno)
+    return make_response(jsonify(returnAnno), 200)
 
 
 @annotations.route("/createAnnotation/<imageId>", methods=['POST'])
@@ -243,7 +243,7 @@ def createAnnotation(imageId):
 
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'success'})
+    return make_response(jsonify({'success': 'success'}), 201)
 
 
 @annotations.route("/deleteAnnotation", methods=['POST'])
@@ -259,7 +259,7 @@ def deleteAnnotation():
                    })
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'success'})
+    return make_response(jsonify({'success': 'success'}), 200)
 
 
 @annotations.route("/updateAnnotationCoord", methods=['POST'])
@@ -279,4 +279,4 @@ def updateAnnotationCoord():
                    })
     mysql.connection.commit()
     cursor.close()
-    return jsonify({'success': 'success'})
+    return make_response(jsonify({'success': 'success'}), 200)

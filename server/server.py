@@ -12,7 +12,8 @@ from init_database import init_db
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = "holaquetal"
+# TODO : put SECRET_KET in a .env file
+app.config['SECRET_KEY'] = 'your_secret_key'
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'

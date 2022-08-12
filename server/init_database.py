@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, make_response, jsonify
 from utils.extension import admin, mysql
 from os import listdir, mkdir
 from os.path import exists, join
@@ -98,8 +98,8 @@ def add_images_to_db(cote):
                 add_image_to_db(f[:-4], cote)
 
 
-def read_excel_data():
-    data = pd.read_excel(r'liste_cotes_deliberations_1776-1790.xlsx',
+def read_excel_data(excel_file):
+    data = pd.read_excel(excel_file,
                          sheet_name='Feuil1')
     df = pd.DataFrame(data, columns=['Cote', 'Intitulé', 'dates'])
 
@@ -108,10 +108,10 @@ def read_excel_data():
             add_document_to_db(PROJECT_NAME + data.at[i, 'Cote'],
                                data.at[i, 'Intitulé'], data.at[i, 'dates'])
         add_images_to_db(PROJECT_NAME + data.at[i, 'Cote'])
-    return "DONE"
 
 
 @init_db.route('/initdb')
+@admin
 def initdb():
-    read_excel_data()
-    return "DONE"
+    read_excel_data(r'images/liste_documents.xlsx')
+    return make_response(jsonify({'success': 'init db'}), 200)
