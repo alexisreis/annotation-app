@@ -10,41 +10,46 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=['POST'])
 def login():
-    # TODO : try / except
     mail = request.values.get('mail')
     password = request.values.get('password')
 
     cursor = mysql.connection.cursor()
-    user = cursor.execute(f'''SELECT * FROM Users WHERE user_mail='{mail}'  ''')
-    if user > 0:
-        userDetails = cursor.fetchall()
-        cursor.close()
-        user_id = userDetails[0][0]
-        user_name = userDetails[0][1]
-        user_type = userDetails[0][2]
-        user_password = userDetails[0][4]
-    else:
+    user = cursor.execute("""
+        SELECT * 
+        FROM Users 
+        WHERE user_mail=%(mail)s  """,
+                          {
+                              'mail': mail
+                          })
+    if user == 0:
         cursor.close()
         return make_response('User not found', 403, {'WWW-Authenticate':
                                                          'Basic '
                                                          'realm:"Authentification Failed!"'})
 
-    if password == user_password:
-        session['logged_in'] = True
-        token = jwt.encode({
-            'user_id': user_id,
-            'user_name': user_name,
-            'user_mail': mail,
-            'user_type': user_type,
-            # 'expiration': str(datetime.utcnow() + timedelta(seconds=30))
-        },
-            key=current_app.config['SECRET_KEY'],
-            algorithm="HS256")
-        return jsonify({'token': token})
-    else:
+    userDetails = cursor.fetchall()
+    cursor.close()
+    user_id = userDetails[0][0]
+    user_name = userDetails[0][1]
+    user_type = userDetails[0][2]
+    user_password = userDetails[0][4]
+
+    if password != user_password:
         return make_response('Password is incorrect', 403, {'WWW-Authenticate':
                                                                 'Basic '
                                                                 'realm:"Authentification Failed!"'})
+
+    session['logged_in'] = True
+    token = jwt.encode({
+        'user_id': user_id,
+        'user_name': user_name,
+        'user_mail': mail,
+        'user_type': user_type,
+        # 'expiration': str(datetime.utcnow() + timedelta(seconds=30))
+    },
+        key=current_app.config['SECRET_KEY'],
+        algorithm="HS256")
+    return jsonify({'token': token})
 
 
 @auth.route('/auth')
@@ -64,13 +69,21 @@ def createNewUser():
 
     cursor = mysql.connection.cursor()
 
-    user = cursor.execute(f'''SELECT user_id FROM users WHERE user_mail='{mail}' ''')
+    user = cursor.execute("""
+        SELECT user_id 
+        FROM users 
+        WHERE user_mail=%(mail)s """, {'mail': mail})
     if user > 0:
         return jsonify({'exists': 'This email has already an account'})
 
-    cursor.execute(f'''
+    cursor.execute("""
     INSERT INTO users(user_name, user_type, user_mail, user_password) 
-    VALUES ('{name}', 'W','{mail}','{password}')''')
+    VALUES (%(name)s, 'W', %(mail)s, %(password)s)""",
+                   {
+                       'name': name,
+                       'mail': mail,
+                       'password': password,
+                   })
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'Successful  insertion'})
@@ -80,9 +93,10 @@ def createNewUser():
 @admin
 def getUsers():
     cursor = mysql.connection.cursor()
-    user = cursor.execute('''
+    user = cursor.execute("""
         SELECT user_id, user_name, user_mail, user_type 
-        FROM Users ''')
+        FROM Users """)
+
     if user > 0:
         userDetails = cursor.fetchall()
         return jsonify(userDetails)
@@ -95,11 +109,16 @@ def getUsers():
 def editUserType():
     user_type = request.values.get('user_type')
     user_id = request.values.get('user_id')
+
     cursor = mysql.connection.cursor()
-    cursor.execute(f'''
+    cursor.execute("""
         UPDATE users 
-        SET user_type = '{user_type}' 
-        WHERE user_id = '{user_id}' ''')
+        SET user_type = %(user_type)s
+        WHERE user_id = %(user_id)s """,
+                   {
+                       'user_type': user_type,
+                       'user_id': user_id
+                   })
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'Successful update'})
@@ -109,10 +128,14 @@ def editUserType():
 @admin
 def deleteUser():
     user_id = request.values.get('user_id')
+
     cursor = mysql.connection.cursor()
-    cursor.execute(f'''
+    cursor.execute("""
         DELETE FROM users 
-        WHERE user_id = '{user_id}' ''')
+        WHERE user_id = %(user_id)s """,
+                   {
+                       'user_id': user_id
+                   })
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'Successful delete'})

@@ -65,12 +65,12 @@ const DocumentDashboard = ({senseStats, transcriptions}) => {
 	return (
 		<div className="document-dashboard">
 			<div className={"document-stats-div"}>
-				{senseStats.length > 0 ?
+				{senseStats && senseStats.length > 0 ?
 					<div className={"document-graph-div"}>
 						<ReactECharts option={option}/>
 					</div>:
 					null}
-				{transcriptions.length > 0 ?
+				{transcriptions && transcriptions.length > 0 ?
 					<TranscriptionTab transcriptions={transcriptions}/> :
 					null}
 			</div>

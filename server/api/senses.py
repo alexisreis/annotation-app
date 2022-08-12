@@ -11,22 +11,32 @@ def createSenseView(sense):
     if sense not in['view', 'sound', 'smell', 'touch', 'taste']:
         return jsonify({'no_tables': 'table sense_' + sense + ' does not '
                                                               'exists'})
-    id = request.values.get('id')
+    annotation_id = request.values.get('id')
     user_id, _ = getUserId(request.headers['x-access-tokens'])
 
     cursor = mysql.connection.cursor()
 
     if sense == 'sound':
         sound_type = request.values.get('sound_type')
-        print(sound_type)
         sound_volume = request.values.get('sound_volume')
-        cursor.execute(f'''
+        cursor.execute("""
             INSERT INTO sense_sound (annotation_id, sound_type, sound_volume, user_id)
-            VALUES ('{id}', '{sound_type}', '{sound_volume}', {user_id}) ''')
+            VALUES (%(annotation_id)s, %(sound_type)s, %(sound_volume)s, %(user_id)s) """,
+                       {
+                           'annotation_id': annotation_id,
+                           'sound_type': sound_type,
+                           'sound_volume': sound_volume,
+                           'user_id': user_id,
+                       })
     else:
-        cursor.execute(f'''
-            INSERT INTO sense_{sense} (annotation_id, user_id)
-            VALUES ('{id}', {user_id}) ''')
+        cursor.execute("""
+            INSERT INTO %(table)s (annotation_id, user_id)
+            VALUES (%(annotation_id)s, %(user_id)s)""",
+                       {
+                           'table': 'sense_' + sense,
+                           'annotation_id': annotation_id,
+                           'user_id': user_id,
+                       })
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
@@ -39,10 +49,15 @@ def deleteSenseView(sense):
         return jsonify({'no_tables': 'table sense_' + sense + ' does not '
                                                               'exists'})
 
-    annoId = request.values.get('id')
+    annotation_id = request.values.get('id')
     cursor = mysql.connection.cursor()
-    cursor.execute(f'''
-        DELETE FROM sense_{sense} WHERE annotation_id = '{annoId}' ''')
+    cursor.execute("""
+        DELETE FROM %(table)s 
+        WHERE annotation_id = %(annotation_id)s """,
+                   {
+                       'table': 'sense_' + sense,
+                       'annotation_id': annotation_id,
+                   })
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
@@ -54,7 +69,7 @@ def updateSenseView(sense):
     if sense not in['view', 'sound', 'smell', 'touch', 'taste']:
         return jsonify({'no_tables': 'table sense_' + sense + ' does not '
                                                               'exists'})
-    id = request.values.get('id')
+    annotation_id = request.values.get('id')
     editor_id, _ = getUserId(request.headers['x-access-tokens'])
 
     cursor = mysql.connection.cursor()
@@ -63,17 +78,27 @@ def updateSenseView(sense):
         sound_type = request.values.get('sound_type')
         sound_volume = request.values.get('sound_volume')
 
-        cursor.execute(f'''
+        cursor.execute("""
             UPDATE sense_sound 
-            SET editor_id = {editor_id}, sound_type='{sound_type}', 
-            sound_volume='{sound_volume}'
-            WHERE annotation_id = '{id}' ''')
+            SET editor_id = %(editor_id)s, sound_type= %(sound_type)s, 
+                sound_volume= %(sound_volume)s
+            WHERE annotation_id = %(annotation_id)s """,
+                       {
+                           'editor_id': editor_id,
+                           'sound_type': sound_type,
+                           'sound_volume': sound_volume,
+                           'annotation_id': annotation_id,
+                       })
     else:
-        # TODO : update les autres sens quand on les aura définis
-        cursor.execute(f'''
-            UPDATE sense_{sense} 
-            SET editor_id = {editor_id} /*, ...*/
-            WHERE annotation_id = '{id}' ''')
+        cursor.execute("""
+            UPDATE %(table)s 
+            SET editor_id = %(editor_id)s 
+            WHERE annotation_id = %(annotation_id)s """,
+                       {
+                           'table': 'sense_'+sense,
+                           'editor_id': editor_id,
+                           'annotation_id': annotation_id,
+                       })
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})

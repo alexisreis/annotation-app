@@ -27,6 +27,13 @@ function AdminDashboard() {
 			}).catch(console.error)
 	}
 
+	const initDB = async () => {
+		await fetch('initdb', {
+			method: 'GET',
+			headers: {'x-access-tokens': localStorage.getItem('token')}
+		})
+	}
+
 	useEffect(() => {
 		fetchData()
 			.catch(console.error);
@@ -38,6 +45,7 @@ function AdminDashboard() {
 				<h1>Console d'administration</h1>
 				<h4>Liste des utilisateurs</h4>
 				<UserList users={usersList} setUsers={setUsersList}/>
+				<button onClick={initDB}>Initialiser la base de données</button>
 			</header> : <h1>Not authorized</h1>}
 
 		</div>

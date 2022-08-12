@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
-from utils.extension import mysql, token_required, getUserId, \
-    edition_type, creator, editor
+from utils.extension import mysql, token_required, getUserId, creator, editor
 from json import loads
 
 annotations = Blueprint('annotations', __name__)
@@ -11,23 +10,22 @@ annotations = Blueprint('annotations', __name__)
 def getImageAnnotations(id):
     returnAnno = []
     cursor = mysql.connection.cursor()
-    image_annotations = cursor.execute(f''' SELECT annotation_id, 
-                                                    zone_type, 
-                                                    zone_coord 
-                                            FROM annotations a
-                                            WHERE a.image_id = '{id}' ''')
+    image_annotations = \
+        cursor.execute("""  SELECT annotation_id, zone_type, zone_coord 
+                            FROM annotations a
+                            WHERE a.image_id = %(id)s """,
+                       {'id': id})
     if image_annotations > 0:
         image_annotations = cursor.fetchall()
-        # print(image_annotations)
         for annotation in image_annotations:
             body = []
             # TRANSCRIPTION
             transcription_body = {}
-            transcription = cursor.execute(f''' SELECT transcription
-                                                user_id, editor_id
-                                        FROM transcription t 
-                                        WHERE t.annotation_id = 
-                                        '{annotation[0]}'; ''')
+            transcription = \
+                cursor.execute("""  SELECT transcription, user_id, editor_id
+                                    FROM transcription t 
+                                    WHERE t.annotation_id = %(annotation_id)s; """,
+                               {'annotation_id': annotation[0]})
             if transcription > 0:
                 transcription = cursor.fetchall()
                 transcription_body = {"value": transcription[0][0], "purpose":
@@ -36,10 +34,13 @@ def getImageAnnotations(id):
             sense_body = {"value": {}, "purpose": "sense"}
 
             # SOUND
-            sound = cursor.execute(f''' SELECT sound_type, sound_volume, 
-                                                user_id, editor_id
-                                        FROM sense_sound s 
-                                        WHERE s.annotation_id = '{annotation[0]}'; ''')
+            sound = \
+                cursor.execute("""  
+                    SELECT sound_type, sound_volume, 
+                                user_id, editor_id
+                    FROM sense_sound s 
+                    WHERE s.annotation_id = %(annotation_id)s; """,
+                               {'annotation_id': annotation[0]})
             if sound > 0:
                 sound = cursor.fetchall()
                 sense_body.get("value").update(
@@ -52,9 +53,12 @@ def getImageAnnotations(id):
                      })
 
             # VIEW
-            view = cursor.execute(f''' SELECT user_id, editor_id
-                                        FROM sense_view s 
-                                        WHERE s.annotation_id = '{annotation[0]}'; ''')
+            view = \
+                cursor.execute(""" 
+                    SELECT user_id, editor_id
+                    FROM sense_view s 
+                    WHERE s.annotation_id = %(annotation_id)s; """,
+                               {'annotation_id': annotation[0]})
             if view > 0:
                 view = cursor.fetchall()
                 sense_body.get("value").update(
@@ -65,9 +69,12 @@ def getImageAnnotations(id):
                      })
 
             # TASTE
-            taste = cursor.execute(f''' SELECT user_id, editor_id
-                                        FROM sense_taste s 
-                                        WHERE s.annotation_id = '{annotation[0]}'; ''')
+            taste = \
+                cursor.execute(""" 
+                    SELECT user_id, editor_id
+                    FROM sense_taste s 
+                    WHERE s.annotation_id = %(annotation_id)s; """,
+                               {'annotation_id': annotation[0]})
             if taste > 0:
                 taste = cursor.fetchall()
                 sense_body.get("value").update(
@@ -78,9 +85,12 @@ def getImageAnnotations(id):
                      })
 
             # SMELL
-            smell = cursor.execute(f''' SELECT user_id, editor_id
-                                        FROM sense_smell s 
-                                        WHERE s.annotation_id = '{annotation[0]}'; ''')
+            smell = \
+                cursor.execute(""" 
+                    SELECT user_id, editor_id
+                    FROM sense_smell s 
+                    WHERE s.annotation_id = %(annotation_id)s; """,
+                               {'annotation_id': annotation[0]})
             if smell > 0:
                 smell = cursor.fetchall()
                 sense_body.get("value").update(
@@ -91,9 +101,12 @@ def getImageAnnotations(id):
                      })
 
             # TOUCH
-            touch = cursor.execute(f''' SELECT user_id, editor_id
-                                        FROM sense_touch s 
-                                        WHERE s.annotation_id = '{annotation[0]}'; ''')
+            touch = \
+                cursor.execute(""" 
+                    SELECT user_id, editor_id
+                    FROM sense_touch s 
+                    WHERE s.annotation_id = %(annotation_id)s; """,
+                               {'annotation_id': annotation[0]})
             if touch > 0:
                 touch = cursor.fetchall()
                 sense_body.get("value").update(
@@ -150,52 +163,83 @@ def createAnnotation(imageId):
     zone_coord = request.values.get('zone_coord')
     id = request.values.get('id')
 
-    # TODO : trouver l'id de l'utilsateur qui crée en déchiffrant token
+    # Find user id with token
     user_id, _ = getUserId(request.headers['x-access-tokens'])
 
     cursor = mysql.connection.cursor()
-    cursor.execute(f''' 
+    cursor.execute("""
         INSERT INTO annotations (annotation_id, image_id, zone_type, zone_coord)
-        VALUES ('{id}', '{imageId}', '{zone_type}', '{zone_coord}') ''')
+        VALUES (%(id)s, %(imageId)s, %(zone_type)s, %(zone_coord)s) """,
+                   {'id': id,
+                    'imageId': imageId,
+                    'zone_type': zone_type,
+                    'zone_coord': zone_coord})
 
     for object in body:
         if object.get('purpose') == 'sense':
             sense_body = object.get('value')
 
             if sense_body.get('sound'):
-                sound_type = str(sense_body.get('sound').get('type')).replace('\'', '"')
+                sound_type = str(sense_body.get('sound').get('type')).replace(
+                    '\'', '"')
                 print(sound_type)
                 sound_volume = sense_body.get('sound').get('volume')
-                cursor.execute(f'''
+                cursor.execute("""
                     INSERT INTO sense_sound (annotation_id, sound_type, sound_volume, user_id)
-                    VALUES ('{id}', '{sound_type}', '{sound_volume}',
-                     {user_id}) ''')
+                    VALUES (%(id)s, %(sound_type)s, %(sound_volume)s, %(user_id)s)""",
+                               {
+                                   'id': id,
+                                   'sound_type': sound_type,
+                                   'sound_volume': sound_volume,
+                                   'user_id': user_id
+                               })
 
             if sense_body.get('view'):
-                cursor.execute(f'''
+                cursor.execute("""
                     INSERT INTO sense_view(annotation_id, user_id)
-                    VALUES ('{id}', {user_id})''')
+                    VALUES (%(id)s, %(user_id)s)""",
+                               {
+                                   'id': id,
+                                   'user_id': user_id
+                               })
 
             if sense_body.get('touch'):
-                cursor.execute(f'''
+                cursor.execute("""
                     INSERT INTO sense_touch(annotation_id, user_id)
-                    VALUES ('{id}', {user_id})''')
+                    VALUES (%(id)s, %(user_id)s)""",
+                               {
+                                   'id': id,
+                                   'user_id': user_id
+                               })
 
             if sense_body.get('taste'):
-                cursor.execute(f'''
+                cursor.execute("""
                     INSERT INTO sense_taste(annotation_id, user_id)
-                    VALUES ('{id}', {user_id})''')
+                    VALUES (%(id)s, %(user_id)s)""",
+                               {
+                                   'id': id,
+                                   'user_id': user_id
+                               })
 
             if sense_body.get('smell'):
-                cursor.execute(f'''
+                cursor.execute("""
                     INSERT INTO sense_smell(annotation_id, user_id)
-                    VALUES ('{id}', {user_id})''')
+                    VALUES (%(id)s, %(user_id)s)""",
+                               {
+                                   'id': id,
+                                   'user_id': user_id
+                               })
 
         elif object.get('purpose') == 'transcription':
-            cursor.execute(f'''
+            cursor.execute("""
                 INSERT INTO transcription(annotation_id, transcription, 
                 user_id)
-                VALUES ('{id}', '{object.get('value')}', '{1}') ''')
+                VALUES (%(id)s, %(transcription)s, %(user_id)s)""",
+                           {
+                               'id': id,
+                               'transcription': object.get('value'),
+                               'user_id': user_id
+                           })
 
     mysql.connection.commit()
     cursor.close()
@@ -207,8 +251,12 @@ def createAnnotation(imageId):
 def deleteAnnotation():
     annoId = request.values.get('id')
     cursor = mysql.connection.cursor()
-    cursor.execute(f'''
-        DELETE FROM annotations WHERE annotation_id = '{annoId}' ''')
+    cursor.execute("""
+        DELETE FROM annotations 
+        WHERE annotation_id = %(annotation_id)s """,
+                   {
+                        'annotation_id': annoId,
+                   })
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})
@@ -217,18 +265,18 @@ def deleteAnnotation():
 @annotations.route("/updateAnnotationCoord", methods=['POST'])
 @editor
 def updateAnnotationCoord():
-    _, user_type = getUserId(request.headers['x-access-tokens'])
-    if user_type not in edition_type:
-        return jsonify({'failure': 'user has no rights to edit'})
-
     zone_coord = request.values.get('zone_coord')
-    id = request.values.get('id')
+    annoId = request.values.get('id')
 
     cursor = mysql.connection.cursor()
-    cursor.execute(f'''
+    cursor.execute("""
         UPDATE annotations 
-        SET zone_coord = '{zone_coord}' 
-        WHERE annotation_id = '{id}' ''')
+        SET zone_coord = %(zone_coord)s 
+        WHERE annotation_id = %(annotation_id)s """,
+                   {
+                       'zone_coord': zone_coord,
+                       'annotation_id': annoId,
+                   })
     mysql.connection.commit()
     cursor.close()
     return jsonify({'success': 'success'})

@@ -45,7 +45,8 @@
 }
 
 .image_previs {
-    width: var(--image-item-width);
+    /*width: var(--image-item-width);*/
+    max-height: calc(var(--image-item-width)*0.8);;
 }
 .image-div:hover .image_previs{
     filter: opacity(20%);
