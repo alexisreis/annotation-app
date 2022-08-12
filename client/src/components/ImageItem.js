@@ -87,8 +87,14 @@ const ImageItem = ({data}) => {
 			navigate('image')
 		}} onMouseEnter={() => setShowGraph(true)} onMouseLeave={()=>setShowGraph(false)}>
 			<div className={"image-infos-div"}>
-				<span>{data[0]}</span>
-				<span>{data[1]+data[2]+data[3]+data[4]+data[5]}</span>
+				<div style={{display: "flex", flexDirection: "column"}}>
+					<span>Nom :</span>
+					<span>{data[0]}</span>
+				</div>
+				<div style={{display: "flex", flexDirection: "column"}}>
+					<span>Sens trouvés :</span>
+					<span>{data[1]+data[2]+data[3]+data[4]+data[5]}</span>
+				</div>
 			</div>
 
 			<img src={image} alt="Previs" className={"image_previs"} loading={"lazy"}/>

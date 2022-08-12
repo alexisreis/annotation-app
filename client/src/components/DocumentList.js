@@ -25,7 +25,7 @@ const DocumentList = ({documents}) => {
 		       id={"document-search-bar"}
 		       placeholder={"Rechercher un titre, une date, une cote..."}/>
 
-		{displayedDocuments ? <table>
+		{displayedDocuments && displayedDocuments.length > 0 ? <table>
 			<thead>
 			<tr>
 				<th>cote</th>

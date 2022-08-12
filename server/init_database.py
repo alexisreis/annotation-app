@@ -102,9 +102,11 @@ def read_excel_data(excel_file):
     data = pd.read_excel(excel_file,
                          sheet_name='Feuil1')
     df = pd.DataFrame(data, columns=['Cote', 'Intitulé', 'dates'])
+    print(df)
 
-    for i in range(df.shape[0] - 1):
+    for i in range(df.shape[0]):
         if not is_document_in_db(PROJECT_NAME + data.at[i, 'Cote']):
+            print(f'''Adding {PROJECT_NAME + data.at[i, 'Cote']} to DB''')
             add_document_to_db(PROJECT_NAME + data.at[i, 'Cote'],
                                data.at[i, 'Intitulé'], data.at[i, 'dates'])
         add_images_to_db(PROJECT_NAME + data.at[i, 'Cote'])
@@ -113,5 +115,5 @@ def read_excel_data(excel_file):
 @init_db.route('/initdb')
 @admin
 def initdb():
-    read_excel_data(r'images/liste_documents.xlsx')
+    read_excel_data('images/liste_documents.xlsx')
     return make_response(jsonify({'success': 'init db'}), 200)

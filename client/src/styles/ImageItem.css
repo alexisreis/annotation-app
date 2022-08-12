@@ -26,7 +26,7 @@
     min-width: 300px;
     border-radius: 0 0 var(--image-item-border-radius) var(--image-item-border-radius);
     background-color: var(--image-item-infos-background);
-    height: 1.5em;
+    height: 3em;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

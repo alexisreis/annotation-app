@@ -20,7 +20,7 @@ function AdminDashboard() {
 				} else if (users.failure){
 					alert("Non autorisé")
 				} else if (users.storage) {
-					alert("Il n'y a pas de documents stockés ici");
+					alert("Pas d'utilisateur");
 				} else {
 					setUsersList(users)
 				}
