@@ -3,6 +3,11 @@
 Developed by @alexisreis  
 June - August 2022
 
+# Documentation
+Full documentation for this project is available here: [https://alexis-reis.gitbook.io/annotation-app/](https://alexis-reis.gitbook.io/annotation-app/)
+
+
+
 # Server side
 A flask server is used to send images to the OpenCV library to enhanced them.
 ### \> Installation
