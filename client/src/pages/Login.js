@@ -3,6 +3,7 @@ import React, {useContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {UserContext} from "../utils/UserContext";
 import bcrypt from "bcryptjs";
+import "../styles/Login.css"
 
 function Login() {
 
@@ -65,23 +66,31 @@ function Login() {
 
 	return (
 		<div className="App">
-				<h1>Se connecter</h1>
-				<form onKeyDown={handleKeyDown}>
-					{incorrect ?
-						<div id="alert-div">
-							Adresse mail ou mot de passe incorrect
-						</div> : null}
 
+				<form onKeyDown={handleKeyDown}>
+					<h2>Se connecter</h2>
 					<div>
-						<p>Adresse mail</p>
+						<label>ADRESSE MAIL</label>
 						<input type="text" id="mail" name="mail" onChange={(e) => setMail(e.target.value)}/>
 					</div>
 					<div>
-						<p>Mot de passe</p>
+						<label>MOT DE PASSE</label>
 						<input type="password" id="password" name="password" onChange={(e) => setPassword(e.target.value)}/>
 					</div>
-					<input type="button" value="Login"
+
+					<label className='checkbox'>
+						<input type='checkbox' checked title='Keep me Signed in' /> Se souvenir de moi
+					</label>
+					<br/>
+					{incorrect ?
+						<div className="alert-div">
+							Adresse mail ou mot de passe incorrect
+						</div> : null }
+					<input type="button" id="login-button" value="SE CONNECTER"
 					       onClick={() => login()}/>
+					<hr/>
+					<input type="button" id="signup-button" value="CRÉER UN COMPTE"
+					       onClick={() => navigate('/signup')}/>
 				</form>
 		</div>
 	);

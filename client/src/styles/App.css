@@ -1,7 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Quicksand:400,700');
 
-* {
-  font-family: 'Open Sans', sans-serif;
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  height: 100%;
+  font-family: 'Quicksand', sans-serif;
 }
 
 .App {
@@ -18,7 +27,8 @@
 }
 
 table {
-  width: 50vw;
+  min-width: 50vw;
+  max-width: 90vw;
   align-self: center;
 }
 
@@ -40,8 +50,8 @@ tbody tr:hover{
 }
 
 #document-search-bar {
-  max-width: 720px;
-  width: 720px;
+  min-width: 50vw;
+  max-width: 90vw;
   height: 2em;
   border-width: 1px;
   border-color: darkgray;

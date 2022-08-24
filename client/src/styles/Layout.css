@@ -70,3 +70,9 @@
     color: white;
     font-weight: 700;
 }
+
+@media screen and (max-width: 768px) {
+    #navbar-div h1 {
+        display: none;
+    }
+}

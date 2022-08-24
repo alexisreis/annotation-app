@@ -1,0 +1,50 @@
+h1 {
+    margin: 0;
+}
+#app-title {
+    color: var(--image-item-infos-background)
+}
+
+.presentation-section {
+    display : flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+}
+
+.presentation-illustration {
+    object-fit: contain;
+    flex: 0.5;
+
+}
+
+.presentation-explication {
+    flex: 0.3;
+}
+
+.presentation-explication {
+    font-size: 0.9em;
+    text-align: left;
+}
+
+.presentation-explication p,
+.presentation-explication li{
+    font-size: 0.8em;
+}
+
+.presentation-explication span {
+    font-weight: 700;
+}
+
+hr {
+    width: 75%;
+    color: darkgrey;
+}
+
+@media screen and (max-width: 768px) {
+    .presentation-section {
+        display: flex;
+        flex-direction: column;
+    }
+}

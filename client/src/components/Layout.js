@@ -36,7 +36,7 @@ const Layout = () => {
 					navigate('/')
 				}}>
 					<img src={logo} alt='Logo'/>
-					<h1 className="unselectable">ANNOTATION APP</h1>
+					<h1 className="unselectable">annotation-app</h1>
 				</div>
 
 

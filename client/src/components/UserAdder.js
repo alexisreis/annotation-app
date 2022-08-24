@@ -51,37 +51,23 @@ const UserAdder = () => {
 
 	return (
 	<form onKeyDown={handleKeyDown}>
+		<h2>Créer un compte</h2>
 		<div>
-			<p>Nom</p>
+			<label>Nom</label>
 			<input type="text" id="name" name="name"
 			       onChange={(e) => setName(e.target.value)}/>
 		</div>
-{/*		<div>
-			<p>Type</p>
-			<input type="radio" name='type' value='A' id='A'
-			       onClick={(e) => setType(e.target.value)}/>
-			<label htmlFor='A'>Admin</label>
-			<input type="radio" name='type' value='M' id='M'
-			       onClick={(e) => setType(e.target.value)}/>
-			<label htmlFor='M'>Modérateur</label>
-			<input type="radio" name='type' value='E' id='E'
-			       onClick={(e) => setType(e.target.value)}/>
-			<label htmlFor='E'>Editeur</label>
-			<input type="radio" name='type' value='S' id='S'
-			       onClick={(e) => setType(e.target.value)}/>
-			<label htmlFor='S'>Créateur (standard)</label>
-		</div>*/}
 		<div>
-			<p>Adresse mail</p>
+			<label>Adresse mail</label>
 			<input type="text" id="mail" name="mail"
 			       onChange={(e) => setMail(e.target.value)}/>
 		</div>
 		<div>
-			<p>Mot de passe</p>
+			<label>Mot de passe</label>
 			<input type="password" id="password" name="password"
 			       onChange={(e) => setPassword(e.target.value)}/>
 		</div>
-		<input type="button" value="Ajouter l'utilisateur"
+		<input type="button" id="login-button" value="Ajouter l'utilisateur"
 		       onClick={() => addUser()}/>
 	</form>)
 }
