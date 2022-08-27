@@ -1,7 +1,7 @@
 h1 {
     margin: 0;
 }
-#app-title {
+.span-blue {
     color: var(--image-item-infos-background)
 }
 
@@ -11,12 +11,13 @@ h1 {
     align-items: center;
     justify-content: center;
     padding: 1em;
+    margin: 1em;
+    flex-wrap: wrap;
 }
 
 .presentation-illustration {
     object-fit: contain;
     flex: 0.5;
-
 }
 
 .presentation-explication {
@@ -46,5 +47,37 @@ hr {
     .presentation-section {
         display: flex;
         flex-direction: column;
+    }
+
+    .presentation-explication h3 {
+        margin-left: 1em;
+        margin-right: 1em;
+        font-size: 1.3em;
+        text-align: center;
+    }
+
+    .presentation-explication p,
+    .presentation-explication li{
+        font-size: 1.1em;
+        margin-left: 1em;
+        margin-right: 1em;
+        text-align: justify;
+    }
+
+    .presentation-div h1 {
+        font-size: 1.7em;
+    }
+}
+
+@media screen and (max-width: 570px) {
+    .presentation-illustration {
+        max-width: 80vw;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .presentation-section {
+        padding: 0.5rem;
+        margin: 0.5rem;
     }
 }

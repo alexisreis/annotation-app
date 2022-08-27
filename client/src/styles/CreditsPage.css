@@ -1,0 +1,12 @@
+.credits h4 {
+    width: 100%;
+    font-size: 0.7em;
+    font-weight: 700;
+    text-align: left;
+    text-align: center;
+    margin: 0;
+}
+
+.credits li {
+    font-size: 0.6em;
+}

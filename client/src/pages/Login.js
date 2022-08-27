@@ -65,7 +65,7 @@ function Login() {
 	}
 
 	return (
-		<div className="App">
+		<div className="Login">
 
 				<form onKeyDown={handleKeyDown}>
 					<h2>Se connecter</h2>

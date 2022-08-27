@@ -18,7 +18,8 @@ In development `Python 3.10` was used.
 cd server
 python -m venv venv
 .\venv\Scripts\activate
-pip install flask flask_cors opencv-python flask_mysqldb PyJWT openpyxl pandas
+pip install flask flask_cors opencv-python flask_mysqldb PyJWT openpyxl 
+pandas python-dotenv
 # Or you can just use the requirements.txt file
 pip install -r requirements.txt
 ```

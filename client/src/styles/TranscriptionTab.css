@@ -12,4 +12,20 @@
     color: white;
     border-radius: 20px 20px 0 0;
     padding: 1em 1em 0.5em 1em;
+    font-weight: 600;
+}
+
+.transcription-tab ul{
+    display: flex;
+    flex-direction: column;
+}
+
+.transcription-tab li {
+    text-align: left;
+    margin-right: 1em;
+    padding: 0.5em;
+}
+
+.transcription-tab li:not(:last-of-type){
+    border-bottom: 1px solid darkgrey;
 }

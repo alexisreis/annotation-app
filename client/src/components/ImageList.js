@@ -5,6 +5,8 @@ const ImageList = ({images}) => {
 
 	return (
 	<div>
+		<h3>📜 Pages du document</h3>
+		<hr/>
 		{images && images.length ?
 			<div style={{display: "flex", flexWrap: "wrap", justifyContent: "center"}}>
 				{images.sort((a, b) => a[0] - b[0])

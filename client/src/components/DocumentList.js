@@ -20,7 +20,8 @@ const DocumentList = ({documents}) => {
 		}
 	}
 
-	return (<div>
+	return (<div style={{display: "flex", flexDirection: "column"}}>
+		<h3>📖 Liste des documents</h3>
 		<input type="text" onChange={e => search(e.target.value)}
 		       id={"document-search-bar"}
 		       placeholder={"Rechercher un titre, une date, une cote..."}/>
@@ -40,7 +41,7 @@ const DocumentList = ({documents}) => {
 				)}
 			</tbody>
 
-		</table> : <span>Aucun document ne correspond</span>}
+		</table> : <span>Aucun document ne correspond à votre recherche</span>}
 	</div>)
 }
 

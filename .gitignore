@@ -21,6 +21,7 @@ yarn-error.log*
 
 # Flask env
 /server/venv/
+/server/.env
 
 .idea
 *.txt

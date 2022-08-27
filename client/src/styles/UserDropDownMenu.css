@@ -73,7 +73,7 @@
 }
 
 .menu-item {
-    height: 30px;
+    height: 40px;
     display: flex;
     align-items: center;
     transition: background 300ms;

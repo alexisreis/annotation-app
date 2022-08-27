@@ -34,16 +34,16 @@ const ImageAdder = ({images, setImages}) => {
 	}
 
 	return (
-		<div>
-			<h4>Ajouter une image au document</h4>
+		<form>
+			<h2>Ajouter une page au document</h2>
 			<div>
 				<label>Nom :</label>
 				<input
 					placeholder="IMG_09090990.jpg" type="text"
 					onChange={(e) => setImageId(e.target.value)}/>
 			</div>
-			<button onClick={addImage}>Ajouter</button>
-		</div>)
+			<div onClick={addImage} id="login-button">Ajouter</div>
+		</form>)
 }
 
 export default ImageAdder;

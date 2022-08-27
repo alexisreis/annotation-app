@@ -5,14 +5,14 @@ import dataProcessing from "../assets/Data processing.svg"
 function Presentation() {
 
 	return (
-		<div>
+		<div className="presentation-div">
 			<h1>Bienvenue sur</h1>
-				<h1>📝 <span id="app-title">annotation-app</span>!</h1>
+				<h1>📝 <span className="span-blue">annotation-app</span>!</h1>
 			<div className="presentation-section">
                 <img className="presentation-illustration" src={teamWork} alt="Annotez vos images"/>
 				<div className="presentation-explication">
 					<h3>📝 Annotez vos manuscrits</h3>
-					<p>Sélectionnez un ou plusieurs mot(s) sur une page et entrez : </p>
+					<p>Sélectionnez un ou plusieurs mot(s) sur une page et entrez</p>
 					<ul>
 						<li>les informations liées à la <span>sensorialité</span> (mot relatif au son, à l'odorat...)</li>
 						<li>la <span>transcription</span> du mot</li>

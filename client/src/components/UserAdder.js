@@ -1,5 +1,6 @@
 import React, {useState} from "react"
 import bcrypt from "bcryptjs";
+import {useNavigate} from "react-router-dom";
 
 const UserAdder = () => {
 
@@ -7,6 +8,8 @@ const UserAdder = () => {
 	/*const [type, setType] = useState("");*/
 	const [mail, setMail] = useState("");
 	const [password, setPassword] = useState("");
+
+	const navigate = useNavigate();
 
 	const handleKeyDown = (e) => {
 		if (e.key === 'Enter') {
@@ -42,7 +45,8 @@ const UserAdder = () => {
 				} else if (!json.success){
 					alert("Erreur lors de l'insertion")
 				} else {
-					alert("Utilisateur créé")
+					alert("Compte créé!")
+					navigate('/login')
 				}
 
 			})
@@ -67,7 +71,7 @@ const UserAdder = () => {
 			<input type="password" id="password" name="password"
 			       onChange={(e) => setPassword(e.target.value)}/>
 		</div>
-		<input type="button" id="login-button" value="Ajouter l'utilisateur"
+		<input type="button" id="login-button" value="Créer mon compte"
 		       onClick={() => addUser()}/>
 	</form>)
 }

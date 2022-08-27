@@ -33,30 +33,30 @@ const DocumentAdder = ({documents, setDocuments}) => {
 				.catch(console.error);
 		}
 	}
-	return (<div>
-		<h4>Ajouter un document</h4>
+	return (<form>
+		<h2>Ajouter un document</h2>
 		<div>
-			<p>Cote :</p>
+			<label>Cote :</label>
 			<input
 				placeholder="AML_09999" type="text"
 				onChange={(e) => setCote(e.target.value)}/>
 		</div>
 
 		<div>
-			<p>Nom :</p>
+			<label>Nom :</label>
 			<input
 				placeholder="Registre de la ville de Lyon" type="text"
 				onChange={(e) => setTitle(e.target.value)}/>
 		</div>
 
 		<div>
-			<p>Date :</p>
+			<label>Date :</label>
 			<input type="number" min="1700" max="2022"
 			       onChange={(e) => setDate(e.target.value)}/>
 		</div>
 
-		<button onClick={addDocument}>Ajouter</button>
-	</div>)
+		<div onClick={addDocument} id="login-button">Ajouter</div>
+	</form>)
 }
 
 export default DocumentAdder;

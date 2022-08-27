@@ -1,8 +1,10 @@
 :root{
-    --image-item-width:360px;
-    --image-item-border-radius: 20px;
-    --image-item-background: #e8e8e8;
+    --image-item-width:300px;
+    --image-item-border-radius: 16px;
+    --image-item-background: #f1f1f1;
     --image-item-infos-background: #1e47a2;
+    --infos-bg: #e8e8e8;
+    --infos-h: 3em;
 }
 
 .image-div {
@@ -17,6 +19,7 @@
     justify-content: center;
     position: relative;
     transition: transform 0.5s ease-in-out;
+    overflow: hidden;
 }
 
 .image-infos-div{
@@ -25,28 +28,45 @@
     width: var(--image-item-width);
     min-width: 300px;
     border-radius: 0 0 var(--image-item-border-radius) var(--image-item-border-radius);
-    background-color: var(--image-item-infos-background);
-    height: 3em;
+    background-color: var(--infos-bg);
+    border-top: 1px solid darkgray;
+    height: var(--infos-h);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    transition: transform 0.5s ease-in-out;
 }
 
-.image-infos-div span {
-    color: white;
+.image-infos-div .sense-count-span {
+    color: black;
     font-weight: 600;
-    margin-left: 0.7em;
     margin-right: 0.7em;
 }
 
+.image-infos-div .image-id-span {
+    color: red;
+    padding: 0.2em;
+    background-color: #cecece;
+    border-radius: 5px;
+    color: red;
+    font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+    font-weight: 400;
+    margin-left: 0.7em;
+}
+
 .image-div:hover {
-    transform: scale(110%);
+    transform: scale(105%);
+}
+
+.image-div:hover .image-infos-div {
+    transform: translateY(var(--infos-h));
 }
 
 .image_previs {
     /*width: var(--image-item-width);*/
-    max-height: calc(var(--image-item-width)*0.8);;
+    /*max-height: calc(var(--image-item-width)*0.8);*/
+    object-fit: cover;
 }
 .image-div:hover .image_previs{
     filter: opacity(20%);

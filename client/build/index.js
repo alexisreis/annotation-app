@@ -1,10 +1,11 @@
+const API_URL = 'http://localhost:5000/'
+
 let isImproved = false;
 let showIsOriginal = true;
 let originalImage;
 let improvedImage;
 let imageName = "";
 
-// let displayedAnnotations = [];
 let anno;
 
 // let annotationCoordinates = "";
@@ -12,7 +13,6 @@ let selectedAnnotation = null;
 
 
 const SenseFormatter = function (annotation) {
-	//TODO améliorer algos
 	const isView = annotation.bodies.find(b => {
 		return b.purpose === 'sense' && b.value['view']
 	});
@@ -33,11 +33,11 @@ const SenseFormatter = function (annotation) {
 		return b.purpose === 'sense' && b.value['touch']
 	});
 	// add the important css class if the tag is present
-	if (isView) return 'view'
-	if (isSound) return 'sound'
-	if (isTaste) return 'taste'
 	if (isSmell) return 'smell'
 	if (isTouch) return 'touch'
+	if (isTaste) return 'taste'
+	if (isView) return 'view'
+	if (isSound) return 'sound'
 }
 
 const TranscriptionFormatter = function (annotation) {
@@ -59,7 +59,7 @@ const TranscriptionFormatter = function (annotation) {
 const getDatabaseAnnotations = async (anno) => {
 	// const id = imageName.replace(/\.[^/.]+$/, "");
 	const id = localStorage.getItem('image_id');
-	const response = await fetch(`http://localhost:5000/getImageAnnotations/` + id, {
+	const response = await fetch(API_URL + `getImageAnnotations/` + id, {
 		method: 'GET',
 		headers: {'x-access-tokens': localStorage.getItem('token')},
 	})
@@ -90,7 +90,7 @@ const createAnnotation = async (anno, annotation) => {
 	formData.append('zone_coord', zone_coord)
 	formData.append('id', annotation.id)
 
-	await fetch(`http://localhost:5000/createAnnotation/` + id, {
+	await fetch(API_URL + `createAnnotation/` + id, {
 		method: 'POST',
 		body: formData,
 		headers: {'x-access-tokens': localStorage.getItem('token')},
@@ -131,7 +131,7 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 		const formData = new FormData();
 		formData.append('id', annotation.id)
 		formData.append('zone_coord', zone_coord)
-		await fetch(`http://localhost:5000/updateAnnotationCoord`, {
+		await fetch(API_URL + `updateAnnotationCoord`, {
 			method: 'POST',
 			body: formData,
 			headers: {'x-access-tokens': localStorage.getItem('token')},
@@ -158,7 +158,7 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 		// Delete the transcription
 		const formData = new FormData();
 		formData.append('id', annotation.id)
-		await fetch(`http://localhost:5000/deleteTranscription`, {
+		await fetch(API_URL + `deleteTranscription`, {
 			method: 'POST',
 			body: formData,
 			headers: {'x-access-tokens': localStorage.getItem('token')},
@@ -179,7 +179,7 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 		const formData = new FormData();
 		formData.append('id', annotation.id)
 		formData.append('transcription', newTranscription.value)
-		await fetch(`http://localhost:5000/createTranscription`, {
+		await fetch(API_URL + `createTranscription`, {
 			method: 'POST',
 			body: formData,
 			headers: {'x-access-tokens': localStorage.getItem('token')},
@@ -197,7 +197,7 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 		const formData = new FormData();
 		formData.append('id', annotation.id)
 		formData.append('transcription', newTranscription.value)
-		await fetch(`http://localhost:5000/updateTranscription`, {
+		await fetch(API_URL + `updateTranscription`, {
 			method: 'POST',
 			body: formData,
 			headers: {'x-access-tokens': localStorage.getItem('token')},
@@ -226,7 +226,7 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 				console.log('delete ' + sense)
 				const formData = new FormData();
 				formData.append('id', annotation.id)
-				await fetch(`http://localhost:5000/deleteSense/` + sense, {
+				await fetch(API_URL + `deleteSense/` + sense, {
 					method: 'POST',
 					body: formData,
 					headers: {'x-access-tokens': localStorage.getItem('token')},
@@ -261,7 +261,7 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 					formData.append('sound_volume', senseBody.value['sound'].volume)
 				}
 
-				await fetch(`http://localhost:5000/createSense/` + sense, {
+				await fetch(API_URL + `createSense/` + sense, {
 					method: 'POST',
 					body: formData,
 					headers: {'x-access-tokens': localStorage.getItem('token')},
@@ -295,7 +295,7 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 					formData.append('sound_volume', senseBody.value['sound'].volume)
 				}
 
-				await fetch(`http://localhost:5000/updateSense/` + sense, {
+				await fetch(API_URL + `updateSense/` + sense, {
 					method: 'POST',
 					body: formData,
 					headers: {'x-access-tokens': localStorage.getItem('token')},
@@ -321,7 +321,7 @@ const updateAnnotation = async (annotation, oldAnnotation) => {
 const deleteAnnotation = async (anno, annotation) => {
 	const formData = new FormData();
 	formData.append('id', annotation.id)
-	await fetch(`http://localhost:5000/deleteAnnotation`, {
+	await fetch(API_URL + `deleteAnnotation`, {
 		method: 'POST',
 		body: formData,
 		headers: {'x-access-tokens': localStorage.getItem('token')},
@@ -388,6 +388,8 @@ const initAnnotorious = () => {
 		deleteAnnotation(anno, annotation)
 	});
 
+	/*
+	// Is useful for findWord with word_spotting
 	anno.on('clickAnnotation', function (annotation, element) {
 		// let value = annotation.target.selector.value;
 		// annotationCoordinates = value.substring(11, value.length);
@@ -398,6 +400,7 @@ const initAnnotorious = () => {
 		// annotationCoordinates = "";
 		selectedAnnotation = null;
 	});
+	*/
 }
 
 const upload = () => {
@@ -410,8 +413,6 @@ const upload = () => {
 
 	const file = document.getElementById('file').files[0];
 	imageName = file.name;
-
-	// TODO : vérifier si les noms de fichier correspondent
 
 	const reader = new FileReader();
 	reader.onload = function (e) {
@@ -433,7 +434,7 @@ const improveImage = async () => {
 		const formData = new FormData();
 		formData.append("file", document.getElementById('file').files[0]);
 
-		const response = await fetch(`http://localhost:5000/uploadImage`, {
+		const response = await fetch(API_URL + `uploadImage`, {
 			method: 'POST',
 			body: formData,
 			contentType: false,

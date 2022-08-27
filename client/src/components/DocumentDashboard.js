@@ -64,6 +64,8 @@ const DocumentDashboard = ({senseStats, transcriptions}) => {
 
 	return (
 		<div className="document-dashboard">
+			<h3>📊 Statistiques</h3>
+			<hr/>
 			<div className={"document-stats-div"}>
 				{senseStats && senseStats.length > 0 ?
 					<div className={"document-graph-div"}>

@@ -5,7 +5,8 @@ form {
     box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.39);
     -webkit-box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.39);
     -moz-box-shadow: 0px 0px 10px 2px rgba(0,0,0,0.39);
-    width: 350px;
+    max-width: 400px;
+    margin: 2em;
 }
 
 form h2 {
@@ -24,7 +25,8 @@ label {
 }
 
 form input[type="text"],
-form input[type="password"] {
+form input[type="password"],
+form input[type="number"]{
     width: 100%;
     height: 3em;
     padding: 0px 10px;
@@ -62,17 +64,11 @@ form input[type="button"]:focus {
     outline: 0;
 }
 
-#login-button {
-    background-color: var(--image-item-infos-background);
-    transition: all 0.5s ease-in-out;
-}
-
 #signup-button{
     background-color: #ff8e00;
     transition: all 0.5s ease-in-out;
 }
 
-#login-button:hover,
 #signup-button:hover {
     background-color: #4d4d4d;
     color: lightgrey;
@@ -88,4 +84,12 @@ form input[type="button"]:focus {
     font-weight: 700;
     font-size: 0.8em;
     text-wrap: normal;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+@media screen and (max-width: 768px) {
+    form {
+        font-size: calc(14px + 2vmin);
+    }
 }

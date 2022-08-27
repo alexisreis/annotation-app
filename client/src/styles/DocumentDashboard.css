@@ -8,3 +8,12 @@
 .document-graph-div{
     width: 400px;
 }
+
+@media screen and (max-width: 768px) {
+    .document-stats-div{
+        flex-direction: column;
+    }
+    .document-graph-div {
+        width: 300px;
+    }
+}

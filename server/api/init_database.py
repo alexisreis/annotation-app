@@ -7,8 +7,8 @@ import cv2 as cv
 
 init_db = Blueprint('init_db', __name__)
 
-ORIGINAL_PATH = 'images/original/'
-RESIZED_PATH = 'images/resized/'
+ORIGINAL_PATH = join('images', 'original')
+RESIZED_PATH = join('images', 'resized')
 PROJECT_NAME = "AM69123_"
 WIDTH = 500
 
