@@ -42,8 +42,9 @@ export default function DocumentPage() {
 	}, [page])
 
 	return (
-		<div id="home-div">
-			<h2 style={{textAlign: "center", paddingTop: '1em', paddingLeft: '25%', paddingRight: '25%', wordWrap: "normal"}}>📖 {page.document_name}</h2>
+		<div className="App">
+			<h2>📖 {page.document_name}</h2>
+			<span>{page.document_date}</span>
 			<DocumentDashboard senseStats={stats}
 			                   transcriptions={transcriptions}/>
 			<ImageList images={images}/>

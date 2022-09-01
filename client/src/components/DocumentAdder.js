@@ -34,7 +34,7 @@ const DocumentAdder = ({documents, setDocuments}) => {
 		}
 	}
 	return (<form>
-		<h2>Ajouter un document</h2>
+		<h3 className="adder-title">Ajouter un document</h3>
 		<div>
 			<label>Cote :</label>
 			<input

@@ -41,6 +41,7 @@
 .image-infos-div .sense-count-span {
     color: black;
     font-weight: 600;
+    font-size: 0.8em;
     margin-right: 0.7em;
 }
 
@@ -55,20 +56,18 @@
     margin-left: 0.7em;
 }
 
-.image-div:hover {
+.image-div:where(:hover, :active) {
     transform: scale(105%);
 }
 
-.image-div:hover .image-infos-div {
+.image-div:where(:hover, :active) .image-infos-div {
     transform: translateY(var(--infos-h));
 }
 
 .image_previs {
-    /*width: var(--image-item-width);*/
-    /*max-height: calc(var(--image-item-width)*0.8);*/
     object-fit: cover;
 }
-.image-div:hover .image_previs{
+.image-div:where(:hover, :active) .image_previs{
     filter: opacity(20%);
 }
 

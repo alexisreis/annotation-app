@@ -35,7 +35,7 @@ const ImageAdder = ({images, setImages}) => {
 
 	return (
 		<form>
-			<h2>Ajouter une page au document</h2>
+			<h3 className="adder-title">Ajouter une page au document</h3>
 			<div>
 				<label>Nom :</label>
 				<input

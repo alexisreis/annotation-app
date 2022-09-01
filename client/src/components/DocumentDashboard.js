@@ -14,7 +14,9 @@ const DocumentDashboard = ({senseStats, transcriptions}) => {
 			left: 'center',
 			top: 20,
 			textStyle: {
-				color: '#000'
+				color: '#000',
+				fontFamily: 'Quicksand',
+				fontSize: '18px',
 			}
 		},
 		tooltip: {

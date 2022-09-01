@@ -39,5 +39,10 @@ def serve(path):
     return send_from_directory(app.static_folder, 'index.html')
 
 
+@app.errorhandler(404)
+def not_found(e):
+    return send_from_directory(app.static_folder, 'index.html')
+
+
 if __name__ == "__main__":
-    app.run(debug=False, threaded=True, host='0.0.0.0')
+    app.run(debug=True, threaded=True, host='0.0.0.0')

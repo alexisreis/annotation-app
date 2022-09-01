@@ -9,13 +9,15 @@ form {
     margin: 2em;
 }
 
-form h2 {
+form h3 {
     line-height: 1;
     margin-top: 0.5em;
     text-align: left;
+    padding-left: 10%;
+    padding-right: 10%;
 }
 
-label {
+form label {
     float: left;
     width: 100%;
     font-size: 0.7em;
@@ -91,5 +93,9 @@ form input[type="button"]:focus {
 @media screen and (max-width: 768px) {
     form {
         font-size: calc(14px + 2vmin);
+    }
+
+    form h3 {
+        font-size: 1em;
     }
 }

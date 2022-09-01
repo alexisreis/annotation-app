@@ -2,7 +2,8 @@ h1 {
     margin: 0;
 }
 .span-blue {
-    color: var(--image-item-infos-background)
+    color: var(--image-item-infos-background);
+    font-weight: 600;
 }
 
 .presentation-section {
@@ -25,13 +26,17 @@ h1 {
 }
 
 .presentation-explication {
-    font-size: 0.9em;
     text-align: left;
+}
+
+.presentation-explication h3 {
+    padding-left: 10%;
+    padding-right: 10%;
 }
 
 .presentation-explication p,
 .presentation-explication li{
-    font-size: 0.8em;
+    font-size: 1em;
 }
 
 .presentation-explication span {

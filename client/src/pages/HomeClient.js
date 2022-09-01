@@ -35,8 +35,11 @@ function HomeClient() {
 
 
 	return (
-		<div id="home-div">
-			<h1>Bienvenue <span className="span-blue">{user.name}</span>,</h1>
+		<div className="App">
+			<div>
+				<h1>Bienvenue <span className="span-blue">{user.name}</span>,</h1>
+				<hr/>
+			</div>
 
 			{documents && documents.length > 0 ?
 				<DocumentList documents={documents}/> :

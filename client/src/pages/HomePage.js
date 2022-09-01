@@ -7,7 +7,7 @@ import Presentation from "./Presentation";
 function HomePage() {
     const {user} = useContext(UserContext)
   return (
-    <div className="App">
+    <div>
           {user ?
               <HomeClient />
               :

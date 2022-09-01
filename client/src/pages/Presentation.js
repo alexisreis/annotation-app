@@ -5,7 +5,7 @@ import dataProcessing from "../assets/Data processing.svg"
 function Presentation() {
 
 	return (
-		<div className="presentation-div">
+		<div className="App presentation-div">
 			<h1>Bienvenue sur</h1>
 				<h1>📝 <span className="span-blue">annotation-app</span>!</h1>
 			<div className="presentation-section">

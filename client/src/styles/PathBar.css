@@ -55,13 +55,12 @@
     background-color: #aaaaaa;
 }
 
-.pathbar-element .doc-id-span {
+.doc-id-span {
     color: red;
     padding: 0.2em;
     background-color: #d3d3d3;
     border-radius: 5px;
     color: red;
     font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-    font-weight: 500;
-    font-size: 1em;
+    font-weight: 600;
 }

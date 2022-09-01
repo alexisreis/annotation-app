@@ -1,8 +1,9 @@
-from flask import Blueprint, jsonify, send_file, request, make_response
+from flask import Blueprint, jsonify, send_file, request, make_response, current_app
 from utils.extension import token_required, admin
 from utils.image_processing import process_image
 from utils.word_spotting import word_spotting
 from os.path import exists, join
+import jwt
 
 images = Blueprint('images', __name__)
 
@@ -20,14 +21,20 @@ def getResizedImage(cote, img):
                                    mimetype='image/jpg'), 200)
 
 
-@images.route("/getOriginalImage/<cote>/<img>")
-@token_required
-def getOriginalImage(cote, img):
-    path_to_original_image = join(ORIGINAL_IMAGES_DIR, cote, img + '.jpg')
-    if not exists(path_to_original_image):
-        return make_response(jsonify({'not_found': 'No files'}), 404)
-    return make_response(send_file(path_to_original_image,
-                                   mimetype='image/jpg'), 200)
+# TODO : check token
+@images.route("/getOriginalImage/<cote>/<img>/<token>")
+def getOriginalImage(cote, img, token):
+    try:
+        jwt.decode(token, key=current_app.config['SECRET_KEY'], algorithms=[
+            "HS256"])
+        path_to_original_image = join(ORIGINAL_IMAGES_DIR, cote, img + '.jpg')
+        if not exists(path_to_original_image):
+            return make_response(jsonify({'not_found': 'No files'}), 404)
+        return make_response(send_file(path_to_original_image,
+                                       mimetype='image/jpg'), 200)
+    except:
+        return make_response(jsonify({'invalid': 'token is invalid'}), 401)
+
 
 
 @images.route('/uploadImage', methods=['POST'])

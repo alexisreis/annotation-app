@@ -17,6 +17,7 @@ function PathBar() {
 				page: 'home',
 				document_cote: page.document_cote,
 				document_name: page.document_name,
+				document_date: page.document_date,
 				image_id: page.image_id
 			})
 		} else if (page.document_cote && !page.image_id) {
@@ -24,6 +25,7 @@ function PathBar() {
 				page: 'home',
 				document_cote: page.document_cote,
 				document_name: page.document_name,
+				document_date: page.document_date,
 			})
 		}
 		navigate('/')
@@ -35,6 +37,7 @@ function PathBar() {
 				page: 'document',
 				document_cote: page.document_cote,
 				document_name: page.document_name,
+				document_date: page.document_date,
 				image_id: page.image_id
 			})
 			navigate('document')

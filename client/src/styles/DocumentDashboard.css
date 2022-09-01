@@ -1,19 +1,22 @@
+.document-dashboard {
+    margin-top: 0.7em;
+    /*margin-bottom: 1em;*/
+}
 .document-stats-div{
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center;
 }
 
 .document-graph-div{
     width: 400px;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 700px) {
     .document-stats-div{
         flex-direction: column;
     }
     .document-graph-div {
-        width: 300px;
+        width: 400px;
     }
 }
