@@ -22,18 +22,15 @@ def getResizedImage(cote, img):
 
 
 # TODO : check token
-@images.route("/getOriginalImage/<cote>/<img>/<token>")
-def getOriginalImage(cote, img, token):
-    try:
-        jwt.decode(token, key=current_app.config['SECRET_KEY'], algorithms=[
-            "HS256"])
-        path_to_original_image = join(ORIGINAL_IMAGES_DIR, cote, img + '.jpg')
-        if not exists(path_to_original_image):
-            return make_response(jsonify({'not_found': 'No files'}), 404)
-        return make_response(send_file(path_to_original_image,
+@images.route("/getOriginalImage/<cote>/<img>")
+@token_required
+def getOriginalImage(cote, img):
+    path_to_original_image = join(ORIGINAL_IMAGES_DIR, cote, img + '.jpg')
+    if not exists(path_to_original_image):
+        return make_response(jsonify({'not_found': 'No files'}), 404)
+    return make_response(send_file(path_to_original_image,
                                        mimetype='image/jpg'), 200)
-    except:
-        return make_response(jsonify({'invalid': 'token is invalid'}), 401)
+
 
 
 
