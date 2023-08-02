@@ -1,4 +1,4 @@
-const API_URL = "https://anno-app.herokuapp.com/"
+const API_URL = "http://localhost:5000/"
 
 let isImproved = false;
 let showIsOriginal = true;
