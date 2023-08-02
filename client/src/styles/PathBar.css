@@ -15,8 +15,9 @@
 
 .pathbar-element {
     display: flex;
-    flex-direction: column;
-    margin-right: 1em;
+    flex-direction: row;
+    gap: 0.5em;
+    margin-right: 0.5em;
     border-radius: 10px;
     padding: 0.4em;
     transition: 0.3s ease-in-out;
@@ -52,4 +53,14 @@
 
 .pathbar-element:active span {
     background-color: #aaaaaa;
+}
+
+.doc-id-span {
+    color: red;
+    padding: 0.2em;
+    background-color: #d3d3d3;
+    border-radius: 5px;
+    color: red;
+    font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+    font-weight: 600;
 }

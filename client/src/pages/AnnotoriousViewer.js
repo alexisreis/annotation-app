@@ -1,5 +1,5 @@
 import '../styles/App.css';
-import {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {PageContext} from "../utils/PageContext";
 
 function AnnotoriousViewer() {
@@ -24,7 +24,8 @@ function AnnotoriousViewer() {
 				page: 'image',
 				image_id: page.image_id,
 				document_cote: page.document_cote,
-				document_name: page.document_name
+				document_name: page.document_name,
+				document_page: page.document_page
 			})
 		}
 	}, [page, setPage])
@@ -33,9 +34,11 @@ function AnnotoriousViewer() {
 		<div className="App">
 {/*				<input type="file" id="file" accept="image/png, image/jpeg"/>
 				<button id="improve-image-button">Améliorer l'image</button>*/}
-				<button id="export-json-button">Exporter JSON</button>
+				<h2>📖 {page.document_name}</h2>
+				<h3>📜 {page.image_id}</h3>
+				<button id="export-json-button">Exporter les annotations</button>
 				<div id="my-toolbar-container"/>
-				<img id="my-image" width="100%" alt='To annotate' src={image}/>
+				<img id="my-image" width="100%" alt='Image à annoter' src={image}/>
 		</div>
 	);
 }

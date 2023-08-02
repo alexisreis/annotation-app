@@ -2,7 +2,7 @@ import '../styles/TranscriptionTab.css'
 
 const TranscriptionTab = ({transcriptions}) => {
 	return (
-		<div className={"transcription-tab flex-center"}>
+		<div className={"transcription-tab"}>
 			<span>Mots les plus transcrits</span>
 			{transcriptions.length ?
 				<ul>

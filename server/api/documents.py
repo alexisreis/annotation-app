@@ -81,14 +81,31 @@ def getImagesFromDocument(cote):
             statsDetails = cursor.fetchall()
             response.update({'stats': statsDetails[0]});
 
+
+        # transcriptions = cursor.execute("""
+        #     SELECT t1.transcription, count(t2.transcription_id)+1
+        #     FROM (SELECT im.image_id FROM images im WHERE im.document_cote = %(cote)s) i
+        #     JOIN annotations a ON i.image_id = a.image_id
+        #     JOIN transcription t1 ON a.annotation_id = t1.annotation_id
+        #     JOIN transcription t2 ON t1.transcription = t2.transcription
+        #     AND t1.transcription_id < t2.transcription_id
+        #     GROUP BY t1.transcription_id
+        #     LIMIT 5; """,
+        #                                 {'cote': cote})
+
         transcriptions = cursor.execute("""
-            SELECT t1.transcription, count(t2.transcription_id)+1
-            FROM (SELECT im.image_id FROM images im WHERE im.document_cote = %(cote)s) i 
-            JOIN annotations a ON i.image_id = a.image_id 
-            JOIN transcription t1 ON a.annotation_id = t1.annotation_id
-            JOIN transcription t2 ON t1.transcription = t2.transcription
-            AND t1.transcription_id < t2.transcription_id
-            GROUP BY t1.transcription_id, t2.transcription_id
+            SELECT t1, count(*)
+            FROM (
+                SELECT t1.transcription as t1, t2.transcription as t2
+                FROM (SELECT im.image_id FROM images im WHERE im.document_cote = %(cote)s) i
+                JOIN annotations a ON i.image_id = a.image_id 
+                JOIN transcription t1 ON a.annotation_id = t1.annotation_id
+                JOIN transcription t2 ON t1.transcription_id = t2.transcription_id
+                WHERE t1.transcription = t2.transcription
+            ) x
+            GROUP BY t1, t2
+            HAVING count(*) > 1
+            ORDER BY 2 desc
             LIMIT 5; """,
                                         {'cote': cote})
 

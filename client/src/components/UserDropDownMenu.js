@@ -1,6 +1,7 @@
 import {useContext, useState} from "react";
 import {UserContext} from "../utils/UserContext";
 import signOut from '../assets/sign-out.svg'
+import admin from '../assets/admin.svg'
 import arrow from '../assets/arrow-down-sign-to-navigate.svg'
 
 import '../styles/UserDropDownMenu.css'
@@ -37,13 +38,13 @@ function UserDropDownMenu() {
 			<div className={"dropdown"} onClick={() => setOpen(false)}>
 				<div className={"menu-item"}
 				     onClick={() => disconnect()}>
-					<img className={"menu-item-svg"} src={signOut} alt="sign-out"/>
-					<span>Se déconnecter</span>
+					<img className={"menu-item-svg"} src={signOut} style={{filter: "invert(30%) sepia(94%) saturate(7074%) hue-rotate(356deg) brightness(80%) contrast(123%)"}} alt="sign-out"/>
+					<span style={{color: "red"}}>Se déconnecter</span>
 				</div>
 				{user.type === 'A' ?
 					<div className={"menu-item"}
 					     onClick={() =>  navigate("/admin")}>
-						<img className={"menu-item-svg"} src={signOut} alt="sign-out"/>
+						<img className={"menu-item-svg"} src={admin} alt="admin-dashboard"/>
 						<span>Dashboard (admin)</span>
 					</div> : null}
 			</div> : null}

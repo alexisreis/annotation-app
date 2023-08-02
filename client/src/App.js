@@ -9,6 +9,8 @@ import {PageContext} from "./utils/PageContext";
 import AdminDashboard from "./pages/AdminDashboard";
 import DocumentPage from "./pages/DocumentPage";
 import SignUp from "./pages/SignUp";
+import CreditsPage from "./pages/CreditsPage";
+import Error404 from "./pages/Error404";
 
 function App(){
 
@@ -44,6 +46,8 @@ function App(){
 							<Route path="login" element={<Login />} />
 							<Route path="signup" element={<SignUp />} />
 							<Route path="admin" element={<AdminDashboard />} />
+							<Route path="credits" element={<CreditsPage />} />
+							<Route path="*" element={<Error404 />} />
 						</Route>
 					</Routes>
 				</BrowserRouter>

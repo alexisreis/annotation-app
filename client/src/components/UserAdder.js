@@ -1,5 +1,6 @@
 import React, {useState} from "react"
 import bcrypt from "bcryptjs";
+import {useNavigate} from "react-router-dom";
 
 const UserAdder = () => {
 
@@ -7,6 +8,8 @@ const UserAdder = () => {
 	/*const [type, setType] = useState("");*/
 	const [mail, setMail] = useState("");
 	const [password, setPassword] = useState("");
+
+	const navigate = useNavigate();
 
 	const handleKeyDown = (e) => {
 		if (e.key === 'Enter') {
@@ -42,46 +45,32 @@ const UserAdder = () => {
 				} else if (!json.success){
 					alert("Erreur lors de l'insertion")
 				} else {
-					alert("Utilisateur créé")
+					alert("Compte créé!")
+					navigate('/login')
 				}
 
 			})
 	}
 
-
 	return (
 	<form onKeyDown={handleKeyDown}>
+		<h2>Créer un compte</h2>
 		<div>
-			<p>Nom</p>
+			<label>NOM</label>
 			<input type="text" id="name" name="name"
 			       onChange={(e) => setName(e.target.value)}/>
 		</div>
-{/*		<div>
-			<p>Type</p>
-			<input type="radio" name='type' value='A' id='A'
-			       onClick={(e) => setType(e.target.value)}/>
-			<label htmlFor='A'>Admin</label>
-			<input type="radio" name='type' value='M' id='M'
-			       onClick={(e) => setType(e.target.value)}/>
-			<label htmlFor='M'>Modérateur</label>
-			<input type="radio" name='type' value='E' id='E'
-			       onClick={(e) => setType(e.target.value)}/>
-			<label htmlFor='E'>Editeur</label>
-			<input type="radio" name='type' value='S' id='S'
-			       onClick={(e) => setType(e.target.value)}/>
-			<label htmlFor='S'>Créateur (standard)</label>
-		</div>*/}
 		<div>
-			<p>Adresse mail</p>
+			<label>ADRESSE MAIL</label>
 			<input type="text" id="mail" name="mail"
 			       onChange={(e) => setMail(e.target.value)}/>
 		</div>
 		<div>
-			<p>Mot de passe</p>
+			<label>MOT DE PASSE</label>
 			<input type="password" id="password" name="password"
 			       onChange={(e) => setPassword(e.target.value)}/>
 		</div>
-		<input type="button" value="Ajouter l'utilisateur"
+		<input type="button" id="login-button" value="CRÉER MON COMPTE"
 		       onClick={() => addUser()}/>
 	</form>)
 }

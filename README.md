@@ -6,8 +6,11 @@ June - August 2022
 # Documentation
 Full documentation for this project is available here : [https://alexis-reis.gitbook.io/annotation-app/](https://alexis-reis.gitbook.io/annotation-app/)
 
-# Server side
-A flask server is used to send images to the OpenCV library to enhanced them.
+# Setup
+A flask server is used in order to :
+- send data to MySQL DB
+- send images to the OpenCV library to enhanced them
+
 ### \> Installation
 You need a virtual environment to run Python with the libraries used.
 In development `Python 3.10` was used.
@@ -15,12 +18,15 @@ In development `Python 3.10` was used.
 cd server
 python -m venv venv
 .\venv\Scripts\activate
-pip install flask flask_cors opencv-python flask_mysqldb PyJWT openpyxl pandas
+pip install flask flask_cors opencv-python flask_mysqldb PyJWT openpyxl 
+pandas gunicorn python-dotenv
+# Or you can just use the requirements.txt file
+pip install -r requirements.txt
 ```
 
 ### \> Run
 Once the virtual environment is set up, and the libraries installed you can 
-start the flask :
+start the server :
 - activate the virtual environment (if it's not already done)
 - launch the server
 ```bash
@@ -28,10 +34,10 @@ start the flask :
 python server.py
 ```
 
+You can now have access to the builded version of the app via [http://localhost:5000/](http://localhost:5000/)
+if you work in local.
 # Client side
-
-## Client mode
-Just open the `index.html` file in `/client/build`
+This section is useful if you wish to edit the frontend of the app.
 
 ## Development mode
 You will need to install `NodeJS` on your system.   

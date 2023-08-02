@@ -1,0 +1,28 @@
+.credits p {
+    margin: 1em;
+}
+
+.credits h4 {
+    width: 100%;
+    font-size: 1.1em;
+    font-weight: 700;
+    text-align: left;
+    text-align: center;
+    margin: 0;
+}
+
+.credits ul {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.credits li {
+    font-size: 1em;
+    float: left;
+}
+
+.credits hr {
+    width: 100%;
+    margin: 1em;
+}

@@ -17,6 +17,7 @@ function PathBar() {
 				page: 'home',
 				document_cote: page.document_cote,
 				document_name: page.document_name,
+				document_date: page.document_date,
 				image_id: page.image_id
 			})
 		} else if (page.document_cote && !page.image_id) {
@@ -24,6 +25,7 @@ function PathBar() {
 				page: 'home',
 				document_cote: page.document_cote,
 				document_name: page.document_name,
+				document_date: page.document_date,
 			})
 		}
 		navigate('/')
@@ -35,6 +37,7 @@ function PathBar() {
 				page: 'document',
 				document_cote: page.document_cote,
 				document_name: page.document_name,
+				document_date: page.document_date,
 				image_id: page.image_id
 			})
 			navigate('document')
@@ -44,18 +47,21 @@ function PathBar() {
 	return (
 		<div id={"pathbar"}>
 			<div className={"pathbar-element"} onClick={goToHome}>
-				<h2>Mon projet {' >'}</h2>
+				<h2>Documents</h2>
+				<h2>{'>'}</h2>
 			</div>
 			{page && (page.page === 'document' || page.page === 'image') ?
 				<div className={"pathbar-element"} onClick={goToDocument}>
-					<h2>Document {' >'}</h2>
-					<span>{page.document_cote}</span>
-					<span>{page.document_name.substr(0, 15)}</span>
+					{/*<h2>Document {' >'}</h2>*/}
+					<span className="doc-id-span">{page.document_cote}</span>
+					<h2>{'>'}</h2>
+
+					{/*<span>{page.document_name.substr(0, 15)}</span>*/}
 				</div> : null}
 			{page && page.page === 'image' ?
 				<div className={"pathbar-element"}>
-					<h2>Image</h2>
-					<span>{page.image_id}</span>
+					{/*<h2>Image</h2>*/}
+					<span className="doc-id-span">{page.image_id}</span>
 				</div> : null}
 		</div>)
 }

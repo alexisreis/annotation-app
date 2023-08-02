@@ -1,42 +1,37 @@
-from flask import Blueprint, jsonify, send_file, request, make_response
-from image_processing import process_image
-from word_spotting import word_spotting
+from flask import Blueprint, jsonify, send_file, request, make_response, current_app
 from utils.extension import token_required, admin
 from utils.image_processing import process_image
 from utils.word_spotting import word_spotting
-from os.path import exists
+from os.path import exists, join
+import jwt
 
 images = Blueprint('images', __name__)
+
+RESIZED_IMAGES_DIR = join('images', 'resized')
+ORIGINAL_IMAGES_DIR = join('images', 'original')
 
 
 @images.route("/getResizedImage/<cote>/<img>")
 @token_required
 def getResizedImage(cote, img):
-    path_to_resized_image = f'''images\\resized\\{cote}\\{img}.jpg'''
+    path_to_resized_image = join(RESIZED_IMAGES_DIR, cote, img + '.jpg')
     if not exists(path_to_resized_image):
         return make_response(jsonify({'not_found': 'No files'}), 404)
     return make_response(send_file(path_to_resized_image,
                                    mimetype='image/jpg'), 200)
 
 
+# TODO : check token
 @images.route("/getOriginalImage/<cote>/<img>")
 @token_required
 def getOriginalImage(cote, img):
-    path_to_original_image = f'''images\\original\\{cote}\\{img}.jpg'''
+    path_to_original_image = join(ORIGINAL_IMAGES_DIR, cote, img + '.jpg')
     if not exists(path_to_original_image):
         return make_response(jsonify({'not_found': 'No files'}), 404)
     return make_response(send_file(path_to_original_image,
-                                   mimetype='image/jpg'), 200)
+                                       mimetype='image/jpg'), 200)
 
 
-@images.route("/getImageTest")
-@token_required
-def getImageTest():
-    path_to_image = "../client/public/wallpaper.jpg"
-    if not exists(path_to_image):
-        return make_response(jsonify({'not_found': 'No files'}), 404)
-    return make_response(send_file(path_to_image,
-                                   mimetype='image/jpg'), 200)
 
 
 @images.route('/uploadImage', methods=['POST'])

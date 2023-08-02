@@ -3,6 +3,7 @@ import DocumentDashboard from "../components/DocumentDashboard";
 import {PageContext} from "../utils/PageContext";
 import ImageList from "../components/ImageList";
 import ImageAdder from "../components/ImageAdder";
+import {UserContext} from "../utils/UserContext";
 
 export default function DocumentPage() {
 
@@ -11,6 +12,7 @@ export default function DocumentPage() {
 	const [transcriptions, setTranscriptions] = useState([]);
 
 	const {page} = useContext(PageContext);
+	const {user} = useContext(UserContext)
 
 	const fetchData = async () => {
 		if (page.document_cote) {
@@ -40,16 +42,16 @@ export default function DocumentPage() {
 	}, [page])
 
 	return (
-		<div style={{
-			display: "flex",
-			flexDirection: "column",
-			justifyContent: "center"
-		}}>
-			<h2 style={{textAlign: "center"}}>{page.document_name}</h2>
+		<div className="App">
+			<h2>📖 {page.document_name}</h2>
+			<span>{page.document_date}</span>
 			<DocumentDashboard senseStats={stats}
 			                   transcriptions={transcriptions}/>
 			<ImageList images={images}/>
-			<ImageAdder images={images} setImages={setImages}/>
+			{user.type === 'A' || user.type === 'M' ?
+				<ImageAdder images={images} setImages={setImages}/>
+				: null}
+
 		</div>
 	)
 }

@@ -1,15 +1,35 @@
 .transcription-tab {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    border-radius: 20px;
-    background-color: #efefef;
-    border: 1px solid darkgrey;
 }
 
 .transcription-tab span {
-    background-color: var(--image-item-infos-background);
-    color: white;
-    border-radius: 20px 20px 0 0;
-    padding: 1em 1em 0.5em 1em;
+    font-weight: 600;
+    font-size: 18px;
+    margin-top: 21px;
+}
+
+.transcription-tab ul{
+    display: flex;
+    flex-direction: column;
+}
+
+.transcription-tab li {
+    text-align: left;
+    margin-right: 1em;
+    padding: 0.5em;
+    font-size: 1em;
+}
+
+.transcription-tab li:not(:last-of-type){
+    border-bottom: 1px solid darkgrey;
+}
+
+@media screen and (max-width: 768px){
+    .transcription-tab span {
+        font-size: 1em;
+    }
+    .transcription-tab li {
+        font-size: 1em;
+    }
 }

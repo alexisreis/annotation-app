@@ -14,7 +14,9 @@ const DocumentDashboard = ({senseStats, transcriptions}) => {
 			left: 'center',
 			top: 20,
 			textStyle: {
-				color: '#000'
+				color: '#000',
+				fontFamily: 'Quicksand',
+				fontSize: '18px',
 			}
 		},
 		tooltip: {
@@ -64,6 +66,8 @@ const DocumentDashboard = ({senseStats, transcriptions}) => {
 
 	return (
 		<div className="document-dashboard">
+			<h3>📊 Statistiques</h3>
+			<hr/>
 			<div className={"document-stats-div"}>
 				{senseStats && senseStats.length > 0 ?
 					<div className={"document-graph-div"}>

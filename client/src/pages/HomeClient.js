@@ -35,11 +35,20 @@ function HomeClient() {
 
 
 	return (
-		<div id="home-div">
-			<h1>Bienvenue {user.name},</h1>
-			<br/>
-			<DocumentList documents={documents}/>
-			<DocumentAdder documents={documents} setDocuments={setDocuments}/>
+		<div className="App">
+			<div>
+				<h1>Bienvenue <span className="span-blue">{user.name}</span>,</h1>
+				<hr/>
+			</div>
+
+			{documents && documents.length > 0 ?
+				<DocumentList documents={documents}/> :
+				<span>Il n'y a aucun documents ici</span>
+			}
+			{user.type === 'A' || user.type === 'M' ?
+				<DocumentAdder documents={documents} setDocuments={setDocuments}/> :
+				null }
+
 		</div>
 	);
 }
