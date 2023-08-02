@@ -24,6 +24,5 @@ yarn-error.log*
 /server/.env
 
 .idea
-*.txt
 
 /server/images/resized
