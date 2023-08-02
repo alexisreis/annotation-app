@@ -44,6 +44,7 @@ form input[type="text"]:focus,
 form input[type="password"]:focus {
     background-color: #cccccc;
     outline: none;
+    border: 1px solid #565656;
 }
 
 label .checkbox {

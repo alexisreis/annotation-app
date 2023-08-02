@@ -10,7 +10,7 @@ init_db = Blueprint('init_db', __name__)
 ORIGINAL_PATH = join('images', 'original')
 RESIZED_PATH = join('images', 'resized')
 PROJECT_NAME = "AM69123_"
-WIDTH = 500
+RESIZED_WIDTH = 500
 
 
 def is_image_in_db(image_id):
@@ -75,24 +75,24 @@ def add_image_to_db(image_id, document_cote):
 
 
 def minify(original_path, cote, image_name):
-    img = cv.imread(original_path + cote + '/' + image_name)
-    height = int(img.shape[0] * 500 / img.shape[1])
-    resized = cv.resize(img, (WIDTH, height), interpolation=cv.INTER_CUBIC)
-    cv.imwrite(RESIZED_PATH + cote + '/' + image_name, resized)
+    img = cv.imread(join(original_path, cote, image_name))
+    height = int(img.shape[0] * RESIZED_WIDTH / img.shape[1])
+    resized = cv.resize(img, (RESIZED_WIDTH, height), interpolation=cv.INTER_CUBIC)
+    cv.imwrite(join(RESIZED_PATH, cote, image_name), resized)
     print(f'''Image {image_name} successfully minified''')
 
 
 def add_images_to_db(cote):
-    if not exists(ORIGINAL_PATH + cote):
+    if not exists(join(ORIGINAL_PATH, cote)):
         print(f'''XXX --- Directory does not exists for {cote} --- XXX''')
         return
 
     path = join(RESIZED_PATH, cote)
     if not exists(path):
         mkdir(path)
-    for f in listdir(ORIGINAL_PATH + cote):
+    for f in listdir(join(ORIGINAL_PATH, cote)):
         if f[-4:] == '.jpg':
-            if not exists(RESIZED_PATH + cote + '/' + f):
+            if not exists(join(RESIZED_PATH, cote, f)):
                 minify(ORIGINAL_PATH, cote, f)
             if not is_image_in_db(f[:-4]):
                 add_image_to_db(f[:-4], cote)

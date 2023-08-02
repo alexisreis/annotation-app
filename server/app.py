@@ -1,6 +1,7 @@
 from flask import Flask, send_from_directory
 from utils.extension import mysql
 from flask_cors import CORS
+
 # Blueprints import
 from api.images import images
 from api.auth import auth
@@ -9,6 +10,7 @@ from api.annotations.annotations import annotations
 from api.annotations.transcription import transcription
 from api.annotations.senses import senses
 from api.init_database import init_db
+
 # To read .env file
 from dotenv import load_dotenv
 from os import getenv

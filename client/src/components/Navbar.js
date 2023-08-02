@@ -40,7 +40,6 @@ const Navbar = () => {
 				<h1 className="unselectable">annotation-app</h1>
 			</div>
 
-
 			{!user ?
 				<nav>
 					<div className="flex-column">

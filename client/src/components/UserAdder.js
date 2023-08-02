@@ -52,26 +52,25 @@ const UserAdder = () => {
 			})
 	}
 
-
 	return (
 	<form onKeyDown={handleKeyDown}>
 		<h2>Créer un compte</h2>
 		<div>
-			<label>Nom</label>
+			<label>NOM</label>
 			<input type="text" id="name" name="name"
 			       onChange={(e) => setName(e.target.value)}/>
 		</div>
 		<div>
-			<label>Adresse mail</label>
+			<label>ADRESSE MAIL</label>
 			<input type="text" id="mail" name="mail"
 			       onChange={(e) => setMail(e.target.value)}/>
 		</div>
 		<div>
-			<label>Mot de passe</label>
+			<label>MOT DE PASSE</label>
 			<input type="password" id="password" name="password"
 			       onChange={(e) => setPassword(e.target.value)}/>
 		</div>
-		<input type="button" id="login-button" value="Créer mon compte"
+		<input type="button" id="login-button" value="CRÉER MON COMPTE"
 		       onClick={() => addUser()}/>
 	</form>)
 }
